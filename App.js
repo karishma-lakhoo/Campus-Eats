@@ -5,6 +5,7 @@ import { createStackNavigator} from "@react-navigation/stack";
 import 'react-native-gesture-handler';
 import React, { createContext, useState} from "react";
 import BottomNavigator from "../Campus-Eats/BottomNavigator";
+import SignUpScreen from "./Screens/SignUp";
 
 const Stack = createStackNavigator();
 
@@ -16,8 +17,9 @@ export default function App() {
       <MyContext.Provider value={{ myState, setMyState }}>
         <NavigationContainer>
           <StatusBar backgroundColor={'#fff'} barStyle={'dark-content'} />
-          <Stack.Navigator screenOptions={{headerShown: true}} initalRouteName={"HomeScreen"} testID="stack-navigator">
-            <Stack.Screen name="Home" component={BottomNavigator}/>
+          <Stack.Navigator screenOptions={{headerShown: false}} initalRouteName={"SignUp"} testID="stack-navigator">
+              <Stack.Screen name="SignUp" component={SignUpScreen}/>
+              <Stack.Screen name="Home" component={BottomNavigator}/>
           </Stack.Navigator>
         </NavigationContainer>
       </MyContext.Provider>
