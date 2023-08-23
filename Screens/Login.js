@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {SafeAreaView, Text, TextInput, View, StyleSheet, Dimensions, Pressable} from 'react-native';
+import {SafeAreaView, Text, TextInput, View, StyleSheet, Dimensions, Pressable, TouchableOpacity} from 'react-native';
 import * as Font from 'expo-font';
 import colors from "../colors";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -36,33 +38,38 @@ const LoginScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={[styles.heading, styles.bold_text]}>Login Screen</Text>
+                <Text style={[styles.heading, styles.bold_text]}>Login</Text>
                 <View style={{marginTop: 40}}>
                     <Text style={[styles.bold_text, {marginTop: 0.03*height,fontSize: 16, marginBottom: 0.006*height}]}>Username</Text>
-                    <TextInput
-                        onChangeText={handleUsernameChange}
-                        value={username}
-                        style={styles.input}
-                        placeholder="Username"
-                    />
+                    <View style={styles.input}>
+                        <FontAwesomeIcon icon={faUser} style={styles.icon} />
+                        <TextInput
+                            onChangeText={handleUsernameChange}
+                            value={username}
+                            style={[styles.regularText]}
+                            placeholder="Username"
+                        />
+                    </View>
                     <Text style={[styles.bold_text, {marginTop: 0.03*height, fontSize: 16, marginBottom: 0.006*height}]}>Password</Text>
-                    <TextInput
-                        onChangeText={handlePasswordChange}
-                        value={password}
-                        style={styles.input}
-                        placeholder="Password"
-                        secureTextEntry={true}
-
-                    />
-                    <Pressable style={styles.btncontainer}>
+                    <View style={styles.input}>
+                        <FontAwesomeIcon icon={faLock} style={styles.icon} />
+                        <TextInput
+                            onChangeText={handlePasswordChange}
+                            value={password}
+                            placeholder="Password"
+                            style={[styles.regularText]}
+                            secureTextEntry={true}
+                        />
+                    </View>
+                    <TouchableOpacity activeOpacity={0.7} style={styles.btncontainer}>
                         <Text style={[styles.text, styles.bold_text]}> SIGN IN </Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
                 <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                     <Text style={styles.reg_text}>Don't have an account?</Text>
-                    <Pressable>
+                    <TouchableOpacity activeOpacity={0.7}>
                         <Text style={[styles.bold_text, {color: 'red', textDecorationLine: 'underline'}]}> Sign Up</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>
@@ -74,7 +81,7 @@ const styles = StyleSheet.create({
         marginTop: height * 0.18,
         flexDirection: 'column', // Changed flexDirection to 'column'
         marginHorizontal: width * 0.05,
-        position:"absolute"
+        position: 'absolute'
     },
     container:{
         flex: 1,
@@ -91,7 +98,7 @@ const styles = StyleSheet.create({
     },
     input: {
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
         alignItems:"flex-start",
         backgroundColor:"white",
         padding:16,
@@ -109,6 +116,10 @@ const styles = StyleSheet.create({
     },
     text:{
         color:'white',
+    },
+    icon: {
+        marginRight: 10,
+        marginTop: 6,
     },
 });
 
