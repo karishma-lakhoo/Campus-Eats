@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
         marginTop: height * 0.18,
         flexDirection: 'column', // Changed flexDirection to 'column'
         marginHorizontal: width * 0.05,
+        position:"absolute"
     },
     container:{
         flex: 1,

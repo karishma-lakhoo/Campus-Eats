@@ -1,8 +1,19 @@
-import {Dimensions, SafeAreaView, Text, TextInput, View, StyleSheet, Button, Pressable} from "react-native";
+import {
+    Dimensions,
+    SafeAreaView,
+    Text,
+    TextInput,
+    View,
+    StyleSheet,
+    Button,
+    Pressable,
+    TouchableOpacity
+} from "react-native";
 const { width, height } = Dimensions.get('window');
 import * as Font from "expo-font";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import colors from "../colors";
+
 const SignUpScreen = () =>{
     const [fontLoaded, setFontLoaded] = useState(false);
     const [username, setUsername] = useState('');
@@ -76,9 +87,15 @@ const SignUpScreen = () =>{
                     style={[styles.regularText, styles.input]}
                     placeholder="Password"
                 />
-                <Pressable style={styles.pressable}>
-                    <Text style={styles.regularText}> SIGN IN </Text>
-                </Pressable>
+                <TouchableOpacity style={styles.pressable} activeOpacity={0.7}>
+                    <Text style={[styles.boldText, styles.pressableText]}> SIGN UP </Text>
+                </TouchableOpacity>
+                <View style={{flexDirection: 'row', alignSelf: 'center'}}>
+                    <Text style={styles.regularText}>Already have an account?</Text>
+                    <TouchableOpacity activeOpacity={0.7}>
+                        <Text style={[styles.boldText, {color: 'red', textDecorationLine: 'underline'}]}> Sign In</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </SafeAreaView>)
 }
@@ -120,14 +137,25 @@ const styles = StyleSheet.create({
         // fontFamily:
     },
     pressable:{
-        // borderRadius: 12,
         backgroundColor: colors.primary,
         width: '100%',
         padding: 20,
         marginVertical: 40,
         alignItems:'center',
         borderRadius: 12,
-
+    },
+    pressableText:{
+        color: "#FFF",
+        fontSize:16
+    },
+    bottomTextLeft:{
+        fontSize:14,
+        color: colors.gray,
+        textAlign: "center",
+    },
+    bottomTextRigth:{
+        fontSize:14,
+        color: "#FA4D5E",
     }
 
 })
