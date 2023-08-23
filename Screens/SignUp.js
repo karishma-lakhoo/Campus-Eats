@@ -7,7 +7,8 @@ const SignUpScreen = () =>{
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
-                'Urbanist': require('../Fonts/Urbanist-Regular.ttf'),
+                'Urbanist-Regular': require('../Fonts/Urbanist-Regular.ttf'),
+                'Urbanist-Bold': require('../Fonts/Urbanist-Bold.ttf'),
             });
             setFontLoaded(true);
         }
@@ -15,26 +16,26 @@ const SignUpScreen = () =>{
     }, []);
 
     if (!fontLoaded) {
-        return null; // You can return a loading indicator or something here
+        return null;
     }
     return(<SafeAreaView style={styles.header}>
-        <View>
-            <Text style={styles.heading}>SignUp</Text>
-        </View>
+            <Text style={styles.boldText}>SignUp</Text>
     </SafeAreaView>)
 }
 
 const styles = StyleSheet.create({
     header: {
-        paddingVertical: height * 0.03,
+        paddingVertical: height * 0.5,
         flexDirection: 'row',
         alignItems: 'center',
         marginHorizontal: width * 0.05,
     },
-    heading: {
-        fontFamily: 'Urbanist',
-        fontSize: 24,
-    }
+    regularText: {
+        fontFamily: 'Urbanist-Regular',
+    },
+    boldText: {
+        fontFamily: 'Urbanist-Bold',
+        fontSize: 30},
 
 })
 

@@ -3,6 +3,8 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import HomeScreen from "../Campus-Eats/Screens/Home";
+import SignUpScreen from "./Screens/SignUp";
+import LoginScreen from "./Screens/Login";
 const Tab = createBottomTabNavigator();
 const BottomNavigator = () => {
     return <Tab.Navigator screenOptions={{
@@ -13,6 +15,16 @@ const BottomNavigator = () => {
         },
         headerShown: false, tabBarActiveTintColor: 'black' }} >
         <Tab.Screen name="Home" component={HomeScreen} options={{
+            tabBarIcon: ({color}) => (
+                <Icon name="home-filled" color={color} size={28}/>
+            ),
+        }}/>
+        <Tab.Screen name="SignUp" component={SignUpScreen} options={{
+            tabBarIcon: ({color}) => (
+                <Icon name="home-filled" color={color} size={28}/>
+            ),
+        }}/>
+        <Tab.Screen name="Login" component={LoginScreen} options={{
             tabBarIcon: ({color}) => (
                 <Icon name="home-filled" color={color} size={28}/>
             ),
