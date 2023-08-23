@@ -27,7 +27,7 @@ const LoginScreen =() =>{
 
 const styles = StyleSheet.create({
     header: {
-        paddingVertical: height * 0.18,
+        marginTop: height * 0.18,
         flexDirection: 'row',
         alignItems: 'center',
         marginHorizontal: width * 0.05,
