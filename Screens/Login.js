@@ -3,11 +3,11 @@ import {SafeAreaView, Text, TextInput, View, StyleSheet, Dimensions, Pressable, 
 import * as Font from 'expo-font';
 import colors from "../colors";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faLock, faAt} from '@fortawesome/free-solid-svg-icons';
 
 const { width, height } = Dimensions.get('window');
 
-const LoginScreen = () => {
+const LoginScreen = ({navigation}) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -35,6 +35,11 @@ const LoginScreen = () => {
         setPassword(text);
     };
 
+    const onSignInPressed = () => {
+        console.log(username)
+        console.log(password)
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -46,7 +51,7 @@ const LoginScreen = () => {
                         <TextInput
                             onChangeText={handleUsernameChange}
                             value={username}
-                            style={[styles.regularText]}
+                            style={[styles.reg_text]}
                             placeholder="Username"
                         />
                     </View>
@@ -57,17 +62,17 @@ const LoginScreen = () => {
                             onChangeText={handlePasswordChange}
                             value={password}
                             placeholder="Password"
-                            style={[styles.regularText]}
+                            style={[styles.reg_text]}
                             secureTextEntry={true}
                         />
                     </View>
-                    <TouchableOpacity activeOpacity={0.7} style={styles.btncontainer}>
+                    <TouchableOpacity activeOpacity={0.7} style={styles.btncontainer} onPress={() => onSignInPressed()}>
                         <Text style={[styles.text, styles.bold_text]}> SIGN IN </Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                     <Text style={styles.reg_text}>Don't have an account?</Text>
-                    <TouchableOpacity activeOpacity={0.7}>
+                    <TouchableOpacity onPress={() => navigation.navigate('SignUp')} activeOpacity={0.7}>
                         <Text style={[styles.bold_text, {color: 'red', textDecorationLine: 'underline'}]}> Sign Up</Text>
                     </TouchableOpacity>
                 </View>
@@ -119,7 +124,8 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 10,
-        marginTop: 6,
+        marginVertical: height*0.006,
+        position: "relative"
     },
 });
 
