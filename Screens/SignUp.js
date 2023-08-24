@@ -13,8 +13,10 @@ const { width, height } = Dimensions.get('window');
 import * as Font from "expo-font";
 import React, {useEffect, useState} from "react";
 import colors from "../colors";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faUser, faLock, faUserGraduate, faAt} from '@fortawesome/free-solid-svg-icons';
 
-const SignUpScreen = () =>{
+const SignUpScreen = ({navigation}) =>{
     const [fontLoaded, setFontLoaded] = useState(false);
     const [username, setUsername] = useState('');
     const [studentNumber, setStudentNumber] = useState('');
@@ -60,39 +62,52 @@ const SignUpScreen = () =>{
             <View style={styles.header}>
                 <Text style={[styles.heading, styles.boldText]}>Sign Up</Text>
                 <Text style={[styles.boldText, styles.subHeadings]}>Username</Text>
-                <TextInput
-                    onChangeText={handleUsernameChange}
-                    value={username}
-                    style={[styles.regularText, styles.input]}
-                    placeholder="Username"
-                />
+                <View style={styles.textBoxes}>
+                    <FontAwesomeIcon icon={faUser} style={styles.icon} />
+                    <TextInput
+                        onChangeText={handleUsernameChange}
+                        value={username}
+                        style={[styles.regularText]}
+                        placeholder="Username"
+                    />
+                </View>
+
                 <Text style={[styles.boldText, styles.subHeadings]}>Student Number</Text>
-                <TextInput
-                    onChangeText={handleStudentNumberChange}
-                    value={studentNumber}
-                    style={[styles.regularText, styles.input]}
-                    placeholder="Student Number"
-                />
+                <View style={styles.textBoxes}>
+                    <FontAwesomeIcon icon={faUserGraduate} style={styles.icon} />
+                    <TextInput
+                        onChangeText={handleStudentNumberChange}
+                        value={studentNumber}
+                        style={[styles.regularText]}
+                        placeholder="Student Number"
+                    />
+                </View>
                 <Text style={[styles.boldText, styles.subHeadings]}>Email</Text>
-                <TextInput
-                    onChangeText={handleEmailChange}
-                    value={studentNumber}
-                    style={[styles.regularText, styles.input]}
-                    placeholder="Email"
-                />
+                <View style={styles.textBoxes}>
+                    <FontAwesomeIcon icon={faAt} style={styles.icon} />
+                    <TextInput
+                        onChangeText={handleEmailChange}
+                        value={email}
+                        style={[styles.regularText]}
+                        placeholder="Email"
+                    />
+                </View>
                 <Text style={[styles.boldText, styles.subHeadings]}>Password</Text>
-                <TextInput
-                    onChangeText={handlePasswordChange}
-                    value={studentNumber}
-                    style={[styles.regularText, styles.input]}
-                    placeholder="Password"
-                />
+                <View style={styles.textBoxes}>
+                    <FontAwesomeIcon icon={faLock} style={styles.icon} />
+                    <TextInput
+                        onChangeText={handlePasswordChange}
+                        value={studentNumber}
+                        style={[styles.regularText]}
+                        placeholder="Password"
+                    />
+                </View>
                 <TouchableOpacity style={styles.pressable} activeOpacity={0.7}>
                     <Text style={[styles.boldText, styles.pressableText]}> SIGN UP </Text>
                 </TouchableOpacity>
                 <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                     <Text style={styles.regularText}>Already have an account?</Text>
-                    <TouchableOpacity activeOpacity={0.7}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Login')}  activeOpacity={0.7}>
                         <Text style={[styles.boldText, {color: 'red', textDecorationLine: 'underline'}]}> Sign In</Text>
                     </TouchableOpacity>
                 </View>
@@ -156,6 +171,19 @@ const styles = StyleSheet.create({
     bottomTextRigth:{
         fontSize:14,
         color: "#FA4D5E",
+    },
+    icon: {
+        marginRight: 10,
+        position: "relative"
+    },
+    textBoxes:{
+        display: "flex",
+        flexDirection: "row",
+        alignItems:"flex-start",
+        backgroundColor:"white",
+        padding:16,
+        width:0.9*width,
+        borderRadius: 12,
     }
 
 })
