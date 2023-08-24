@@ -100,6 +100,8 @@ const SignUpScreen = ({navigation}) =>{
                         value={password}
                         style={[styles.regularText, styles.textBoxes]}
                         placeholder="Password"
+                        secureTextEntry={true}
+
                     />
                 </View>
                 <TouchableOpacity style={styles.pressable} activeOpacity={0.7}>
@@ -108,7 +110,7 @@ const SignUpScreen = ({navigation}) =>{
                 <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                     <Text style={styles.regularText}>Already have an account?</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Login')}  activeOpacity={0.7}>
-                        <Text style={[styles.boldText, {color: 'red', textDecorationLine: 'underline'}]}> Sign In</Text>
+                        <Text style={[styles.boldText, {color: 'red', textDecorationLine: 'underline'}]}> Login</Text>
                     </TouchableOpacity>
                 </View>
             </View>
