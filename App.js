@@ -6,6 +6,7 @@ import 'react-native-gesture-handler';
 import React, { createContext, useState} from "react";
 import BottomNavigator from "../Campus-Eats/BottomNavigator";
 import SignUpScreen from "./Screens/SignUp";
+import SplashScreen from "./Screens/Splash";
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,7 @@ export default function App() {
         <NavigationContainer>
           <StatusBar backgroundColor={'#fff'} barStyle={'dark-content'} />
           <Stack.Navigator screenOptions={{headerShown: false}} initalRouteName={"SignUp"} testID="stack-navigator">
+              <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }}/>
               <Stack.Screen name="Home" component={BottomNavigator}/>
               <Stack.Screen name="SignUp" component={BottomNavigator}/>
               <Stack.Screen name="Login" component={BottomNavigator}/>
