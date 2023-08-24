@@ -16,7 +16,7 @@ export default function SplashScreen({navigation}) {
     return (
         <View style={styles.container}>
             <LottieView
-                source={require('../animations/coffee_man.json')}
+                source={require('../animations/taco.json')}
                 autoPlay
                 loop
                 style={styles.animation}
@@ -28,6 +28,7 @@ export default function SplashScreen({navigation}) {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
