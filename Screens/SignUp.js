@@ -62,43 +62,43 @@ const SignUpScreen = ({navigation}) =>{
             <View style={styles.header}>
                 <Text style={[styles.heading, styles.boldText]}>Sign Up</Text>
                 <Text style={[styles.boldText, styles.subHeadings]}>Username</Text>
-                <View style={styles.textBoxes}>
+                <View style={styles.combo}>
                     <FontAwesomeIcon icon={faUser} style={styles.icon} />
                     <TextInput
                         onChangeText={handleUsernameChange}
                         value={username}
-                        style={[styles.regularText]}
+                        style={[styles.regularText, styles.textBoxes]}
                         placeholder="Username"
                     />
                 </View>
 
                 <Text style={[styles.boldText, styles.subHeadings]}>Student Number</Text>
-                <View style={styles.textBoxes}>
+                <View style={styles.combo}>
                     <FontAwesomeIcon icon={faUserGraduate} style={styles.icon} />
                     <TextInput
                         onChangeText={handleStudentNumberChange}
                         value={studentNumber}
-                        style={[styles.regularText]}
+                        style={[styles.regularText, styles.textBoxes]}
                         placeholder="Student Number"
                     />
                 </View>
                 <Text style={[styles.boldText, styles.subHeadings]}>Email</Text>
-                <View style={styles.textBoxes}>
+                <View style={styles.combo}>
                     <FontAwesomeIcon icon={faAt} style={styles.icon} />
                     <TextInput
                         onChangeText={handleEmailChange}
                         value={email}
-                        style={[styles.regularText]}
+                        style={[styles.regularText, styles.textBoxes]}
                         placeholder="Email"
                     />
                 </View>
                 <Text style={[styles.boldText, styles.subHeadings]}>Password</Text>
-                <View style={styles.textBoxes}>
+                <View style={styles.combo}>
                     <FontAwesomeIcon icon={faLock} style={styles.icon} />
                     <TextInput
                         onChangeText={handlePasswordChange}
-                        value={studentNumber}
-                        style={[styles.regularText]}
+                        value={password}
+                        style={[styles.regularText, styles.textBoxes]}
                         placeholder="Password"
                     />
                 </View>
@@ -173,16 +173,22 @@ const styles = StyleSheet.create({
         color: "#FA4D5E",
     },
     icon: {
-        marginRight: 10,
-        position: "relative"
+        position: "relative",
+        alignItems: "flex-start",
+        marginLeft: 16,
+        marginTop: 16
     },
     textBoxes:{
         display: "flex",
-        flexDirection: "row",
         alignItems:"flex-start",
         backgroundColor:"white",
         padding:16,
-        width:0.9*width,
+        width:0.8*width,
+        borderRadius: 12,
+    },
+    combo:{
+        flexDirection: "row",
+        backgroundColor: "white",
         borderRadius: 12,
     }
 
