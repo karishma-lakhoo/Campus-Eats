@@ -4,13 +4,17 @@ import * as Font from 'expo-font';
 import colors from "../colors";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUser, faLock, faAt} from '@fortawesome/free-solid-svg-icons';
+import { } from "../firebase";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+
 
 const { width, height } = Dimensions.get('window');
 
 const LoginScreen = ({navigation}) => {
     const [fontLoaded, setFontLoaded] = useState(false);
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const auth = getAuth();
 
     useEffect(() => {
         async function loadFont() {
@@ -21,14 +25,22 @@ const LoginScreen = ({navigation}) => {
             setFontLoaded(true);
         }
         loadFont();
+
+        //signup and auth navigate to home on signup, login and as long as user is not changed
+        const unsubscribe =  onAuthStateChanged(auth, (user) => {
+            if(user){
+                navigation.navigate("Home")
+            }
+        })
+        return unsubscribe;
     }, []);
 
     if (!fontLoaded) {
         return null;
     }
 
-    const handleUsernameChange = (text) => {
-        setUsername(text);
+    const handleEmailChange = (text) => {
+        setEmail(text);
     };
 
     const handlePasswordChange = (text) => {
@@ -36,8 +48,14 @@ const LoginScreen = ({navigation}) => {
     };
 
     const onSignInPressed = () => {
-        console.log(username)
-        console.log(password)
+
+            signInWithEmailAndPassword(auth, email, password)
+            .then(userCredentials => {
+                const user = userCredentials.user;
+                // can use the variable user to get uid  and use it for accessing docs/info in firestore
+                navigation.navigate(('Home')); // the unsubscribe was not working for login so added navigation
+            }).catch(error => alert(error.message))
+
     }
 
     return (
@@ -45,14 +63,14 @@ const LoginScreen = ({navigation}) => {
             <View style={styles.header}>
                 <Text style={[styles.heading, styles.bold_text]}>Login</Text>
                 <View style={{marginTop: 40}}>
-                    <Text style={[styles.bold_text, {marginTop: 0.03*height,fontSize: 16, marginBottom: 0.006*height}]}>Username</Text>
+                    <Text style={[styles.bold_text, {marginTop: 0.03*height,fontSize: 16, marginBottom: 0.006*height}]}>Email</Text>
                     <View style={styles.input}>
                         <FontAwesomeIcon icon={faUser} style={styles.icon} />
                         <TextInput
-                            onChangeText={handleUsernameChange}
-                            value={username}
+                            onChangeText={handleEmailChange}
+                            value={email}
                             style={[styles.reg_text]}
-                            placeholder="Username"
+                            placeholder="Email"
                         />
                     </View>
                     <Text style={[styles.bold_text, {marginTop: 0.03*height, fontSize: 16, marginBottom: 0.006*height}]}>Password</Text>
