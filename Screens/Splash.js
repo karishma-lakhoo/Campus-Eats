@@ -21,7 +21,7 @@ export default function SplashScreen({navigation}) {
                 loop
                 style={styles.animation}
             />
-            <Text style={{fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 20 }}>CODESHEDDING</Text>
+            <Text>CODESHEDDING</Text>
         </View>
     );
 }
