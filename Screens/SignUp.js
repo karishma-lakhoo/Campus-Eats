@@ -9,12 +9,16 @@ import {
     Pressable,
     TouchableOpacity
 } from "react-native";
+
 const { width, height } = Dimensions.get('window');
 import * as Font from "expo-font";
 import React, {useEffect, useState} from "react";
 import colors from "../colors";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUser, faLock, faUserGraduate, faAt} from '@fortawesome/free-solid-svg-icons';
+import { } from "../firebase";
+import { getAuth,   createUserWithEmailAndPassword, onAuthStateChanged  } from "firebase/auth";
+import { collection, addDoc, getFirestore, doc, setDoc } from 'firebase/firestore';
 
 const SignUpScreen = ({navigation}) =>{
     const [fontLoaded, setFontLoaded] = useState(false);
@@ -22,6 +26,8 @@ const SignUpScreen = ({navigation}) =>{
     const [studentNumber, setStudentNumber] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const auth = getAuth();
+    const db = getFirestore();
 
     const handleUsernameChange = (text) => {
         setUsername(text);
@@ -39,9 +45,50 @@ const SignUpScreen = ({navigation}) =>{
         setPassword(text);
     };
 
-    const onSignInPressed = () => {
-        console.log("sign up")
+    //firebase signup method
+    const onSignUpPressed = async () => {
+        try {
+            const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredentials.user;
+            // get the userId so it can be used to match the the user document in firestore
+            const userUID = user.uid;
+            //array of data that will be added fo each user
+            const userData = {
+                username: username,
+                studentNum: studentNumber,
+                email: email,
+                credits: 0,
+                rating: 0,
+            };
+
+            const docRef = doc(db, 'users', userUID);
+            //Set the document data with the userId so it matches the one in authentication
+            await setDoc(docRef, userData);
+
+            // Create the "Ratings" subcollection inside the user's document
+            const ratingsCollectionRef = collection(docRef,'Ratings');
+            // Add a sample rating document
+            await addDoc(ratingsCollectionRef, {
+                rating: 0, // Sample rating value
+                comment: 'Great user!', // Sample comment
+                //Any other category required in the ratings can be added here with a sample
+            });
+
+            // Create the "Ratings" subcollection inside the user's document
+            const favFoodCollectionRef = collection(docRef, 'Favourites');
+            // Add a sample fav document
+            await addDoc(favFoodCollectionRef, {
+                restuarant: "KFC",
+                foodItem: 'Dunked wings',
+                //Any other category required in the favourites can be added here with a sample
+                //  I think the all samples should later be deleted as it moght affect query results
+            });
+
+        } catch (error) {
+            alert(error.message);
+        }
     }
+
 
     useEffect(() => {
         async function loadFont() {
@@ -52,6 +99,14 @@ const SignUpScreen = ({navigation}) =>{
             setFontLoaded(true);
         }
         loadFont();
+
+        //signup and auth navigate to home on signup, login and as long as user is not changed
+        const unsubscribe =  onAuthStateChanged(auth, (user) => {
+            if(user){
+                navigation.navigate("Home")
+            }
+        })
+        return unsubscribe;
     }, []);
 
     if (!fontLoaded) {
@@ -100,15 +155,17 @@ const SignUpScreen = ({navigation}) =>{
                         value={password}
                         style={[styles.regularText, styles.textBoxes]}
                         placeholder="Password"
+                        secureTextEntry={true}
+
                     />
                 </View>
-                <TouchableOpacity style={styles.pressable} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.pressable} activeOpacity={0.7} onPress={() => onSignUpPressed()}>
                     <Text style={[styles.boldText, styles.pressableText]}> SIGN UP </Text>
                 </TouchableOpacity>
                 <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                     <Text style={styles.regularText}>Already have an account?</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Login')}  activeOpacity={0.7}>
-                        <Text style={[styles.boldText, {color: 'red', textDecorationLine: 'underline'}]}> Sign In</Text>
+                        <Text style={[styles.boldText, {color: 'red', textDecorationLine: 'underline'}]}> Login</Text>
                     </TouchableOpacity>
                 </View>
             </View>

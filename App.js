@@ -23,6 +23,7 @@ export default function App() {
               <Stack.Screen name="Home" component={BottomNavigator}/>
               <Stack.Screen name="SignUp" component={BottomNavigator}/>
               <Stack.Screen name="Login" component={BottomNavigator}/>
+              <Stack.Screen name="Restuarnats" component={BottomNavigator}/>
           </Stack.Navigator>
         </NavigationContainer>
       </MyContext.Provider>
