@@ -6,7 +6,7 @@ import HomeScreen from "../Campus-Eats/Screens/Home";
 import SignUpScreen from "./Screens/SignUp";
 import LoginScreen from "./Screens/Login";
 import RestaurantsScreen from "./Screens/Restaurants";
-
+import ProfileScreen from './Screens/Profile';
 import FoodScreen from "./Screens/Foods";
 
 const Tab = createBottomTabNavigator();
@@ -43,7 +43,12 @@ const BottomNavigator = () => {
                 <Icon name="home-filled" color={color} size={28}/>
             ),
         }}/>
-    </Tab.Navigator>
+        <Tab.Screen name="Profile" component={ProfileScreen} options={{
+                    tabBarIcon: ({color}) => (
+                        <Icon name="home-filled" color={color} size={28}/>
+                    ),
+                }}/>
+        </Tab.Navigator>
 }
 
 export default BottomNavigator;
