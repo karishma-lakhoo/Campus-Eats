@@ -17,7 +17,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 
 const { width, height } = Dimensions.get("window");
 
-const RestaurantsScreen = () => {
+const RestaurantsScreen = ({navigation}) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
@@ -47,6 +47,12 @@ const RestaurantsScreen = () => {
         // Add your filter logic here
     };
 
+
+    const handleRestaurantPress = () => {
+        // Add your filter logic here
+        navigation.navigate('Menu')
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.contentContainer}>
@@ -59,7 +65,7 @@ const RestaurantsScreen = () => {
                         <Image
                             source={require('../assets/Search.png')}
                             style={{ width: 24, height: 24 }}
-                            onPress={() => {handleFilterPress()}}
+                            // onPress={() => {handleFilterPress()}}
                         />
 
                         <TextInput
@@ -83,7 +89,7 @@ const RestaurantsScreen = () => {
                         scrollEnabled={true}
                         style={styles.flatListContainer}
                         renderItem={({ item }) => (
-                            <TouchableOpacity style={styles.itemContainer}>
+                            <TouchableOpacity onPress={() => { handleRestaurantPress() }} style={styles.itemContainer}>
                                 <Image source={require('../assets/jimmys.jpg')} style={styles.itemImage} />
                                 <Text style={styles.boldText}>{item.name}</Text>
                                 <Text style={styles.subText}>{item.price}</Text>
@@ -106,6 +112,9 @@ const styles = StyleSheet.create({
     heading: {
         fontFamily: "Urbanist-Bold",
         fontSize: 26,
+    },
+    contentContainer: {
+        flex: 1,
     },
     header: {
         flexDirection: "column",
