@@ -4,12 +4,27 @@ import * as Font from "expo-font";
 import Colors from "../colors";
 import restaurants from '../consts/dummyRestaurants'
 import colors from "../colors";
+import { Pressable } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("window");
 
 const FoodScreen = () => {
     const [fontLoaded, setFontLoaded] = useState(false);
+    const [liked, setLiked] = useState(false);
 
+    const LikeButton = () => {
+        return (
+            <Pressable onPress={() => setLiked((isLiked) => !isLiked)}>
+                <MaterialCommunityIcons
+                    style={{marginLeft: width*0.35, marginTop: height*0.002}}
+                    name={liked ? "heart" : "heart-outline"}
+                    size={32}
+                    color={liked ? "red" : "black"}
+                />
+            </Pressable>
+        );
+    };
 
 
     useEffect(() => {
@@ -33,6 +48,7 @@ const FoodScreen = () => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={[styles.heading, styles.heading]}>Panda's Sauce</Text>
+                <LikeButton/>
             </View>
             <View style={{ marginTop: height * 0.15 ,marginHorizontal: 10, height: "24%"}}>
                 <Image  source={require('../assets/jimmys.jpg')} style={styles.foodImage} />
@@ -44,7 +60,8 @@ const FoodScreen = () => {
                     <Text style={styles.boldText}>Add to cart</Text>
                  </TouchableOpacity>
             </View>
-            
+
+
         </SafeAreaView>
     );
 };
@@ -55,14 +72,15 @@ const styles = StyleSheet.create({
         flex: 0,
         backgroundColor: "#F2F5F9",
     },
-    
+    like: {
+    },
     heading: {
         fontFamily: "Urbanist-Bold",
         fontSize: 26,
     },
     header: {
         marginTop: height * 0.07,
-        flexDirection: "column",
+        flexDirection: "row",
         marginHorizontal: width * 0.05,
         position: "absolute",
     },

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, Button, ScrollView} from "react-native";
 import * as Font from "expo-font";
+import { FontAwesome5 } from '@expo/vector-icons'; // Import FontAwesome5 for the plus icon
+import { Pressable } from 'react-native';
 import Colors from "../colors";
 import colors from "../colors";
+import COLORS from "../colors";
 
 const { width, height } = Dimensions.get("window");
 
-const ProfileScreen = () => {
+const ProfileScreen = ({navigation}) => {
     const [fontLoaded, setFontLoaded] = useState(false);
 
 
@@ -28,6 +31,11 @@ const ProfileScreen = () => {
 
     let student_name = "Panda";
 
+    const handleAdd = () => {
+        // Implement your logic here, e.g., navigate to a new screen
+        console.log('Add button pressed');
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.container}>
@@ -37,8 +45,13 @@ const ProfileScreen = () => {
                     </View>
                 </View>
                 <View>
+                    <View style={styles.addpfp}>
+                        <Pressable onPress={handleAdd}>
+                            <FontAwesome5 name="plus" size={24} color="white" />
+                        </Pressable>
+                    </View>
                     <View style={styles.profileImage}>
-                            <Image source={require("../assets/avatar.png")} style={styles.image} resizeMode="center"></Image>
+                        <Image source={require("../assets/avatar.png")} style={styles.image} resizeMode="center"></Image>
                     </View>
                 </View>
             </View>
@@ -65,6 +78,18 @@ const styles = StyleSheet.create({
         flex: 1,
         height: undefined,
         width: undefined
+    },
+    addpfp: {
+        backgroundColor: colors.primary,
+        position: "absolute", // Position the plus button absolutely
+        bottom: 30, // Adjust the bottom value as needed
+        right: 30, // Adjust the right value as needed
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1, // Ensure the button appears on top of the image
     },
 
     heading: {

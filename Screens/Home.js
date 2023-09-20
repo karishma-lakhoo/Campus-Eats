@@ -6,26 +6,6 @@ import Colors from "../colors";
 const { width, height } = Dimensions.get("window");
 
 const HomeScreen = () => {
-    const [fontLoaded, setFontLoaded] = useState(false);
-    const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
-    const [selectedSubtypes, setSelectedSubtypes] = useState([]);
-
-
-    useEffect(() => {
-        async function loadFont() {
-            await Font.loadAsync({
-                "Urbanist-Regular": require("../Fonts/Urbanist-Regular.ttf"),
-                "Urbanist-Bold": require("../Fonts/Urbanist-Bold.ttf"),
-            });
-            setFontLoaded(true);
-        }
-        loadFont();
-    }, []);
-
-    if (!fontLoaded) {
-        return null;
-    }
-
     const categories = [
         {
             key: "1",
@@ -67,7 +47,7 @@ const HomeScreen = () => {
         },
         {
             key: "2",
-            category: "chicken",
+            category: "favourites",
             subtypes: [
                 {
                     key: "1",
@@ -81,6 +61,20 @@ const HomeScreen = () => {
         },
         {
             key: "3",
+            category: "chicken",
+            subtypes: [
+                {
+                    key: "1",
+                    subtype: "wings",
+                },
+                {
+                    key: "2",
+                    subtype: "chicken curry",
+                },
+            ],
+        },
+        {
+            key: "4",
             category: "beef",
             subtypes: [
                 {
@@ -94,7 +88,7 @@ const HomeScreen = () => {
             ],
         },
         {
-            key: "4",
+            key: "5",
             category: "fish",
             subtypes: [
                 {
@@ -108,7 +102,7 @@ const HomeScreen = () => {
             ],
         },
         {
-            key: "5",
+            key: "6",
             category: "vegan",
             subtypes: [
                 {
@@ -122,7 +116,7 @@ const HomeScreen = () => {
             ],
         },
         {
-            key: "6",
+            key: "7",
             category: "desserts",
             subtypes: [
                 {
@@ -136,6 +130,28 @@ const HomeScreen = () => {
             ],
         },
     ];
+
+
+    const [fontLoaded, setFontLoaded] = useState(false);
+    const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
+    const [selectedSubtypes, setSelectedSubtypes] = useState(categories[0].subtypes);
+
+    useEffect(() => {
+        async function loadFont() {
+            await Font.loadAsync({
+                "Urbanist-Regular": require("../Fonts/Urbanist-Regular.ttf"),
+                "Urbanist-Bold": require("../Fonts/Urbanist-Bold.ttf"),
+            });
+            setFontLoaded(true);
+        }
+        loadFont();
+    }, []);
+
+    if (!fontLoaded) {
+        return null;
+    }
+
+
 
     const ListCategories = () => {
         return (
@@ -234,7 +250,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginHorizontal: 10,
         height: height * 0.07,
-        width: width * 0.2,
+        width: width * 0.21,
         justifyContent: "center",
         alignItems: "center",
 
