@@ -85,7 +85,7 @@ const RestaurantsScreen = ({navigation}) => {
                     </View>
                     <FlatList
                         data={filteredRestaurants}
-                        keyExtractor={item => item.key}
+                        keyExtractor={item => item.id}
                         scrollEnabled={true}
                         style={styles.flatListContainer}
                         renderItem={({ item }) => (
