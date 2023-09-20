@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         flex: 1,
+        marginTop: height * 0.02,
     },
     header: {
         flexDirection: "column",

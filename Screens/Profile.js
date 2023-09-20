@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from "react";
-import {Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, Button, ScrollView} from "react-native";
+import {
+    Dimensions,
+    FlatList,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    Image,
+    Button,
+    ScrollView,
+    TouchableWithoutFeedback
+} from "react-native";
 import * as Font from "expo-font";
 import { FontAwesome5 } from '@expo/vector-icons'; // Import FontAwesome5 for the plus icon
 import { Pressable } from 'react-native';
 import Colors from "../colors";
 import colors from "../colors";
 import COLORS from "../colors";
+import {PFPpopup} from "../PopUps/PFPpopup";
 
 const { width, height } = Dimensions.get("window");
 
 const ProfileScreen = ({navigation}) => {
+    let popupRef = React.createRef()
     const [fontLoaded, setFontLoaded] = useState(false);
-
-
 
     useEffect(() => {
         async function loadFont() {
@@ -33,10 +45,16 @@ const ProfileScreen = ({navigation}) => {
 
     const handleAdd = () => {
         // Implement your logic here, e.g., navigate to a new screen
+        popupRef.show();
         console.log('Add button pressed');
     };
 
+    const onClosePopup = () => {
+        popupRef.close()
+    }
+
     return (
+        <>
         <SafeAreaView style={styles.container}>
             <View style={styles.container}>
                 <View>
@@ -46,17 +64,26 @@ const ProfileScreen = ({navigation}) => {
                 </View>
                 <View>
                     <View style={styles.addpfp}>
-                        <Pressable onPress={handleAdd}>
+                        <TouchableWithoutFeedback onPress={handleAdd}>
                             <FontAwesome5 name="plus" size={24} color="white" />
-                        </Pressable>
+                        </TouchableWithoutFeedback>
+                        <PFPpopup
+                            title="Profile Picture"
+                            ref={(target) => popupRef = target}
+                            onTouchOutside={onClosePopup}
+                        />
                     </View>
+
                     <View style={styles.profileImage}>
                         <Image source={require("../assets/avatar.png")} style={styles.image} resizeMode="center"></Image>
                     </View>
+
                 </View>
             </View>
 
+
         </SafeAreaView>
+        </>
     );
 };
 
