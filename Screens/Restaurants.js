@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     View,
     Image,
-    TextInput, Button
+    TextInput, Button, ScrollView
 } from "react-native";
 import * as Font from "expo-font";
 import restaurants from '../consts/dummyRestaurants'
@@ -50,7 +50,7 @@ const RestaurantsScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={[styles.heading, styles.heading]}>Restaurants</Text>
+                <Text style={styles.heading}>Restaurants</Text>
             </View>
 
             <View style={{ marginHorizontal: 10}}>
@@ -76,25 +76,25 @@ const RestaurantsScreen = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
+                    <FlatList
+                        data={filteredRestaurants}
+                        keyExtractor={item => item.key}
+                        scrollEnabled={true}
+                        style={styles.flatListContainer}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity style={styles.itemContainer}>
+                                <Image source={require('../assets/jimmys.jpg')} style={styles.itemImage} />
+                                <Text style={styles.boldText}>{item.name}</Text>
+                                <Text style={styles.subText}>{item.price}</Text>
+                                {/*<Text style={styles.boldText}>{item.name}</Text>*/}
+                            </TouchableOpacity>
+                        )}
+                    />
 
-                <FlatList
-                    data={filteredRestaurants}
-                    keyExtractor={item => item.key}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity style={styles.itemContainer}>
-                            <Image source={require('../assets/jimmys.jpg')} style={styles.itemImage} />
-                            <Text style={styles.boldText}>{item.name}</Text>
-                            <Text style={styles.subText}>{item.price}</Text>
-                            {/*<Text style={styles.boldText}>{item.name}</Text>*/}
-                        </TouchableOpacity>
-                    )}
-                    contentContainerStyle={styles.flatListContainer}
-                />
             </View>
         </SafeAreaView>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {
@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
     },
 
     flatListContainer:{
+        height: height*0.70,
         padding: 10
     },
     searchInput: {
@@ -156,8 +157,6 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 5,
         padding: 10
-
-
     },
     search: {
         position: "absolute"
