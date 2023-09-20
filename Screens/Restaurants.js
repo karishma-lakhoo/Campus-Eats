@@ -49,33 +49,34 @@ const RestaurantsScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.heading}>Restaurants</Text>
-            </View>
-
-            <View style={{ marginHorizontal: 10}}>
-                <View style={styles.searchContainer}>
-                    <Image
-                        source={require('../assets/Search.png')}
-                        style={{ width: 24, height: 24 }}
-                        onPress={() => {handleFilterPress()}}
-                    />
-
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search..."
-                        value={searchText}
-                        onChangeText={handleSearchTextChange}
-                    />
-                    <View style={styles.filter}>
-                        <TouchableOpacity onPress={() => { handleFilterPress() }} style={styles.filter}>
-                            <Image
-                                source={require('../assets/Filter.png')}
-                                style={{ width: 24, height: 24 }}
-                            />
-                        </TouchableOpacity>
-                    </View>
+            <View style={styles.contentContainer}>
+                <View style={styles.header}>
+                    <Text style={styles.heading}>Restaurants</Text>
                 </View>
+
+                <View style={{ marginHorizontal: 10}}>
+                    <View style={styles.searchContainer}>
+                        <Image
+                            source={require('../assets/Search.png')}
+                            style={{ width: 24, height: 24 }}
+                            onPress={() => {handleFilterPress()}}
+                        />
+
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Search..."
+                            value={searchText}
+                            onChangeText={handleSearchTextChange}
+                        />
+                        <View style={styles.filter}>
+                            <TouchableOpacity onPress={() => { handleFilterPress() }} style={styles.filter}>
+                                <Image
+                                    source={require('../assets/Filter.png')}
+                                    style={{ width: 24, height: 24 }}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                     <FlatList
                         data={filteredRestaurants}
                         keyExtractor={item => item.key}
@@ -90,15 +91,16 @@ const RestaurantsScreen = () => {
                             </TouchableOpacity>
                         )}
                     />
-
+                </View>
             </View>
+
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 0,
+        flex: 1,
         backgroundColor: "#F2F5F9",
     },
     heading: {
@@ -106,8 +108,8 @@ const styles = StyleSheet.create({
         fontSize: 26,
     },
     header: {
-        marginTop: height * 0.07,
         flexDirection: "column",
+        paddingTop: height * 0.02,
         marginHorizontal: width * 0.05,
         position: "absolute",
     },
@@ -140,7 +142,9 @@ const styles = StyleSheet.create({
 
     flatListContainer:{
         height: height*0.70,
-        padding: 10
+        paddingLeft: 10,
+        paddingRight: 10,
+        marginTop: 10
     },
     searchInput: {
         flex: 1,
@@ -152,7 +156,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginTop: height*0.08,
+        marginTop: height*0.07,
         marginHorizontal: 10,
         backgroundColor: "white",
         borderRadius: 5,
