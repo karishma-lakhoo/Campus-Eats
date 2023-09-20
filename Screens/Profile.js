@@ -26,8 +26,6 @@ const ProfileScreen = ({navigation}) => {
     let popupRef = React.createRef()
     const [fontLoaded, setFontLoaded] = useState(false);
 
-
-
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
@@ -70,7 +68,7 @@ const ProfileScreen = ({navigation}) => {
                             <FontAwesome5 name="plus" size={24} color="white" />
                         </TouchableWithoutFeedback>
                         <PFPpopup
-                            title="Demo Popup"
+                            title="Profile Picture"
                             ref={(target) => popupRef = target}
                             onTouchOutside={onClosePopup}
                         />

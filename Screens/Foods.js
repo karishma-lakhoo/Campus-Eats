@@ -60,8 +60,6 @@ const FoodScreen = () => {
                     <Text style={styles.boldText}>Add to cart</Text>
                  </TouchableOpacity>
             </View>
-
-
         </SafeAreaView>
     );
 };
