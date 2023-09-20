@@ -24,9 +24,9 @@ export default function App() {
           <Stack.Navigator screenOptions={{headerShown: false}} initalRouteName={"SignUp"} testID="stack-navigator">
               <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }}/>
               <Stack.Screen name="Home" component={BottomNavigator}/>
-              <Stack.Screen name="SignUp" component={SignUpScreen}/>
-              <Stack.Screen name="Login" component={LoginScreen}/>
-              <Stack.Screen name="Restuarants" component={RestaurantsScreen}/>
+              <Stack.Screen name="SignUp" component={BottomNavigator}/>
+              <Stack.Screen name="Login" component={BottomNavigator}/>
+              <Stack.Screen name="Restuarants" component={BottomNavigator}/>
               <Stack.Screen name="Menu" component={MenuScreen}/>
           </Stack.Navigator>
         </NavigationContainer>
