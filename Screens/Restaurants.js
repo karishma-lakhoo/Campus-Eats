@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { } from "../firebase";
+import {collection, addDoc, getFirestore, doc, setDoc, getDocs, where, query} from 'firebase/firestore';
 import {
     Dimensions,
     FlatList,
@@ -11,16 +13,55 @@ import {
     TextInput, Button, ScrollView
 } from "react-native";
 import * as Font from "expo-font";
-import restaurants from '../consts/dummyRestaurants'
+//import restaurants from '../consts/dummyRestaurants'
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-
 const { width, height } = Dimensions.get("window");
+
+const db = getFirestore();
+//const restaurants = [];
+
+const restaurantsRef = collection(db, 'restaurants');
+
+
 
 const RestaurantsScreen = ({navigation}) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+    const [restaurants, setRestaurants] = useState([]); // Use state for restaurants
+
+    useEffect(() => {
+        async  function fetchData(){
+            try{
+                const q = query(restaurantsRef);
+                const querySnapshot = await getDocs(q);
+
+                const fetchedRestaurants = []; // Create a new array for fetched data
+
+                querySnapshot.forEach((doc) =>{
+                    const data = doc.data();
+                    const id = doc.id;
+                    const name = data.Name;
+                    let imageURL = data.imgurl;
+                    if(imageURL === undefined){
+                        imageURL = '../assets/jimmys.jpg';
+                    }
+
+                    fetchedRestaurants.push({id, name, imageURL});
+                    console.log(`Document ID: ${id}, Name: ${name}`); //Check if data is collected from firebase
+                });
+
+                // Update the state with fetched data
+                setRestaurants(fetchedRestaurants);
+                console.log("Fetched restaurants:", fetchedRestaurants);
+            }catch (error){
+                console.log('Error getting documents', error);
+            }
+        }
+        fetchData();
+
+    }, []);
 
     useEffect(() => {
         async function loadFont() {
@@ -90,9 +131,14 @@ const RestaurantsScreen = ({navigation}) => {
                         style={styles.flatListContainer}
                         renderItem={({ item }) => (
                             <TouchableOpacity onPress={() => { handleRestaurantPress() }} style={styles.itemContainer}>
-                                <Image source={require('../assets/jimmys.jpg')} style={styles.itemImage} />
+                                {item.imageURL.startsWith('../assets/') ? (
+                                    // Render a local image
+                                    <Image source={require('../assets/jimmys.jpg')} style={styles.itemImage} />
+                                ) : (
+                                    // Render a remote image
+                                    <Image source={{ uri: item.imageURL }} style={styles.itemImage} />
+                                )}
                                 <Text style={styles.boldText}>{item.name}</Text>
-                                <Text style={styles.subText}>{item.price}</Text>
                                 {/*<Text style={styles.boldText}>{item.name}</Text>*/}
                             </TouchableOpacity>
                         )}

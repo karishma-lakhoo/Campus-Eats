@@ -1,5 +1,5 @@
 import { } from "../firebase";
-import { collection, addDoc, getFirestore, doc, setDoc, getDocs, where } from 'firebase/firestore';
+import {collection, addDoc, getFirestore, doc, setDoc, getDocs, where, query} from 'firebase/firestore';
 
 const db = getFirestore();
 const restaurants = [];
@@ -17,6 +17,7 @@ const fetchData = async () => {
             const id = doc.id;
             const name = data.Name;
             restaurants.push({id, name});
+            console.log(`Document ID: ${id}, Name: ${name}`);
         });
     }catch (error){
         console.log('Error getting documents', error);
