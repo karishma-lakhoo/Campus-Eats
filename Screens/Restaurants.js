@@ -10,7 +10,7 @@ import {
     TouchableOpacity,
     View,
     Image,
-    TextInput, Button, ScrollView
+    TextInput, Button, ScrollView, ActivityIndicator
 } from "react-native";
 import * as Font from "expo-font";
 //import restaurants from '../consts/dummyRestaurants'
@@ -29,39 +29,40 @@ const RestaurantsScreen = ({navigation}) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
-    const [restaurants, setRestaurants] = useState([]); // Use state for restaurants
+    const [restaurants, setRestaurants] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        async  function fetchData(){
-            try{
+        async function fetchData() {
+            try {
                 const q = query(restaurantsRef);
                 const querySnapshot = await getDocs(q);
 
                 const fetchedRestaurants = []; // Create a new array for fetched data
 
-                querySnapshot.forEach((doc) =>{
+                querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     const id = doc.id;
                     const name = data.Name;
                     let imageURL = data.imgurl;
-                    if(imageURL === undefined){
+                    if (imageURL === undefined) {
                         imageURL = '../assets/jimmys.jpg';
                     }
-
-                    fetchedRestaurants.push({id, name, imageURL});
+                    fetchedRestaurants.push({ id, name, imageURL });
                     console.log(`Document ID: ${id}, Name: ${name}`); //Check if data is collected from firebase
                 });
 
-                // Update the state with fetched data
                 setRestaurants(fetchedRestaurants);
+                setFilteredRestaurants(fetchedRestaurants);
                 console.log("Fetched restaurants:", fetchedRestaurants);
-            }catch (error){
+                setIsLoading(false);
+            } catch (error) {
                 console.log('Error getting documents', error);
             }
         }
         fetchData();
-
     }, []);
+
 
     useEffect(() => {
         async function loadFont() {
@@ -75,9 +76,16 @@ const RestaurantsScreen = ({navigation}) => {
     }, []);
 
     useEffect(() => {
-        // Filter the restaurants based on the search text
-        const filtered = restaurants.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()));
-        setFilteredRestaurants(filtered);
+        if (searchText === "") {
+            console.log('emp')
+            // If search text is empty, display all restaurants
+            setFilteredRestaurants(restaurants);
+        }
+        else{
+            // Filter the restaurants based on the search text
+            const filtered = restaurants.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()));
+            setFilteredRestaurants(filtered);
+        }
     }, [searchText]);
 
     const handleSearchTextChange = (text) => {
@@ -94,6 +102,7 @@ const RestaurantsScreen = ({navigation}) => {
         navigation.navigate('Menu')
     };
 
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.contentContainer}>
@@ -101,14 +110,12 @@ const RestaurantsScreen = ({navigation}) => {
                     <Text style={styles.heading}>Restaurants</Text>
                 </View>
 
-                <View style={{ marginHorizontal: 10}}>
+                <View style={{ marginHorizontal: 10 }}>
                     <View style={styles.searchContainer}>
                         <Image
                             source={require('../assets/Search.png')}
                             style={{ width: 24, height: 24 }}
-                            // onPress={() => {handleFilterPress()}}
                         />
-
                         <TextInput
                             style={styles.searchInput}
                             placeholder="Search..."
@@ -124,28 +131,30 @@ const RestaurantsScreen = ({navigation}) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <FlatList
-                        data={filteredRestaurants}
-                        keyExtractor={item => item.id}
-                        scrollEnabled={true}
-                        style={styles.flatListContainer}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => { handleRestaurantPress() }} style={styles.itemContainer}>
-                                {item.imageURL.startsWith('../assets/') ? (
-                                    // Render a local image
-                                    <Image source={require('../assets/jimmys.jpg')} style={styles.itemImage} />
-                                ) : (
-                                    // Render a remote image
-                                    <Image source={{ uri: item.imageURL }} style={styles.itemImage} />
-                                )}
-                                <Text style={styles.boldText}>{item.name}</Text>
-                                {/*<Text style={styles.boldText}>{item.name}</Text>*/}
-                            </TouchableOpacity>
-                        )}
-                    />
+
+                    {isLoading ? (
+                        // edit buffering icon location on screen here
+                        <ActivityIndicator size="large" color="orange" style={{ marginTop: (height/2) - height*0.15 }} />
+                    ) : (
+                        <FlatList
+                            data={filteredRestaurants}
+                            keyExtractor={item => item.id}
+                            scrollEnabled={true}
+                            style={styles.flatListContainer}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity onPress={() => { handleRestaurantPress() }} style={styles.itemContainer}>
+                                    {item.imageURL.startsWith('../assets/') ? (
+                                        <Image source={require('../assets/jimmys.jpg')} style={styles.itemImage} />
+                                    ) : (
+                                        <Image source={{ uri: item.imageURL }} style={styles.itemImage} />
+                                    )}
+                                    <Text style={styles.boldText}>{item.name}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
+                    )}
                 </View>
             </View>
-
         </SafeAreaView>
     );
 };
