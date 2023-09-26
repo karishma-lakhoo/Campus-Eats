@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import {Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, Button} from "react-native";
 import * as Font from "expo-font";
 import Colors from "../colors";
-import restaurants from '../consts/dummyRestaurants'
 import colors from "../colors";
 import { Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {useRoute} from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-const FoodScreen = () => {
+const FoodScreen = ({navigation}) => {
+    const route = useRoute();
+    const { foodItem } = route.params;
     const [fontLoaded, setFontLoaded] = useState(false);
     const [liked, setLiked] = useState(false);
 

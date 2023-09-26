@@ -2,139 +2,22 @@ import React, { useEffect, useState } from "react";
 import {Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import * as Font from "expo-font";
 import Colors from "../colors";
+import {useRoute} from "@react-navigation/native";
+import {foodList} from "../consts/foodData";
+import categories from "../consts/foodCategories";
+
 
 const { width, height } = Dimensions.get("window");
 
 const MenuScreen = ({navigation}) => {
-    const categories = [
-        {
-            key: "1",
-            category: "Hot",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "wings",
-                },
-                {
-                    key: "2",
-                    subtype: "Jimmy strips",
-                },
-                {
-                    key: "3",
-                    subtype: "wings",
-                },
-                {
-                    key: "4",
-                    subtype: "Jimmy strips",
-                },
-                {
-                    key: "5",
-                    subtype: "wings",
-                },
-                {
-                    key: "6",
-                    subtype: "Jimmy strips",
-                },
-                {
-                    key: "7",
-                    subtype: "wings",
-                },
-                {
-                    key: "8",
-                    subtype: "Jimmy strips",
-                },
-            ],
-        },
-        {
-            key: "2",
-            category: "favourites",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "wings",
-                },
-                {
-                    key: "2",
-                    subtype: "chicken curry",
-                },
-            ],
-        },
-        {
-            key: "3",
-            category: "chicken",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "wings",
-                },
-                {
-                    key: "2",
-                    subtype: "chicken curry",
-                },
-            ],
-        },
-        {
-            key: "4",
-            category: "beef",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "steak",
-                },
-                {
-                    key: "2",
-                    subtype: "burger",
-                },
-            ],
-        },
-        {
-            key: "5",
-            category: "fish",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "salmon",
-                },
-                {
-                    key: "2",
-                    subtype: "sushi",
-                },
-            ],
-        },
-        {
-            key: "6",
-            category: "vegan",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "tofu stir-fry",
-                },
-                {
-                    key: "2",
-                    subtype: "vegetable curry",
-                },
-            ],
-        },
-        {
-            key: "7",
-            category: "desserts",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "cake",
-                },
-                {
-                    key: "2",
-                    subtype: "ice cream",
-                },
-            ],
-        },
-    ];
-
+    const route = useRoute();
+    const { restaurantName } = route.params;
+    const [isLoading, setIsLoading] = useState(true);
+    const { allFoods } = foodList(isLoading);
 
     const [fontLoaded, setFontLoaded] = useState(false);
-    const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
-    const [selectedSubtypes, setSelectedSubtypes] = useState(categories[0].subtypes);
+  //  const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
+    const [selectedItems, setSelectedItems] = useState([]);
 
     useEffect(() => {
         async function loadFont() {
@@ -145,71 +28,90 @@ const MenuScreen = ({navigation}) => {
             setFontLoaded(true);
         }
         loadFont();
+
     }, []);
+
+    useEffect(() => {
+        // Use this useEffect to ensure setIsLoading(false) is called
+        if (allFoods.length > 0) {
+            setIsLoading(false);
+        }
+    }, [allFoods]);
+
+    useEffect(() => {
+        if(!isLoading){
+            const filteredItems = allFoods.filter(
+                (item) => item.restaurantName === restaurantName
+            );
+            setSelectedItems(filteredItems);
+        }
+
+    }, [isLoading, allFoods]);
 
     if (!fontLoaded) {
         return null;
     }
 
+    const handleFoodPress = (foodItem) => {
+        navigation.navigate('Food', {foodItem});
+    }
 
-    //
-    // const ListCategories = () => {
-    //     return (
-    //         <View style={{ marginTop: height * 0.15 ,marginHorizontal: 10,}}>
-    //             <FlatList
-    //                 data={categories}
-    //                 horizontal
-    //                 showsHorizontalScrollIndicator={false}
-    //                 keyExtractor={(item) => item.key}
-    //                 renderItem={({ item, index }) => (
-    //                     <TouchableOpacity
-    //                         onPress={() => {
-    //                             setSelectedCategoryIndex(index);
-    //                             setSelectedSubtypes(categories[index].subtypes); // Update selectedSubtypes here
-    //                             console.log(item.key);
-    //                         }}
-    //                     >
-    //                         <View
-    //                             style={[
-    //                                 styles.categoryItem,
-    //                                 {
-    //                                     backgroundColor:
-    //                                         selectedCategoryIndex === index
-    //                                             ? "#FF5733"
-    //                                             : Colors.primary, // Change the colors as needed
-    //                                 },
-    //                             ]}
-    //                         >
-    //                             <Text style={styles.categoryText}>{item.category}</Text>
-    //                         </View>
-    //                     </TouchableOpacity>
-    //                 )}
-    //             />
-    //         </View>
-    //     );
-    // };
 
     const ListSubtypes = () => {
+        const numColumns = 2;
+        const columnWidth = (width - 30) / numColumns;
+        const itemHeight = height * 0.2;
+
+        // Create an object to group items by category
+        const itemsByCategory = {};
+        selectedItems.forEach((item) => {
+            const category = item.foodCategory.toUpperCase();
+            if (!itemsByCategory[category]) {
+                itemsByCategory[category] = [];
+            }
+            itemsByCategory[category].push(item);
+        });
+
+        // Convert the grouped items into an array of objects with category and items
+        const categorizedItems = Object.keys(itemsByCategory).map((category) => ({
+            category,
+            items: itemsByCategory[category],
+        }));
+
         return (
             <FlatList
-                style={styles.flatListContainer} // Add this style
-                data={selectedSubtypes}
-                numColumns={2}
-                keyExtractor={(item) => item.key}
-                scrollEnabled={true}
+                style={styles.flatListContainer}
+                data={categorizedItems}
+                keyExtractor={(item) => item.category}
                 renderItem={({ item }) => (
-                    <View style={styles.subtypeItem}>
-                        <Text style={styles.subtypeText}>{item.subtype}</Text>
-                    </View>
+                    <>
+                        <Text style={styles.categoryHeading}>{item.category}</Text>
+                        <FlatList
+                            data={item.items}
+                            numColumns={numColumns}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity onPress={() => {handleFoodPress(item)}} style={[styles.itemContainer, { width: columnWidth, height: itemHeight }]}>
+                                    {item.imageURL.startsWith('../assets/') ? (
+                                        <Image source={require('../assets/jimmys.jpg')} style={[styles.itemImage, { width: columnWidth, height: itemHeight }]} />
+                                    ) : (
+                                        <Image source={{ uri: item.imageURL }} style={[styles.itemImage, { width: columnWidth, height: itemHeight }]} />
+                                    )}
+                                    <Text style={styles.boldText}>{item.name}</Text>
+                                </TouchableOpacity>
+                            )}
+                            columnWrapperStyle={{
+                                justifyContent: 'space-between', // Adjust the alignment as needed
+                                marginVertical: 40, // Add margin between rows
+                                marginHorizontal: 20, // Add margin between columns
+                            }}
+                        />
+                    </>
                 )}
-                columnWrapperStyle={{
-                    justifyContent: 'space-between', // Adjust the alignment as needed
-                    marginVertical: 10, // Add margin between rows
-                    marginHorizontal: 10, // Add margin between columns
-                }}
             />
         );
     };
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -235,7 +137,6 @@ const MenuScreen = ({navigation}) => {
         </SafeAreaView>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {

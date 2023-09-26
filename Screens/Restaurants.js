@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { } from "../firebase";
-import {collection, addDoc, getFirestore, doc, setDoc, getDocs, where, query} from 'firebase/firestore';
 import {
     Dimensions,
     FlatList,
@@ -13,56 +11,34 @@ import {
     TextInput, Button, ScrollView, ActivityIndicator
 } from "react-native";
 import * as Font from "expo-font";
-//import restaurants from '../consts/dummyRestaurants'
+import {useFetchRestaurants} from "../consts/foodData";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 const { width, height } = Dimensions.get("window");
-
-const db = getFirestore();
-//const restaurants = [];
-
-const restaurantsRef = collection(db, 'restaurants');
-
 
 
 const RestaurantsScreen = ({navigation}) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
-    const [restaurants, setRestaurants] = useState([]);
+
     const [isLoading, setIsLoading] = useState(true);
+    const { restaurants} = useFetchRestaurants(isLoading);
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const q = query(restaurantsRef);
-                const querySnapshot = await getDocs(q);
-
-                const fetchedRestaurants = []; // Create a new array for fetched data
-
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const id = doc.id;
-                    const name = data.Name;
-                    let imageURL = data.imgurl;
-                    if (imageURL === undefined) {
-                        imageURL = '../assets/jimmys.jpg';
-                    }
-                    fetchedRestaurants.push({ id, name, imageURL });
-                    console.log(`Document ID: ${id}, Name: ${name}`); //Check if data is collected from firebase
-                });
-
-                setRestaurants(fetchedRestaurants);
-                setFilteredRestaurants(fetchedRestaurants);
-                console.log("Fetched restaurants:", fetchedRestaurants);
-                setIsLoading(false);
-            } catch (error) {
-                console.log('Error getting documents', error);
-            }
+        // Use this useEffect to ensure setIsLoading(false) is called
+        if (restaurants.length > 0) {
+            setIsLoading(false);
         }
-        fetchData();
-    }, []);
+    }, [restaurants]);
 
+    useEffect(() => {
+
+        if (!isLoading) {
+            // Update filteredRestaurants when data is fetched and isLoading becomes false
+            setFilteredRestaurants(restaurants);
+        }
+    }, [isLoading, restaurants]);
 
     useEffect(() => {
         async function loadFont() {
@@ -97,9 +73,9 @@ const RestaurantsScreen = ({navigation}) => {
     };
 
 
-    const handleRestaurantPress = () => {
+    const handleRestaurantPress = (restaurantName) => {
         // Add your filter logic here
-        navigation.navigate('Menu')
+        navigation.navigate('Menu', {restaurantName} );
     };
 
 
@@ -142,7 +118,7 @@ const RestaurantsScreen = ({navigation}) => {
                             scrollEnabled={true}
                             style={styles.flatListContainer}
                             renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => { handleRestaurantPress() }} style={styles.itemContainer}>
+                                <TouchableOpacity onPress={() => { handleRestaurantPress(item.name) }} style={styles.itemContainer}>
                                     {item.imageURL.startsWith('../assets/') ? (
                                         <Image source={require('../assets/jimmys.jpg')} style={styles.itemImage} />
                                     ) : (
