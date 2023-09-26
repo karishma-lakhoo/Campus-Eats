@@ -11,7 +11,7 @@ const { width, height } = Dimensions.get("window");
 
 const FoodScreen = ({navigation}) => {
     const route = useRoute();
-    const { foodItem } = route.params;
+    const foodItem = route.params;
     const [fontLoaded, setFontLoaded] = useState(false);
     const [liked, setLiked] = useState(false);
 

@@ -9,12 +9,14 @@ import {
     View,
     TouchableWithoutFeedback
 } from "react-native";
-import React from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import {Ionicons} from "@expo/vector-icons";
 import colors from "../colors";
 const deviceHeight = Dimensions.get("window").height
+import {Camera, useCameraDevices} from "react-native-vision-camera";
 
 export class PFPpopup extends React.Component{
+
     constructor(props) {
         super(props);
         this.state = {
@@ -88,6 +90,10 @@ export class PFPpopup extends React.Component{
         )
     }
 
+    handleCameraPress = () => {
+
+    }
+
 
     render() {
         let {show} = this.state
@@ -112,7 +118,7 @@ export class PFPpopup extends React.Component{
                         borderTopLeftRadius:10,
                         borderTopRightRadius:10,
                         paddingHorizontal: 10,
-                        height: deviceHeight*0.18
+                        height: deviceHeight*0.21
                     }}>
                         {this.renderTitle()}
                         {this.renderContent()}
