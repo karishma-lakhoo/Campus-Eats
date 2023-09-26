@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, ScrollView, Button, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { collection, addDoc, getFirestore, doc, setDoc } from 'firebase/firestore';
 
 const MyForm = () => {
     const [name, setName] = useState("");
@@ -13,14 +14,33 @@ const MyForm = () => {
     const [subtype2, setSubtype2] = useState("");
     const [price2, setPrice2] = useState("");
     const [foodCategory, setFoodCategory] = useState("");
+    const db = getFirestore();
 
-    const handleSubmit = () => {
-       // navigation.navigate('Food', {foodItem});
+    const handleSubmit = async() => {
+        try{
+            const foodData = {
+                Description: description,
+                Favourited: 0,
+                Name: name,
+                Restaurant: restaurant,
+                Type: foodCategory,
+                imgurl: imgUrl,
+                NumberSubtype: numberSubtype,
+            };
+
+            const docRef = doc(db,'Foods');
+            await  setDoc(docRef, foodData);
+
+
+        }catch(error){
+            alert(error.message);
+        }
+
     }
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            scrollEnabled={true}
+
             {/* Add some margin to the top */}
             <View style={styles.formGroup}>
                 <Text style={styles.label}>Name:</Text>
