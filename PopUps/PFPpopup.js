@@ -13,7 +13,7 @@ import React, {useEffect, useState, useRef} from 'react'
 import {Ionicons} from "@expo/vector-icons";
 import colors from "../colors";
 const deviceHeight = Dimensions.get("window").height
-import {Camera, useCameraDevices} from "react-native-vision-camera";
+//import {Camera, useCameraDevices} from "react-native-vision-camera";
 
 export class PFPpopup extends React.Component{
 

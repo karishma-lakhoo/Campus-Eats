@@ -7,27 +7,27 @@ import { Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {useRoute} from "@react-navigation/native";
 
+
 const { width, height } = Dimensions.get("window");
 
-const FoodScreen = ({navigation}) => {
+const FoodScreen = ({ navigation }) => {
     const route = useRoute();
-    const foodItem = route.params;
+    const foodItem = route.params.foodItem;
     const [fontLoaded, setFontLoaded] = useState(false);
     const [liked, setLiked] = useState(false);
 
     const LikeButton = () => {
         return (
-            <Pressable onPress={() => setLiked((isLiked) => !isLiked)}>
+            <TouchableOpacity onPress={() => setLiked(!liked)}>
                 <MaterialCommunityIcons
-                    style={{marginLeft: width*0.35, marginTop: height*0.002}}
+                    style={{ marginLeft: width * 0.35, marginTop: height * 0.002 }}
                     name={liked ? "heart" : "heart-outline"}
                     size={32}
                     color={liked ? "red" : "black"}
                 />
-            </Pressable>
+            </TouchableOpacity>
         );
     };
-
 
     useEffect(() => {
         async function loadFont() {
@@ -44,23 +44,23 @@ const FoodScreen = ({navigation}) => {
         return null;
     }
 
-    let description = "This is a yummy and healthy sauce made by Panda himself. Contains a lot of calories, more than you need."
-
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={[styles.heading, styles.heading]}>Panda's Sauce</Text>
-                <LikeButton/>
+                <Text style={[styles.heading, styles.heading]}>{foodItem.name}</Text>
+                <LikeButton />
             </View>
-            <View style={{ marginTop: height * 0.15 ,marginHorizontal: 10, height: "24%"}}>
-                <Image  source={require('../assets/jimmys.jpg')} style={styles.foodImage} />
-                <Text style={styles.boldText}>Price: $$$</Text>
-                <Text style={styles.subDescr}>Description: {description}"</Text>
-                <TouchableOpacity style={styles.addToCart}
+            <View style={{ marginTop: height * 0.15, marginHorizontal: 10, height: "24%" }}>
+                <Image source={{ uri: foodItem.imageURL }} style={styles.foodImage} />
+                <Text style={styles.boldText}>Price: {foodItem.price}</Text>
+                <Text style={styles.subDescr}>Description: {foodItem.description}</Text>
+                <TouchableOpacity
+                    style={styles.addToCart}
                     title="Add to cart"
-                    onPress={()=> console.log("Added item to cart")}>
+                    onPress={() => console.log("Added item to cart")}
+                >
                     <Text style={styles.boldText}>Add to cart</Text>
-                 </TouchableOpacity>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
