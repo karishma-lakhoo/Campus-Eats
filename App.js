@@ -10,6 +10,7 @@ import SplashScreen from "./Screens/Splash";
 import MenuScreen from "./Screens/Menu";
 import LoginScreen from "./Screens/Login";
 import RestaurantsScreen from "./Screens/Restaurants";
+import CartScreen from "./Screens/Cart";
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,7 @@ export default function App() {
               <Stack.Screen name="Login" component={BottomNavigator}/>
               <Stack.Screen name="Restuarants" component={BottomNavigator}/>
               <Stack.Screen name="Menu" component={MenuScreen}/>
+              <Stack.Screen name="Cart" component={CartScreen}/>
           </Stack.Navigator>
         </NavigationContainer>
       </MyContext.Provider>
