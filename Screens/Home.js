@@ -1,15 +1,28 @@
 import React, { useEffect, useState } from "react";
-import {Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {
+    ActivityIndicator,
+    Dimensions,
+    FlatList, Image,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from "react-native";
 import * as Font from "expo-font";
 import Colors from "../colors";
+import { } from "../firebase";
+import {foodList} from "../consts/foodData";
+import categories from "../consts/foodCategories";
 
 const { width, height } = Dimensions.get("window");
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
+    const [isLoading, setIsLoading] = useState(true);
     const [fontLoaded, setFontLoaded] = useState(false);
-    const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
-    const [selectedSubtypes, setSelectedSubtypes] = useState([]);
-
+    const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
+    const [selectedItems, setSelectedItems] = useState([]);
+    const {allFoods } = foodList( isLoading);
 
     useEffect(() => {
         async function loadFont() {
@@ -22,120 +35,41 @@ const HomeScreen = () => {
         loadFont();
     }, []);
 
+    useEffect(() => {
+        // Use this useEffect to ensure setIsLoading(false) is called
+        if (allFoods.length > 0) {
+            setIsLoading(false);
+        }
+    }, [allFoods]);
+
+    useEffect(() => {
+        // Check if foodArray is defined before filtering
+        if (!isLoading) {
+            // When the selected category changes, filter the items based on the category type
+            const selectedCategory = categories[selectedCategoryIndex];
+            console.log("Selected Category:", selectedCategory.category);
+            if (selectedCategory.category.toLowerCase() === "popular"){
+                //implementation for showing foods with highest favourites
+                console.log("pop pop");
+
+            }else if(selectedCategory.category.toLowerCase() === "your favourites"){
+                //implentation for showing logged in user's favourites
+                console.log("favs");
+            }else{
+                const filteredItems = allFoods.filter(
+                    (item) => item.foodCategory.toLowerCase() === selectedCategory.category.toLowerCase()
+                );
+                console.log("Filtered Items:", filteredItems);
+                setSelectedItems(filteredItems);
+            }
+
+        }
+    }, [ isLoading ,selectedCategoryIndex, allFoods]);
+
+
     if (!fontLoaded) {
         return null;
     }
-
-    const categories = [
-        {
-            key: "1",
-            category: "Hot",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "wings",
-                },
-                {
-                    key: "2",
-                    subtype: "Jimmy strips",
-                },
-                {
-                    key: "3",
-                    subtype: "wings",
-                },
-                {
-                    key: "4",
-                    subtype: "Jimmy strips",
-                },
-                {
-                    key: "5",
-                    subtype: "wings",
-                },
-                {
-                    key: "6",
-                    subtype: "Jimmy strips",
-                },
-                {
-                    key: "7",
-                    subtype: "wings",
-                },
-                {
-                    key: "8",
-                    subtype: "Jimmy strips",
-                },
-            ],
-        },
-        {
-            key: "2",
-            category: "chicken",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "wings",
-                },
-                {
-                    key: "2",
-                    subtype: "chicken curry",
-                },
-            ],
-        },
-        {
-            key: "3",
-            category: "beef",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "steak",
-                },
-                {
-                    key: "2",
-                    subtype: "burger",
-                },
-            ],
-        },
-        {
-            key: "4",
-            category: "fish",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "salmon",
-                },
-                {
-                    key: "2",
-                    subtype: "sushi",
-                },
-            ],
-        },
-        {
-            key: "5",
-            category: "vegan",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "tofu stir-fry",
-                },
-                {
-                    key: "2",
-                    subtype: "vegetable curry",
-                },
-            ],
-        },
-        {
-            key: "6",
-            category: "desserts",
-            subtypes: [
-                {
-                    key: "1",
-                    subtype: "cake",
-                },
-                {
-                    key: "2",
-                    subtype: "ice cream",
-                },
-            ],
-        },
-    ];
 
     const ListCategories = () => {
         return (
@@ -149,7 +83,7 @@ const HomeScreen = () => {
                         <TouchableOpacity
                             onPress={() => {
                                 setSelectedCategoryIndex(index);
-                                setSelectedSubtypes(categories[index].subtypes); // Update selectedSubtypes here
+                              //  setSelectedSubtypes(categories[index].subtypes); // Update selectedSubtypes here
                                 console.log(item.key);
                             }}
                         >
@@ -173,28 +107,49 @@ const HomeScreen = () => {
         );
     };
 
+    const ListItem = ({ item }) => {
+        // Render individual food items here
+        return (
+            <View style={styles.subtypeItem}>
+                <Text style={styles.subtypeText}>{item.Name}</Text>
+            </View>
+        );
+    }
+
     const ListSubtypes = () => {
+      const   numColumns= 2;
+      const   columnWidth = (width - 30) / numColumns ;
+        const itemHeight = height * 0.2;
         return (
             <FlatList
                 style={styles.flatListContainer} // Add this style
-                data={selectedSubtypes}
-                numColumns={2}
-                keyExtractor={(item) => item.key}
+                data={selectedItems}
+                numColumns={numColumns}
+                keyExtractor={(item) => item.id}
                 scrollEnabled={true}
+
                 renderItem={({ item }) => (
-                    <View style={styles.subtypeItem}>
-                        <Text style={styles.subtypeText}>{item.subtype}</Text>
-                    </View>
+                    <TouchableOpacity onPress={() => {handleFoodPress(item)}} style={styles.itemContainer}>
+                        {item.imageURL.startsWith('../assets/') ? (
+                            <Image source={require('../assets/jimmys.jpg')} style={[styles.itemImage, {width: columnWidth, height: itemHeight}]} />
+                        ) : (
+                            <Image source={{ uri: item.imageURL }} style={[styles.itemImage, {width: columnWidth, height: itemHeight}]} />
+                        )}
+                        <Text style={styles.boldText}>{item.name}</Text>
+                    </TouchableOpacity>
                 )}
                 columnWrapperStyle={{
                     justifyContent: 'space-between', // Adjust the alignment as needed
-                    marginVertical: 10, // Add margin between rows
+                    marginVertical: 40, // Add margin between rows
                     marginHorizontal: 10, // Add margin between columns
                 }}
             />
         );
     };
 
+    const handleFoodPress = (foodItem) => {
+        navigation.navigate('Food', {foodItem});
+    }
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -204,7 +159,11 @@ const HomeScreen = () => {
                 <ListCategories />
             </View>
             <View>
-                <ListSubtypes />
+                {!allFoods ? (
+                    <ActivityIndicator size="large" color="orange" style={{ marginTop: (height/2) - height*0.15 }} />
+                ) : (
+                    <ListSubtypes />
+                    )}
             </View>
         </SafeAreaView>
     );
@@ -234,7 +193,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginHorizontal: 10,
         height: height * 0.07,
-        width: width * 0.2,
+        width: width * 0.21,
         justifyContent: "center",
         alignItems: "center",
 

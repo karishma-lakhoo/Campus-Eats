@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Button,
     Pressable,
-    TouchableOpacity
+    TouchableOpacity, TouchableWithoutFeedback, Image
 } from "react-native";
 
 const { width, height } = Dimensions.get('window');
@@ -19,6 +19,10 @@ import { faUser, faLock, faUserGraduate, faAt} from '@fortawesome/free-solid-svg
 import { } from "../firebase";
 import { getAuth,   createUserWithEmailAndPassword, onAuthStateChanged  } from "firebase/auth";
 import { collection, addDoc, getFirestore, doc, setDoc } from 'firebase/firestore';
+import {PFPpopup} from "../PopUps/PFPpopup";
+import {FontAwesome5} from "@expo/vector-icons";
+import {widthHeight} from "twrnc/dist/esm/resolve/width-height";
+
 
 const SignUpScreen = ({navigation}) =>{
     const [fontLoaded, setFontLoaded] = useState(false);
@@ -59,6 +63,7 @@ const SignUpScreen = ({navigation}) =>{
                 email: email,
                 credits: 0,
                 rating: 0,
+                profileImageUrl: '',
             };
 
             const docRef = doc(db, 'users', userUID);
@@ -112,8 +117,43 @@ const SignUpScreen = ({navigation}) =>{
     if (!fontLoaded) {
         return null;
     }
+
+
+    let popupRef = React.createRef()
+
+    let student_name = "Panda";
+
+    const handleAdd = () => {
+        // Implement your logic here, e.g., navigate to a new screen
+        popupRef.show();
+        console.log('Add button pressed');
+    };
+
+    const onClosePopup = () => {
+        popupRef.close()
+    }
+
     return(
         <SafeAreaView style={styles.container}>
+            <View style={styles.container2}>
+                <View style={{marginLeft: width*0.4, marginTop: height*0.1}}>
+                    <View style={styles.addpfp}>
+                        <TouchableWithoutFeedback onPress={handleAdd}>
+                            <FontAwesome5 name="plus" size={24} color="white" />
+                        </TouchableWithoutFeedback>
+                        <PFPpopup
+                            title="Profile Picture"
+                            ref={(target) => popupRef = target}
+                            onTouchOutside={onClosePopup}
+                        />
+                    </View>
+
+                    <View style={styles.profileImage}>
+                        <Image source={require("../assets/avatar.png")} style={styles.image} resizeMode="center"></Image>
+                    </View>
+
+                </View>
+            </View>
             <View style={styles.header}>
                 <Text style={[styles.heading, styles.boldText]}>Sign Up</Text>
                 <Text style={[styles.boldText, styles.subHeadings]}>Username</Text>
@@ -173,6 +213,48 @@ const SignUpScreen = ({navigation}) =>{
 }
 
 const styles = StyleSheet.create({
+    container2: {
+        flex: 1,
+        backgroundColor: "#F2F5F9",
+        alignItems: "center"
+    },
+    profileImage: {
+        width: 200,
+        height: 200,
+        borderRadius: 200,
+        overflow: "hidden"
+    },
+    image: {
+        //marginTop: height * 0.002,
+        flex: 1,
+        height: undefined,
+        width: undefined
+    },
+    addpfp: {
+        backgroundColor: colors.primary,
+        position: "absolute", // Position the plus button absolutely
+        bottom: 30, // Adjust the bottom value as needed
+        right: 30, // Adjust the right value as needed
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1, // Ensure the button appears on top of the image
+    },
+
+
+    add: {
+        backgroundColor: "#41444B",
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        alignItems: "center",
+        justifyContent: "center"
+    },
     container: {
         flex: 1,
         backgroundColor: "#F2F5F9",
@@ -191,6 +273,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Urbanist-Bold',
     },
     heading: {
+        paddingBottom: height*0.03,
         fontSize: 36,
     },
     subHeadings:{
@@ -247,7 +330,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         backgroundColor: "white",
         borderRadius: 12,
-    }
+    },
 
 })
 
