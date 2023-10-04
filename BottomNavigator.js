@@ -25,6 +25,12 @@ const BottomNavigator = () => {
                 <Icon name="home-filled" color={color} size={28}/>
             ),
         }}/>
+         <Tab.Screen name="Food" component={FoodScreen} options={{
+            tabBarIcon: ({color}) => (
+                <Icon name="home-filled" color={color} size={28}/>
+                
+            ),
+        }}/>
         <Tab.Screen name="SignUp" component={SignUpScreen} options={{
             tabBarIcon: ({color}) => (
                 <Icon name="home-filled" color={color} size={28}/>
