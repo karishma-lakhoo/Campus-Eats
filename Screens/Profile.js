@@ -3,6 +3,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Toggle from "react-native-toggle-element";
 import colors from "../colors";
 
+
 console.log(launchImageLibrary)
 import {
     Dimensions,
@@ -122,7 +123,7 @@ const ProfileScreen = ({ navigation }) => {
                     </Text>
                 </View> */}
 
-                <View style={{flexDirection:'row'}}>
+                <View style={{flexDirection:'row', width:'90%'}}>
                     <Toggle 
 
                         thumbButton={{
@@ -144,7 +145,7 @@ const ProfileScreen = ({ navigation }) => {
                         rightTitle="On"
                     />
                     <Text style={styles.text}> Delivery Status</Text>
-                </View>...
+                </View>
 
                 <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                     <TouchableOpacity activeOpacity={0.7} style={styles.btncontainer} onPress={() => console.log("signout")}>
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         fontFamily: 'Urbanist-Bold',
         alignContent: "center",
-        fontSize: 30,
+        fontSize: 28,
     },
 
     updateSection : {
