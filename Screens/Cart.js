@@ -50,6 +50,9 @@ const CartScreen = ({ navigation }) => {
         }
     };
 
+    const handleCheckout = () => {
+        // Add your checkout logic here
+    };
 
 
     return (
@@ -115,7 +118,9 @@ const CartScreen = ({ navigation }) => {
                         onEndReachedThreshold={0.1}
                     />
                     <View style={{ marginTop: 8, alignContent: "center" }}>
-                        <TouchableOpacity style={styles.bottomButton}>
+                        <TouchableOpacity
+                            style={styles.bottomButton}
+                            onPress={handleCheckout()}>
                             <Text style={styles.bottomButtonText}>Checkout</Text>
                         </TouchableOpacity>
                     </View>
