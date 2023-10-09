@@ -94,26 +94,26 @@ const CartScreen = ({ navigation }) => {
                     scrollEventThrottle={16}
                 >
                     <FlatList
-                        data={foodCategories}
+                        data={cartList}
                         keyExtractor={(item) => item.key}
                         scrollEnabled={false} // Disable scrolling of the FlatList
                         style={styles.flatListContainer}
                         renderItem={({ item, index }) => (
                             <View style={styles.itemContainer}>
                                 <Image
-                                    source={require("../assets/jimmys.jpg")}
+                                    source={{uri : item.imageURL} || require("../assets/jimmys.jpg")}
                                     style={styles.itemImage}
                                 />
                                 <View style={{ flexDirection: "column" }}>
                                     <Text style={[styles.boldText, styles.category]}>
-                                        {item.category}
+                                    {item.foodCategory}
                                     </Text>
                                     <Text style={[styles.boldText, styles.subcategory]}>
-                                        Restaurant Name
+                                        {item.restaurantName}
                                     </Text>
                                     <Text></Text>
                                     <Text></Text>
-                                    <Text style={[styles.boldText, styles.category]}>Price</Text>
+                                    <Text style={[styles.boldText, styles.category]}>{item.price}</Text>
                                 </View>
                                 <TouchableOpacity
                                     style={styles.rightButton}
