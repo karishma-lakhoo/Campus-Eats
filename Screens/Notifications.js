@@ -20,7 +20,10 @@ const NotificationsScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
     const [invites, setInvites] = useState([]);
-
+    // if the user is a customer then the information that it should load should be delivery notifications l
+    // ike your driver is nearby or come and pick up your food
+    // if the user is a driver
+    // then the notifications should be the list of all deliveries that they are open to
     useEffect(() => {
         // Set invites data here, for example, after an API call.
         // Avoid setting invites in the render method.
