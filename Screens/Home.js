@@ -148,7 +148,7 @@ const HomeScreen = ({navigation}) => {
     };
 
     const handleFoodPress = (foodItem) => {
-        navigation.navigate('Food', {foodItem});
+        navigation.navigate('Foods', {foodItem});
     }
     return (
         <SafeAreaView style={styles.container}>
