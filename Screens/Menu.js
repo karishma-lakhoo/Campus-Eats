@@ -13,7 +13,7 @@ const MenuScreen = ({navigation}) => {
     const route = useRoute();
     const { restaurantName } = route.params;
     const [isLoading, setIsLoading] = useState(true);
-    const { allFoods } = foodList(isLoading);
+    const [allFoods, isFoodLoading] = foodList(isLoading);
 
     const [fontLoaded, setFontLoaded] = useState(false);
   //  const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
@@ -53,7 +53,7 @@ const MenuScreen = ({navigation}) => {
     }
 
     const handleFoodPress = (foodItem) => {
-        navigation.navigate('Food', {foodItem});
+        navigation.navigate('Foods', {foodItem});
     }
 
 
