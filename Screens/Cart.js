@@ -27,7 +27,8 @@ const CartScreen = ({ navigation }) => {
     const [allFoods, foodLoading] = foodList();
   
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
-
+    const [price, setPrice] = useState(0);
+    const deliveryFee = 5
 
     useEffect(() =>{
         if(!foodLoading && !cartLoading ){
@@ -134,7 +135,22 @@ const CartScreen = ({ navigation }) => {
                         onEndReachedThreshold={0.1}
 
                     />
-                    <View style={{ marginTop: 8, alignContent: "center" }}>
+                    <View style={{marginTop: 8, backgroundColor: "white", padding: 10, flexDirection: "column"}}>
+                        <View style={{flexDirection: "row"}}>
+                            <Text style={[styles.boldTextGrey, styles.alignLeft]}>Subtotal: </Text>
+                            {/*add the price variable here*/}
+                            <Text style={[styles.boldTextGrey, styles.alignRight]}>R 18</Text>
+                        </View>
+                        <View style={{flexDirection: "row"}}>
+                            <Text style={[styles.boldTextGrey, styles.alignLeft]}>Delivery fee: </Text>
+                            <Text style={[styles.boldTextGrey, styles.alignRight]}>R {deliveryFee}</Text>
+                        </View>
+                        <View style={{flexDirection: "row"}}>
+                            <Text style={[styles.boldText17, styles.alignLeft]}>Order total: </Text>
+                            <Text style={[styles.boldText17, styles.alignRight]}>R {price+deliveryFee}</Text>
+                        </View>
+                    </View>
+                    <View style={{  alignContent: "center", backgroundColor: "white"}}>
                         <TouchableOpacity
                             style={styles.bottomButton}
                             onPress={handleCheckout()}>
@@ -169,6 +185,26 @@ const styles = StyleSheet.create({
     },
     boldText: {
         fontFamily: "Urbanist-Bold",
+    },
+    boldText17: {
+        fontFamily: "Urbanist-Bold",
+        fontSize: 17,
+    },
+    boldTextGrey: {
+        fontFamily: "Urbanist-Bold",
+        fontSize: 17,
+        color: "grey"
+    },
+    alignLeft: {
+        flex: 1,
+        textAlign: "left",
+        paddingLeft: 5
+    },
+    alignRight: {
+        flex: 1,
+        textAlign: "right",
+        paddingRight: 5
+
     },
     itemContainer: {
         backgroundColor: "white",
