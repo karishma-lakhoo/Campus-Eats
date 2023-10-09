@@ -14,15 +14,29 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { PFPpopup } from "../PopUps/PFPpopup";
 import Colors from "../colors";
 import foodCategories from "../consts/foodCategories";
+import { foodList } from "../consts/foodData";
+import { getCart } from "../consts/cartData";
 
 const { width, height } = Dimensions.get("window");
 
 const CartScreen = ({ navigation }) => {
     let popupRef = React.createRef();
+    const [cartList, setCartList] = useState([]);
     const [fontLoaded, setFontLoaded] = useState(false);
+    const [cartFoods, cartLoading] = getCart();
+    const [allFoods, foodLoading] = foodList();
+  
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
 
 
+    useEffect(() =>{
+        if(!foodLoading && !cartLoading ){
+            const filteredFoods = allFoods.filter(food => cartFoods.includes(food.id));
+            setCartList(filteredFoods);
+        }
+    },[cartLoading,foodLoading]);
+
+    
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
@@ -72,6 +86,8 @@ const CartScreen = ({ navigation }) => {
                     </TouchableOpacity>
                     <Text style={[styles.heading, styles.boldText]}>My Cart</Text>
                 </View>
+
+ 
                 <ScrollView
                     style={{ flex: 1, marginTop: height * 0.07, flexDirection: "column" }}
                     onScroll={handleScroll}
@@ -116,6 +132,7 @@ const CartScreen = ({ navigation }) => {
                             // You can add additional logic here if needed
                         }}
                         onEndReachedThreshold={0.1}
+
                     />
                     <View style={{ marginTop: 8, alignContent: "center" }}>
                         <TouchableOpacity

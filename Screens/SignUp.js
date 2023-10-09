@@ -89,6 +89,12 @@ const SignUpScreen = ({navigation}) =>{
                 //  I think the all samples should later be deleted as it moght affect query results
             });
 
+            // Create the "Cart" subcollection inside the user's document
+            const cartCollectionRef = collection(docRef,'Cart');
+            await addDoc(cartCollectionRef, {
+                foodIDs: [] 
+            });
+
         } catch (error) {
             alert(error.message);
         }

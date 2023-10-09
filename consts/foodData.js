@@ -81,7 +81,7 @@ export function useFetchRestaurants() {
         fetchData();
     }, []);
 
-    return { allFoods , isLoading};
+    return [allFoods , isLoading];
 
 }
 
