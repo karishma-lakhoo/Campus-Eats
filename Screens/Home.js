@@ -22,7 +22,7 @@ const HomeScreen = ({navigation}) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
     const [selectedItems, setSelectedItems] = useState([]);
-    const {allFoods } = foodList( isLoading);
+    const [allFoods, isFoodLoading ] = foodList( isLoading);
 
     useEffect(() => {
         async function loadFont() {

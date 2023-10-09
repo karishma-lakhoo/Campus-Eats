@@ -14,13 +14,27 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { PFPpopup } from "../PopUps/PFPpopup";
 import Colors from "../colors";
 import foodCategories from "../consts/foodCategories";
+import { foodList } from "../consts/foodData";
+import { getCart } from "../consts/cartData";
 
 const { width, height } = Dimensions.get("window");
 
 const CartScreen = ({ navigation }) => {
     let popupRef = React.createRef();
+    const [cartList, setCartList] = useState([]);
     const [fontLoaded, setFontLoaded] = useState(false);
+    const [cartFoods, cartLoading] = getCart();
+    const [allFoods, foodLoading] = foodList();
 
+
+    useEffect(() =>{
+        if(!foodLoading && !cartLoading ){
+            const filteredFoods = allFoods.filter(food => cartFoods.includes(food.id));
+            setCartList(filteredFoods);
+        }
+    },[cartLoading,foodLoading]);
+
+    
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
@@ -56,19 +70,19 @@ const CartScreen = ({ navigation }) => {
                     <Text style={[styles.heading, styles.boldText]}>My Cart</Text>
                 </View>
                 <View style={{marginTop: height*0.06}}>
-                    <FlatList data={foodCategories}
+                    <FlatList data={cartList}
                               keyExtractor={(item) => item.key}
                               scrollEnabled={true}
                               style={styles.flatListContainer}
                               renderItem={({ item }) => (
                                   <View style={styles.itemContainer}>
-                                      <Image source={require('../assets/jimmys.jpg')} style={styles.itemImage} />
+                                      <Image source={{ uri : item.imageURL } || require('../assets/jimmys.jpg')} style={styles.itemImage} />
                                       <View style={{flexDirection:"column"}}>
-                                          <Text style={[styles.boldText, styles.category]}>{item.category}</Text>
-                                          <Text style={[styles.boldText, styles.subcategory]}>Restaurant Name</Text>
+                                          <Text style={[styles.boldText, styles.category]}>{item.foodCategory}</Text>
+                                          <Text style={[styles.boldText, styles.subcategory]}>{item.restaurantName}</Text>
                                           <Text></Text>
                                           <Text></Text>
-                                          <Text style={[styles.boldText, styles.category]}>Price </Text>
+                                          <Text style={[styles.boldText, styles.category]}>{item.price} </Text>
                                       </View>
 
                                       <TouchableOpacity
