@@ -21,10 +21,11 @@ const RestaurantsScreen = ({navigation}) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
-
     const [isLoading, setIsLoading] = useState(true);
     const { restaurants} = useFetchRestaurants(isLoading);
-
+    const [isDropdownVisible, setDropdownVisible] = useState(false);
+    const [selectedOption, setSelectedOption] = useState(null);
+    const options = ["East", "West"];
     useEffect(() => {
         // Use this useEffect to ensure setIsLoading(false) is called
         if (restaurants.length > 0) {
@@ -69,9 +70,16 @@ const RestaurantsScreen = ({navigation}) => {
     };
 
     const handleFilterPress = () => {
-        // Add your filter logic here
+        toggleDropdown()
+    };
+    const toggleDropdown = () => {
+        setDropdownVisible(!isDropdownVisible);
     };
 
+    const selectOption = (option) => {
+        setSelectedOption(option);
+        toggleDropdown();
+    };
 
     const handleRestaurantPress = (restaurantName) => {
         // Add your filter logic here
@@ -178,7 +186,6 @@ const styles = StyleSheet.create({
         height: 150,
         marginBottom: 10,
         borderRadius: 10,
-
     },
 
     flatListContainer:{

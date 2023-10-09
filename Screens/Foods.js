@@ -10,7 +10,7 @@ import {useRoute} from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-const FoodScreen = ({ navigation }) => {
+const FoodsScreen = ({ navigation }) => {
     const route = useRoute();
     const foodItem = route.params.foodItem;
     const [fontLoaded, setFontLoaded] = useState(false);
@@ -142,4 +142,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default FoodScreen;
+export default FoodsScreen;

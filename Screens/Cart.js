@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     View,
     Image,
-    TouchableWithoutFeedback, FlatList, Button
+    TouchableWithoutFeedback, FlatList, Button, ScrollView
 } from "react-native";
 import * as Font from "expo-font";
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -25,6 +25,8 @@ const CartScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [cartFoods, cartLoading] = getCart();
     const [allFoods, foodLoading] = foodList();
+  
+    const [isAtEndOfList, setIsAtEndOfList] = useState(false);
 
 
     useEffect(() =>{
@@ -49,7 +51,22 @@ const CartScreen = ({ navigation }) => {
     if (!fontLoaded) {
         return null;
     }
+    const handleScroll = (event) => {
+        const offsetY = event.nativeEvent.contentOffset.y;
+        const contentHeight = event.nativeEvent.contentSize.height;
+        const containerHeight = event.nativeEvent.layoutMeasurement.height;
 
+        // Check if the user has reached the end of the list
+        if (offsetY + containerHeight >= contentHeight) {
+            setIsAtEndOfList(true);
+        } else {
+            setIsAtEndOfList(false);
+        }
+    };
+
+    const handleCheckout = () => {
+        // Add your checkout logic here
+    };
 
 
     return (
@@ -63,46 +80,68 @@ const CartScreen = ({ navigation }) => {
                         }}
                     >
                         <Image
-                            source={require('../assets/back_thick.png')}
+                            source={require("../assets/back_thick.png")}
                             style={{ width: 24, height: 24 }}
                         />
                     </TouchableOpacity>
                     <Text style={[styles.heading, styles.boldText]}>My Cart</Text>
                 </View>
-                <View style={{marginTop: height*0.06}}>
-                    <FlatList data={cartList}
-                              keyExtractor={(item) => item.key}
-                              scrollEnabled={true}
-                              style={styles.flatListContainer}
-                              renderItem={({ item }) => (
-                                  <View style={styles.itemContainer}>
-                                      <Image source={{ uri : item.imageURL } || require('../assets/jimmys.jpg')} style={styles.itemImage} />
-                                      <View style={{flexDirection:"column"}}>
-                                          <Text style={[styles.boldText, styles.category]}>{item.foodCategory}</Text>
-                                          <Text style={[styles.boldText, styles.subcategory]}>{item.restaurantName}</Text>
-                                          <Text></Text>
-                                          <Text></Text>
-                                          <Text style={[styles.boldText, styles.category]}>{item.price} </Text>
-                                      </View>
 
-                                      <TouchableOpacity
-                                          style={styles.rightButton}
-                                          onPress={() => {
-                                              // navigation.goBack();
-                                          }}
-                                      >
-                                          <Image
-                                              source={require('../assets/delete.png')}
-                                              style={{ width: 24, height: 24 }}
-                                          />
-                                      </TouchableOpacity>
-                                  </View>
-                                  )}
+ 
+                <ScrollView
+                    style={{ flex: 1, marginTop: height * 0.07, flexDirection: "column" }}
+                    onScroll={handleScroll}
+                    scrollEventThrottle={16}
+                >
+                    <FlatList
+                        data={foodCategories}
+                        keyExtractor={(item) => item.key}
+                        scrollEnabled={false} // Disable scrolling of the FlatList
+                        style={styles.flatListContainer}
+                        renderItem={({ item, index }) => (
+                            <View style={styles.itemContainer}>
+                                <Image
+                                    source={require("../assets/jimmys.jpg")}
+                                    style={styles.itemImage}
+                                />
+                                <View style={{ flexDirection: "column" }}>
+                                    <Text style={[styles.boldText, styles.category]}>
+                                        {item.category}
+                                    </Text>
+                                    <Text style={[styles.boldText, styles.subcategory]}>
+                                        Restaurant Name
+                                    </Text>
+                                    <Text></Text>
+                                    <Text></Text>
+                                    <Text style={[styles.boldText, styles.category]}>Price</Text>
+                                </View>
+                                <TouchableOpacity
+                                    style={styles.rightButton}
+                                    onPress={() => {
+                                        // navigation.goBack();
+                                    }}
+                                >
+                                    <Image
+                                        source={require("../assets/delete.png")}
+                                        style={{ width: 24, height: 24 }}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        onEndReached={() => {
+                            // You can add additional logic here if needed
+                        }}
+                        onEndReachedThreshold={0.1}
+
                     />
-                </View>
-                <TouchableOpacity style={styles.bottomButton}>
-                    <Text style={styles.bottomButtonText}>Checkout</Text>
-                </TouchableOpacity>
+                    <View style={{ marginTop: 8, alignContent: "center" }}>
+                        <TouchableOpacity
+                            style={styles.bottomButton}
+                            onPress={handleCheckout()}>
+                            <Text style={styles.bottomButtonText}>Checkout</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
             </View>
         </SafeAreaView>
     );
@@ -144,7 +183,7 @@ const styles = StyleSheet.create({
         paddingBottom: 60,
     },
     flatListContainer:{
-        height: height*0.80,
+        flex:1,
         paddingLeft: 10,
         paddingRight: 10,
     },
@@ -182,14 +221,15 @@ const styles = StyleSheet.create({
         marginRight: 10
     },
     bottomButton: {
-        backgroundColor: "orange", // Adjust button styles as needed
+        backgroundColor: "orange",
+        width: "95%",
         alignItems: "center",
         justifyContent: "center",
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 60, // Adjust button height
+        height: 60,
+        borderRadius: 10,
+        marginLeft: "auto",
+        marginRight: "auto",
+        marginBottom: 20, // Add margin from the bottom
     },
     bottomButtonText: {
         color: "white",
