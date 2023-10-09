@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     View,
     Image,
-    TextInput, Button, ScrollView, ActivityIndicator
+    TextInput, Button, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback
 } from "react-native";
 import * as Font from "expo-font";
 import {useFetchRestaurants} from "../consts/foodData";
@@ -25,7 +25,8 @@ const RestaurantsScreen = ({navigation}) => {
     const { restaurants} = useFetchRestaurants(isLoading);
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
-    const options = ["East", "West"];
+    const options = ["Entire Campus", "East", "West" ];
+
     useEffect(() => {
         // Use this useEffect to ensure setIsLoading(false) is called
         if (restaurants.length > 0) {
@@ -64,6 +65,21 @@ const RestaurantsScreen = ({navigation}) => {
             setFilteredRestaurants(filtered);
         }
     }, [searchText]);
+
+    useEffect(() => {
+        console.log(selectedOption)
+        if (selectedOption === null || selectedOption === "Entire Campus" ) {
+            console.log('null')
+            // If search text is empty, display all restaurants
+            setFilteredRestaurants(restaurants);
+        }
+        else{
+            // Filter the restaurants based on the filters
+            const filtered = restaurants.filter(item => item.location === selectedOption);
+            setFilteredRestaurants(filtered);
+        }
+    }, [selectedOption]);
+
 
     const handleSearchTextChange = (text) => {
         setSearchText(text);
@@ -113,6 +129,29 @@ const RestaurantsScreen = ({navigation}) => {
                                     style={{ width: 24, height: 24 }}
                                 />
                             </TouchableOpacity>
+
+                            <Modal
+                                animationType="fade"
+                                transparent={true}
+                                visible={isDropdownVisible}
+                                onRequestClose={toggleDropdown}
+                            >
+                                <TouchableWithoutFeedback onPress={toggleDropdown}>
+                                    <View style={styles.modalContainer}>
+                                        <View style={styles.modalContent}>
+                                            <FlatList
+                                                data={options}
+                                                keyExtractor={(item) => item}
+                                                renderItem={({ item }) => (
+                                                    <TouchableOpacity onPress={() => selectOption(item)}>
+                                                        <Text style={styles.option}>{item}</Text>
+                                                    </TouchableOpacity>
+                                                )}
+                                            />
+                                        </View>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            </Modal>
                         </View>
                     </View>
 
@@ -212,7 +251,25 @@ const styles = StyleSheet.create({
     },
     search: {
         position: "absolute"
-    }
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        width: 200,
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        elevation: 5,
+    },
+    option: {
+        fontFamily: "Urbanist-Bold",
+        fontSize: 16,
+        paddingVertical: 10,
+    },
 });
 
 export default RestaurantsScreen;

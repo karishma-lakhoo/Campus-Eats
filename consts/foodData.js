@@ -23,10 +23,11 @@ export function useFetchRestaurants() {
                     const data = doc.data();
                     const id = doc.id;
                     const name = data.Name;
+                    const location = data.Location;
                     let imageURL = data.imgurl || '../assets/jimmys.jpg';
 
-                    fetchedRestaurants.push({ id, name, imageURL });
-                    console.log(`Document ID: ${id}, Name: ${name}`);
+                    fetchedRestaurants.push({ id, name, imageURL, location });
+                    console.log(`Document ID: ${id}, Name: ${name}, Location: ${location}`);
                 });
 
                 setRestaurants(fetchedRestaurants);
