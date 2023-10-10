@@ -20,6 +20,8 @@ const { width, height } = Dimensions.get("window");
 
 const MapScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
+    const map = React.useRef(null); // Use mapRef instead of this.map
+
     const options = [
         {
             item: 'Chamber of mines',
@@ -31,9 +33,40 @@ const MapScreen = ({ navigation }) => {
             image: "../assets/profile.jpg",
             location: "West Campus"
         },
+
+        {
+            item: 'Solomon Mahlangu House',
+            id: '1',
+            coordinate: {
+                latitude: -26.192953158356087,
+                longitude: 28.03078356356788,
+            },
+            image: "../assets/profile.jpg",
+            location: "East Campus"
+        },
+        {
+            item: 'Library Lawns',
+            id: '2',
+            coordinate: {
+                latitude: -26.190621267281905,
+                longitude: 28.030315002576547,
+            },
+            image: "../assets/profile.jpg",
+            location: "East Campus"
+        },
+        {
+            item: 'Law Lawns',
+            id: '3',
+            coordinate: {
+                latitude: -26.187739569419605,
+                longitude:  28.0253896027605,
+            },
+            image: "../assets/profile.jpg",
+            location: "West Campus"
+        },
         {
             item: 'Science Stadium',
-            id: '1',
+            id: '4',
             coordinate: {
                 latitude: -26.190680274339,
                 longitude: 28.025609301102797,
@@ -42,9 +75,40 @@ const MapScreen = ({ navigation }) => {
             location: "West Campus"
         },
 
-
-
     ];
+    let mapIndex = 0;
+    let mapAnimation = new Animated.Value(0);
+
+    useEffect(() => {
+        mapAnimation.addListener(({ value }) => {
+            let index = Math.floor(value / width * 0.8 + 0.3); // animate 30% away from landing on the next item
+            if (index >= options.length) {
+                index = options.length - 1;
+            }
+            if (index <= 0) {
+                index = 0;
+            }
+
+            clearTimeout(regionTimeout);
+
+            const regionTimeout = setTimeout(() => {
+                if( mapIndex !== index ) {
+                    mapIndex = index;
+                    console.log(mapIndex)
+                    const { coordinate } = options[index+1];
+                    map.current.animateToRegion(
+                        {
+                            ...coordinate,
+                            latitudeDelta: 0.009,
+                            longitudeDelta: 0.009,
+                        },
+                        350
+                    );
+                }
+            }, 10);
+        });
+    });
+
 
 
     const [selectedOption, setSelectedOption] = useState(options[0]);
@@ -89,9 +153,9 @@ const MapScreen = ({ navigation }) => {
                 <View style={{ marginHorizontal: 10 }}>
                     <View style={styles.searchContainer}>
                         <TouchableOpacity style={styles.locationButton}
-                            onPress={() => {
-                                console.log("loc")
-                            }}>
+                                          onPress={() => {
+                                              console.log("loc")
+                                          }}>
                             <Image
                                 source={require('../assets/placeholder.png')}
                                 style={{ width: 33, height: 33 }}
@@ -111,7 +175,7 @@ const MapScreen = ({ navigation }) => {
                 </View>
                 <View style={{flex:1, backgroundColor: "white"}}>
                     <MapView
-                        ref={map => this.map = map}
+                        ref={map}
                         style={{ flex: 1 }}
                         initialRegion={{
                             latitude: -26.191417404967527,
@@ -144,10 +208,29 @@ const MapScreen = ({ navigation }) => {
                         ))}
                     </MapView>
                     <Animated.ScrollView
-                    horizontal
-                    scrollEventThrottle={1}
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.scrollView}>
+                        horizontal
+                        scrollEventThrottle={1}
+                        showsHorizontalScrollIndicator={false}
+                        style={styles.scrollView}
+                        pagingEnabled
+                        snapToInterval={width * 0.8 + 20} // Adjust the value as needed
+                        decelerationRate="fast"
+                        contentContainerStyle={{
+                            paddingHorizontal: width * 0.1 - 10
+                        }}
+                        onScroll={Animated.event(
+                            [
+                                {
+                                    nativeEvent: {
+                                        contentOffset: {
+                                            x: mapAnimation
+                                        }
+                                    },
+                                },
+                            ],
+                            {useNativeDriver: true}
+                        )}
+                    >
                         {options.map((marker, id) => (
                             <View style={styles.card} key={id}>
                                 <Image
@@ -171,7 +254,7 @@ const MapScreen = ({ navigation }) => {
                         ))}
 
 
-                            </Animated.ScrollView>
+                    </Animated.ScrollView>
                 </View>
             </View>
         </SafeAreaView>
