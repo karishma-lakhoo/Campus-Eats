@@ -10,6 +10,7 @@ import ProfileScreen from './Screens/Profile';
 import FormPage from "./Screens/addFoodtoDB";
 import CartScreen from "./Screens/Cart";
 import NotificationsScreen from "./Screens/Notifications";
+import MapScreen from "./Screens/Map";
 
 const Tab = createBottomTabNavigator();
 const BottomNavigator = () => {
@@ -57,6 +58,11 @@ const BottomNavigator = () => {
             ),
         }}/>
         <Tab.Screen name="Notifications" component={NotificationsScreen} options={{
+            tabBarIcon: ({color}) => (
+                <Icon name="home-filled" color={color} size={28}/>
+            ),
+        }}/>
+        <Tab.Screen name="Map" component={MapScreen} options={{
             tabBarIcon: ({color}) => (
                 <Icon name="home-filled" color={color} size={28}/>
             ),
