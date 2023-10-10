@@ -21,7 +21,7 @@ const { width, height } = Dimensions.get("window");
 const MapScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const map = React.useRef(null); // Use mapRef instead of this.map
-
+    const scrollView = React.useRef(null);
     const options = [
         {
             item: 'Chamber of mines',
@@ -109,11 +109,29 @@ const MapScreen = ({ navigation }) => {
         });
     });
 
+    const interpolations = options.map((marker,index) => {
+        const inputRange = [
+            (index - 1) * width*0.8,
+            index * width*0.8,
+            ((index + 1) * width*0.8),
+        ];
+
+        const scale = mapAnimation.interpolate({
+            inputRange,
+            outputRange: [1, 1.5, 1],
+            extrapolate: "clamp"
+        });
+
+        return { scale };
+    });
+
 
 
     const [selectedOption, setSelectedOption] = useState(options[0]);
-    const onMarkerPress = (mapEventData) => {
-        console.log("asdf")
+    const onMarkerPress = (id) => {
+        console.log(id)
+        let x = (id * width * 0.8) + (id * 20);
+        scrollView.current.scrollTo({ x: x, y: 0, animated: true });
     }
     const handleSelect = (option) => {
         setSelectedOption(option);
@@ -185,7 +203,15 @@ const MapScreen = ({ navigation }) => {
                         }}
                         provider={PROVIDER_GOOGLE}
                     >
-                        {options.map((marker, id) => (
+                        {options.map((marker, id) => {
+                            const scaleStyle = {
+                                transform: [
+                                    {
+                                        scale: interpolations[id].scale,
+                                    },
+                                ],
+                            };
+                            return (
                             <Marker
                                 key={id}
                                 coordinate={{
@@ -195,19 +221,21 @@ const MapScreen = ({ navigation }) => {
                                 title={marker.name}
                                 identifier="origin"
                                 pinColor="orange"
-                                onPress={(e) => onMarkerPress(e)}
+                                onPress={() => onMarkerPress(id)}
                             >
                                 <Animated.View style={styles.markerWrap}>
                                     <Animated.Image
                                         source={require("../assets/placeholder.png")}
-                                        style={styles.marker}
+                                        style={[styles.marker, scaleStyle]}
                                         resizeMode="cover"/>
                                 </Animated.View>
                             </Marker>
+                            );
 
-                        ))}
+                        })}
                     </MapView>
                     <Animated.ScrollView
+                        ref={scrollView}
                         horizontal
                         scrollEventThrottle={1}
                         showsHorizontalScrollIndicator={false}
