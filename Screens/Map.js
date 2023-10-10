@@ -15,13 +15,21 @@ import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import foodCategories from "../consts/foodCategories";
 import { Animated } from 'react-native';
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-
+import * as Location from 'expo-location'
 const { width, height } = Dimensions.get("window");
 
 const MapScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const map = React.useRef(null); // Use mapRef instead of this.map
     const scrollView = React.useRef(null);
+    const [usersLocation, setUsersLocation] = useState(null);
+
+    const [mapRegion, setMapRegion] = useState({
+        latitude: -26.191417404967527,
+        longitude: 28.0270147972487,
+        latitudeDelta: 0.009,
+        longitudeDelta: 0.009,
+    });
     const options = [
         {
             item: 'Chamber of mines',
@@ -94,7 +102,7 @@ const MapScreen = ({ navigation }) => {
             const regionTimeout = setTimeout(() => {
                 if( mapIndex !== index ) {
                     mapIndex = index;
-                    console.log(mapIndex)
+                    // console.log(mapIndex)
                     const { coordinate } = options[index+1];
                     map.current.animateToRegion(
                         {
@@ -129,13 +137,35 @@ const MapScreen = ({ navigation }) => {
 
     const [selectedOption, setSelectedOption] = useState(options[0]);
     const onMarkerPress = (id) => {
-        console.log(id)
+        // console.log(id)
         let x = (id * width * 0.8) + (id * 20);
         scrollView.current.scrollTo({ x: x, y: 0, animated: true });
     }
     const handleSelect = (option) => {
         setSelectedOption(option);
     };
+    // Define the userLocation function
+    const userLocation = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+            setErrorMsg("Permission to access location was denied");
+        }
+        let location = await Location.getCurrentPositionAsync({
+            enableHighAccuracy: true,
+        });
+        setMapRegion({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.009,
+            longitudeDelta: 0.009,
+        });
+        console.log(location.coords.latitude, location.coords.longitude);
+        setUsersLocation({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+        });
+    };
+
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
@@ -147,9 +177,11 @@ const MapScreen = ({ navigation }) => {
         loadFont();
     }, []);
 
-    if (!fontLoaded) {
-        return null;
-    }
+    // Use the useEffect hook for userLocation at the top level
+    useEffect(() => {
+        userLocation();
+    }, []);
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.contentContainer}>
@@ -171,9 +203,7 @@ const MapScreen = ({ navigation }) => {
                 <View style={{ marginHorizontal: 10 }}>
                     <View style={styles.searchContainer}>
                         <TouchableOpacity style={styles.locationButton}
-                                          onPress={() => {
-                                              console.log("loc")
-                                          }}>
+                                          onPress={userLocation}>
                             <Image
                                 source={require('../assets/placeholder.png')}
                                 style={{ width: 33, height: 33 }}
@@ -233,6 +263,18 @@ const MapScreen = ({ navigation }) => {
                             );
 
                         })}
+                        {usersLocation && (
+                            <Marker
+                                coordinate={{
+                                    latitude: usersLocation.latitude,
+                                    longitude: usersLocation.longitude,
+                                }}
+                                title="Your Location"
+                                identifier="userLocation"
+                                pinColor="red"
+                            >
+                            </Marker>
+                        )}
                     </MapView>
                     <Animated.ScrollView
                         ref={scrollView}
@@ -386,6 +428,7 @@ const styles = StyleSheet.create({
         borderRadius:30,
         alignItems: 'center', // Center horizontally
         justifyContent: 'center', // Center vertically
+        borderColor: 'orange'
     },
     dropdown: {
         width: 200,

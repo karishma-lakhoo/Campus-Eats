@@ -24,6 +24,7 @@
     "@react-navigation/stack": "^6.3.17",
     "expo": "^49.0.9",
     "expo-font": "~11.4.0",
+    "expo-location": "^16.3.0",
     "expo-status-bar": "~1.6.0",
     "firebase": "^10.3.1",
     "font-family": "^0.2.0",
