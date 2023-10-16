@@ -64,6 +64,7 @@ const SignUpScreen = ({navigation}) =>{
                 credits: 0,
                 rating: 0,
                 profileImageUrl: '',
+                deliveryStatus: false,
             };
 
             const docRef = doc(db, 'users', userUID);
@@ -83,10 +84,7 @@ const SignUpScreen = ({navigation}) =>{
             const favFoodCollectionRef = collection(docRef, 'Favourites');
             // Add a sample fav document
             await addDoc(favFoodCollectionRef, {
-                restuarant: "KFC",
-                foodItem: 'Dunked wings',
-                //Any other category required in the favourites can be added here with a sample
-                //  I think the all samples should later be deleted as it moght affect query results
+                foodIDs:[]
             });
 
             // Create the "Cart" subcollection inside the user's document

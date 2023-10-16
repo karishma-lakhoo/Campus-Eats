@@ -51,6 +51,8 @@ const HomeScreen = ({navigation}) => {
             if (selectedCategory.category.toLowerCase() === "popular"){
                 //implementation for showing foods with highest favourites
                 console.log("pop pop");
+                const randomFoods = getRandomFoods(allFoods, 10);
+                setSelectedItems(randomFoods);
 
             }else if(selectedCategory.category.toLowerCase() === "your favourites"){
                 //implentation for showing logged in user's favourites
@@ -70,6 +72,30 @@ const HomeScreen = ({navigation}) => {
     if (!fontLoaded) {
         return null;
     }
+
+    const getRandomFoods = (foodList, count) => {
+        const randomFoods = [];
+        const shuffledFoodList = [...foodList]; // Create a copy of the foodList to shuffle
+        let currentIndex = shuffledFoodList.length;
+        let temporaryValue, randomIndex;
+
+        // Shuffle the array to get a random order
+        while (currentIndex !== 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            temporaryValue = shuffledFoodList[currentIndex];
+            shuffledFoodList[currentIndex] = shuffledFoodList[randomIndex];
+            shuffledFoodList[randomIndex] = temporaryValue;
+        }
+
+        // Get the first 'count' items from the shuffled list
+        for (let i = 0; i < count; i++) {
+            randomFoods.push(shuffledFoodList[i]);
+        }
+
+        return randomFoods;
+    };
 
     const ListCategories = () => {
         return (
