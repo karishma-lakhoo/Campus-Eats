@@ -6,10 +6,8 @@ import colors from "../colors";
 import { Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {useRoute} from "@react-navigation/native";
-import { collection, addDoc, getFirestore, doc, setDoc } from 'firebase/firestore';
-import {getAuth} from "firebase/auth";
-import {addToFavs, getFavs, removeFromFavs} from "../consts/favsData";
-import {getCart} from "../consts/cartData";
+import { addToCart } from "../consts/cartData";
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -93,7 +91,10 @@ const FoodsScreen = ({ navigation }) => {
                 <TouchableOpacity
                     style={styles.addToCart}
                     title="Add to cart"
-                    onPress={() => console.log("Added item to cart")}
+                    onPress={() => {
+                        console.log("Food item : ",foodItem.id);
+                        addToCart(foodItem.id);
+                        console.log("Added item to cart")}}
                 >
                     <Text style={styles.boldText}>Add to cart</Text>
                 </TouchableOpacity>
