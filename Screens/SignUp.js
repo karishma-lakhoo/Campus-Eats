@@ -12,7 +12,7 @@ import {
 
 const { width, height } = Dimensions.get('window');
 import * as Font from "expo-font";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext } from "react";
 import colors from "../colors";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUser, faLock, faUserGraduate, faAt} from '@fortawesome/free-solid-svg-icons';
@@ -21,6 +21,8 @@ import { getAuth,   createUserWithEmailAndPassword, onAuthStateChanged  } from "
 import { collection, addDoc, getFirestore, doc, setDoc } from 'firebase/firestore';
 import {PFPpopup} from "../PopUps/PFPpopup";
 import {FontAwesome5} from "@expo/vector-icons";
+
+
 import {widthHeight} from "twrnc/dist/esm/resolve/width-height";
 
 

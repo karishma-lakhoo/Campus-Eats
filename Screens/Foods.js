@@ -6,19 +6,55 @@ import colors from "../colors";
 import { Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {useRoute} from "@react-navigation/native";
-
+import { collection, addDoc, getFirestore, doc, setDoc } from 'firebase/firestore';
+import {getAuth} from "firebase/auth";
+import {addToFavs, getFavs, removeFromFavs} from "../consts/favsData";
+import {getCart} from "../consts/cartData";
 
 const { width, height } = Dimensions.get("window");
 
 const FoodsScreen = ({ navigation }) => {
+
+    const db = getFirestore();
+    const auth = getAuth();
+  //  const favFoodCollectionRef = collection(docRef, 'Favourites');
     const route = useRoute();
     const foodItem = route.params.foodItem;
+    const [favFoods, favsLoading] = getFavs();
     const [fontLoaded, setFontLoaded] = useState(false);
     const [liked, setLiked] = useState(false);
 
+
+    useEffect(() => {
+        if(!favsLoading){
+
+            if (favFoods.includes(foodItem.id)) {
+                setLiked(true);
+            } else {
+                setLiked(false);
+            }
+
+        }
+    }, [foodItem.id, favsLoading]); // You can add favFoods to the dependency array if it's expected to change
+
+
+
+    const handleLikeButton = () => {
+        setLiked(!liked);
+        if (!liked) {
+            // Call the addToFavs function to add the food item to favorites
+            addToFavs(foodItem.id); // Pass the food item ID or appropriate data
+        }else{
+            //Remove from favourites
+            removeFromFavs(foodItem.id);
+
+        }
+
+    };
+
     const LikeButton = () => {
         return (
-            <TouchableOpacity onPress={() => setLiked(!liked)}>
+            <TouchableOpacity onPress={() => handleLikeButton()}>
                 <MaterialCommunityIcons
                     style={{ marginLeft: width * 0.35, marginTop: height * 0.002 }}
                     name={liked ? "heart" : "heart-outline"}
