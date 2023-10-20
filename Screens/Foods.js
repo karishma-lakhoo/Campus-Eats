@@ -7,6 +7,9 @@ import { Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {useRoute} from "@react-navigation/native";
 import { addToCart } from "../consts/cartData";
+import { getFirestore} from 'firebase/firestore';
+import { getAuth} from "firebase/auth";
+import {getFavs} from "../consts/favsData";
 
 
 const { width, height } = Dimensions.get("window");

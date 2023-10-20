@@ -23,7 +23,9 @@ const HomeScreen = ({navigation}) => {
     const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
     const [selectedItems, setSelectedItems] = useState([]);
     const [allFoods, isFoodLoading ] = foodList();
+    console.log("favFoods runs");
     const [favFoods, favsLoading] = getFavs();
+    console.log("favFoods:", favFoods);
 
     useEffect(() => {
         async function loadFont() {
@@ -39,7 +41,7 @@ const HomeScreen = ({navigation}) => {
 
     useEffect(() => {
         // Check if foodArray is defined before filtering
-        if (!isFoodLoading && !favsLoading) {
+        if (!isFoodLoading ) {
             // When the selected category changes, filter the items based on the category type
             const selectedCategory = categories[selectedCategoryIndex];
             if (selectedCategory.category.toLowerCase() === "popular") {
@@ -47,10 +49,12 @@ const HomeScreen = ({navigation}) => {
                 const randomFoods = getRandomFoods(allFoods, 10);
                 setSelectedItems(randomFoods);
             } else if (selectedCategory.category.toLowerCase() === "your favourites") {
-                if (favFoods) {
+
+                if ( !favsLoading) {
                     const filteredFoods = allFoods.filter((food) => favFoods.includes(food.id));
                     setSelectedItems(filteredFoods);
-                    console.log("favs ran");
+                    console.log("favFoods:", favFoods);
+                    console.log("selectedItems:", selectedItems);
                 } else {
                     // Handle the case when favFoods is not loaded yet or is empty
                     setSelectedItems([]);
@@ -144,6 +148,7 @@ const HomeScreen = ({navigation}) => {
       const   columnWidth = (width - 30) / numColumns ;
         const itemHeight = height * 0.2;
         return (
+
             <FlatList
                 style={styles.flatListContainer} // Add this style
                 data={selectedItems}
@@ -182,7 +187,7 @@ const HomeScreen = ({navigation}) => {
                 <ListCategories />
             </View>
             <View>
-                {!allFoods ? (
+                {isFoodLoading || (selectedCategoryIndex === categories.findIndex(cat => cat.category.toLowerCase() === 'your favourites') && favsLoading)  ? (
                     <ActivityIndicator size="large" color="orange" style={{ marginTop: (height/2) - height*0.15 }} />
                 ) : (
                     <ListSubtypes />

@@ -5,46 +5,53 @@ import { getAuth} from "firebase/auth";
 
 
 const db = getFirestore();
-export function getFavs(){
+const auth = getAuth();
+const currentUser = auth.currentUser;
+export function getFavs() {
     const [foodIDs, setFoodIDs] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-    let userUID;
-
-    if(currentUser){
-        userUID = currentUser.uid;
-    }
-    else{
-        console.log("User not logged in!");
-    }
     useEffect(() => {
-        async function getFavsdata() {
-            try {
-                const usersCollection = collection(db, 'users');
-                const userDoc = doc(usersCollection,userUID);
-                const favsCollection = collection(userDoc,'Favourites');
-                const querySnapshot = await getDocs(favsCollection);
 
-                querySnapshot.forEach((doc) =>{
-                    const docData = doc.data();
-                    setFoodIDs(docData.foodIDs);
+
+        if (currentUser) {
+            const userUID = currentUser.uid;
+
+            async function getFavsData() {
+                try {
+                    const usersCollection = collection(db, 'users');
+                    const userDoc = doc(usersCollection, userUID);
+                    const favsCollection = collection(userDoc, 'Favourites');
+                    const querySnapshot = await getDocs(favsCollection);
+
+                    const foodIDList = [];
+                    querySnapshot.forEach((doc) => {
+                        const docData = doc.data();
+                        foodIDList.push(...docData.foodIDs);
+                    });
+
+                    setFoodIDs(foodIDList);
+                 //   console.log('foodIDs:', foodIDList); // Log the foodIDs when set
+                  //  console.log(foodIDs);
                     setLoading(false);
-                })
-            } catch (error) {
-                console.log('Error getting documents', error);
-                setLoading(false);
+                } catch (error) {
+                    console.log('Error getting documents', error);
+                    setLoading(false);
+                }
             }
+
+            getFavsData();
+        } else {
+           // setLoading(false);
+            console.log('User not logged in!');
         }
-        getFavsdata();
-    }, []);
+    }, [currentUser]);
+
     return [foodIDs, loading];
 }
 
 export async function addToFavs(foodID) {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
+
 
     if (!currentUser) {
         console.log("User not logged in!");
@@ -81,8 +88,6 @@ export async function addToFavs(foodID) {
 }
 
 export async function removeFromFavs(foodID) {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
 
     if (!currentUser) {
         console.log("User not logged in!");
