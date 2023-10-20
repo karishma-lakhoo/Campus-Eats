@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 
-import {collection,getFirestore, doc, getDocs, updateDoc, arrayUnion} from 'firebase/firestore';
+import {collection, getFirestore, doc, getDocs, updateDoc, arrayUnion, arrayRemove} from 'firebase/firestore';
 import { getAuth} from "firebase/auth";
 
 
@@ -70,5 +70,40 @@ export async function addToCart(foodId){
           });
     } catch (error) {
         console.log('Error getting documents', error);
+    }
+}
+
+export async function removeFromCart(foodID) {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+        console.log("User not logged in!");
+        return;
+    }
+
+    const userUID = currentUser.uid;
+
+    try {
+        const usersCollection = collection(db, 'users');
+        const userDoc = doc(usersCollection, userUID);
+        const favsCollection = collection(userDoc, 'Cart');
+        const querySnapshot = await getDocs(favsCollection);
+
+        if (!querySnapshot.empty) {
+            querySnapshot.forEach(async (document) => {
+                const docID = document.id;
+
+                // Update the existing document to remove the specified foodID
+                await updateDoc(doc(favsCollection, docID), {
+                    foodIDs: arrayRemove(foodID),
+                });
+            });
+            console.log('item removed from Cart successfully');
+        } else {
+            console.log("Cart is empty, nothing to remove.");
+        }
+    } catch (error) {
+        console.error('Error removing data from Cart', error);
     }
 }

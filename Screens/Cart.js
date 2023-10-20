@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
+
 import {
     Dimensions,
     SafeAreaView,
@@ -15,7 +17,7 @@ import { PFPpopup } from "../PopUps/PFPpopup";
 import Colors from "../colors";
 import foodCategories from "../consts/foodCategories";
 import { foodList } from "../consts/foodData";
-import { getCart } from "../consts/cartData";
+import {getCart, removeFromCart} from "../consts/cartData";
 
 const { width, height } = Dimensions.get("window");
 
@@ -23,7 +25,7 @@ const CartScreen = ({ navigation }) => {
     let popupRef = React.createRef();
     const [cartList, setCartList] = useState([]);
     const [fontLoaded, setFontLoaded] = useState(false);
-    const [cartFoods, cartLoading] = getCart();
+    let [cartFoods, cartLoading] = getCart();
     const [allFoods, foodLoading] = foodList();
   
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
@@ -82,82 +84,87 @@ const CartScreen = ({ navigation }) => {
                     >
                         <Image
                             source={require("../assets/back_thick.png")}
-                            style={{ width: 24, height: 24 }}
+                            style={{width: 24, height: 24}}
                         />
                     </TouchableOpacity>
                     <Text style={[styles.heading, styles.boldText]}>My Cart</Text>
                 </View>
 
- 
-                <ScrollView
-                    style={{ flex: 1, marginTop: height * 0.07, flexDirection: "column" }}
-                    onScroll={handleScroll}
-                    scrollEventThrottle={16}
-                >
-                    <FlatList
-                        data={cartList}
-                        keyExtractor={(item) => item.key}
-                        scrollEnabled={false} // Disable scrolling of the FlatList
-                        style={styles.flatListContainer}
-                        renderItem={({ item, index }) => (
-                            <View style={styles.itemContainer}>
-                                <Image
-                                    source={{uri : item.imageURL} || require("../assets/jimmys.jpg")}
-                                    style={styles.itemImage}
-                                />
-                                <View style={{ flexDirection: "column" }}>
-                                    <Text style={[styles.boldText, styles.category]}>
-                                    {item.name}
-                                    </Text>
-                                    <Text style={[styles.boldText, styles.subcategory]}>
-                                        {item.restaurantName}
-                                    </Text>
-                                    <Text></Text>
-                                    <Text></Text>
-                                    <Text style={[styles.boldText, styles.category]}>{item.price}</Text>
-                                </View>
-                                <TouchableOpacity
-                                    style={styles.rightButton}
-                                    onPress={() => {
-                                        // navigation.goBack();
-                                    }}
-                                >
+                {cartLoading || foodLoading ? (
+                    // Display a loading indicator here
+                    <ActivityIndicator size="large" color="orange" style={{marginTop: (height / 2) - height * 0.15}}/>
+                ) : (
+                    <ScrollView
+                        style={{flex: 1, marginTop: height * 0.07, flexDirection: "column"}}
+                        onScroll={handleScroll}
+                        scrollEventThrottle={16}
+                    >
+                        <FlatList
+                            data={cartList}
+                            keyExtractor={(item) => item.key}
+                            scrollEnabled={false} // Disable scrolling of the FlatList
+                            style={styles.flatListContainer}
+                            renderItem={({item, index}) => (
+                                <View style={styles.itemContainer}>
                                     <Image
-                                        source={require("../assets/delete.png")}
-                                        style={{ width: 24, height: 24 }}
+                                        source={{uri: item.imageURL} || require("../assets/jimmys.jpg")}
+                                        style={styles.itemImage}
                                     />
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                        onEndReached={() => {
-                            // You can add additional logic here if needed
-                        }}
-                        onEndReachedThreshold={0.1}
+                                    <View style={{flexDirection: "column"}}>
+                                        <Text style={[styles.boldText, styles.category]}>
+                                            {item.name}
+                                        </Text>
+                                        <Text style={[styles.boldText, styles.subcategory]}>
+                                            {item.restaurantName}
+                                        </Text>
+                                        <Text></Text>
+                                        <Text></Text>
+                                        <Text style={[styles.boldText, styles.category]}>{item.price}</Text>
+                                    </View>
+                                    <TouchableOpacity
+                                        style={styles.rightButton}
+                                        onPress={() => {
+                                            removeFromCart(item.id);
 
-                    />
-                    <View style={{marginTop: 8, backgroundColor: "white", padding: 10, flexDirection: "column"}}>
-                        <View style={{flexDirection: "row"}}>
-                            <Text style={[styles.boldTextGrey, styles.alignLeft]}>Subtotal: </Text>
-                            {/*add the price variable here*/}
-                            <Text style={[styles.boldTextGrey, styles.alignRight]}>R 18</Text>
+                                        }}
+                                    >
+                                        <Image
+                                            source={require("../assets/delete.png")}
+                                            style={{width: 24, height: 24}}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            onEndReached={() => {
+                                // You can add additional logic here if needed
+                            }}
+                            onEndReachedThreshold={0.1}
+
+                        />
+                        <View style={{marginTop: 8, backgroundColor: "white", padding: 10, flexDirection: "column"}}>
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={[styles.boldTextGrey, styles.alignLeft]}>Subtotal: </Text>
+                                {/*add the price variable here*/}
+                                <Text style={[styles.boldTextGrey, styles.alignRight]}>R 18</Text>
+                            </View>
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={[styles.boldTextGrey, styles.alignLeft]}>Delivery fee: </Text>
+                                <Text style={[styles.boldTextGrey, styles.alignRight]}>R {deliveryFee}</Text>
+                            </View>
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={[styles.boldText17, styles.alignLeft]}>Order total: </Text>
+                                <Text style={[styles.boldText17, styles.alignRight]}>R {price + deliveryFee}</Text>
+                            </View>
                         </View>
-                        <View style={{flexDirection: "row"}}>
-                            <Text style={[styles.boldTextGrey, styles.alignLeft]}>Delivery fee: </Text>
-                            <Text style={[styles.boldTextGrey, styles.alignRight]}>R {deliveryFee}</Text>
+                        <View style={{alignContent: "center", backgroundColor: "white"}}>
+                            <TouchableOpacity
+                                style={styles.bottomButton}
+                                onPress={handleCheckout()}>
+                                <Text style={styles.bottomButtonText}>Checkout</Text>
+                            </TouchableOpacity>
                         </View>
-                        <View style={{flexDirection: "row"}}>
-                            <Text style={[styles.boldText17, styles.alignLeft]}>Order total: </Text>
-                            <Text style={[styles.boldText17, styles.alignRight]}>R {price+deliveryFee}</Text>
-                        </View>
-                    </View>
-                    <View style={{  alignContent: "center", backgroundColor: "white"}}>
-                        <TouchableOpacity
-                            style={styles.bottomButton}
-                            onPress={handleCheckout()}>
-                            <Text style={styles.bottomButtonText}>Checkout</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
+                    </ScrollView>
+                )}
             </View>
         </SafeAreaView>
     );
