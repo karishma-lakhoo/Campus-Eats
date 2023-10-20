@@ -107,7 +107,7 @@ const CartScreen = ({ navigation }) => {
                                 />
                                 <View style={{ flexDirection: "column" }}>
                                     <Text style={[styles.boldText, styles.category]}>
-                                    {item.foodCategory}
+                                    {item.name}
                                     </Text>
                                     <Text style={[styles.boldText, styles.subcategory]}>
                                         {item.restaurantName}

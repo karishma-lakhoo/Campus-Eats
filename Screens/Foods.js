@@ -9,7 +9,7 @@ import {useRoute} from "@react-navigation/native";
 import { addToCart } from "../consts/cartData";
 import { getFirestore} from 'firebase/firestore';
 import { getAuth} from "firebase/auth";
-import {getFavs} from "../consts/favsData";
+import {addToFavs, getFavs, removeFromFavs} from "../consts/favsData";
 
 
 const { width, height } = Dimensions.get("window");
@@ -24,6 +24,7 @@ const FoodsScreen = ({ navigation }) => {
     const [favFoods, favsLoading] = getFavs();
     const [fontLoaded, setFontLoaded] = useState(false);
     const [liked, setLiked] = useState(false);
+    const [cartClicked, setCartClicked] = useState(false); // Track if "Add to Cart" is clicked
 
 
     useEffect(() => {
@@ -36,7 +37,7 @@ const FoodsScreen = ({ navigation }) => {
             }
 
         }
-    }, [foodItem.id, favsLoading]); // You can add favFoods to the dependency array if it's expected to change
+    }, [foodItem.id, favsLoading, favFoods]);
 
 
 
@@ -45,6 +46,7 @@ const FoodsScreen = ({ navigation }) => {
         if (!liked) {
             // Call the addToFavs function to add the food item to favorites
             addToFavs(foodItem.id); // Pass the food item ID or appropriate data
+
         }else{
             //Remove from favourites
             removeFromFavs(foodItem.id);
@@ -53,7 +55,12 @@ const FoodsScreen = ({ navigation }) => {
 
     };
 
-    const LikeButton = () => {
+    const handleAddToCart = () => {
+        addToCart(foodItem.id);
+        setCartClicked(true);
+
+    };
+        const LikeButton = () => {
         return (
             <TouchableOpacity onPress={() => handleLikeButton()}>
                 <MaterialCommunityIcons
@@ -94,13 +101,30 @@ const FoodsScreen = ({ navigation }) => {
                 <TouchableOpacity
                     style={styles.addToCart}
                     title="Add to cart"
+
                     onPress={() => {
-                        console.log("Food item : ",foodItem.id);
-                        addToCart(foodItem.id);
-                        console.log("Added item to cart")}}
+                        console.log("Food item : ", foodItem.id);
+                        handleAddToCart();
+                        alert("Item Added to cart");
+
+                    }}
                 >
                     <Text style={styles.boldText}>Add to cart</Text>
                 </TouchableOpacity>
+                {cartClicked && (
+                    <TouchableOpacity
+                        style={styles.viewCart}
+                        title="View Cart"
+                        onPress={() => {
+                            //handleAddToCart();
+                            navigation.navigate('Cart');
+                        }}
+                    >
+                        <Text style={styles.boldText}>View Cart</Text>
+
+                    </TouchableOpacity>
+                )}
+
             </View>
         </SafeAreaView>
     );
@@ -168,6 +192,15 @@ const styles = StyleSheet.create({
     },
 
     addToCart: {
+        position:"relative",
+        backgroundColor: colors.primary,
+        width: "100%",
+        padding: 20,
+        marginVertical: 6,
+        alignItems:'center',
+        borderRadius: 12,
+    },
+    viewCart: {
         position:"relative",
         backgroundColor: colors.primary,
         width: "100%",

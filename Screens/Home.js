@@ -23,9 +23,9 @@ const HomeScreen = ({navigation}) => {
     const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
     const [selectedItems, setSelectedItems] = useState([]);
     const [allFoods, isFoodLoading ] = foodList();
-    console.log("favFoods runs");
+  //  console.log("favFoods runs");
     const [favFoods, favsLoading] = getFavs();
-    console.log("favFoods:", favFoods);
+ //   console.log("favFoods:", favFoods);
 
     useEffect(() => {
         async function loadFont() {
@@ -53,8 +53,8 @@ const HomeScreen = ({navigation}) => {
                 if ( !favsLoading) {
                     const filteredFoods = allFoods.filter((food) => favFoods.includes(food.id));
                     setSelectedItems(filteredFoods);
-                    console.log("favFoods:", favFoods);
-                    console.log("selectedItems:", selectedItems);
+            //        console.log("favFoods:", favFoods);
+             //       console.log("selectedItems:", selectedItems);
                 } else {
                     // Handle the case when favFoods is not loaded yet or is empty
                     setSelectedItems([]);
