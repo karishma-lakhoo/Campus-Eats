@@ -18,6 +18,7 @@ import Colors from "../colors";
 import foodCategories from "../consts/foodCategories";
 import { foodList } from "../consts/foodData";
 import {getCart, removeFromCart} from "../consts/cartData";
+import { CreditProcessor } from "../consts/creditProcessor";
 
 const { width, height } = Dimensions.get("window");
 
@@ -27,6 +28,7 @@ const CartScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     let [cartFoods, cartLoading] = getCart();
     const [allFoods, foodLoading] = foodList();
+    const creditProcessor = new CreditProcessor();
   
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
     const [price, setPrice] = useState(0);
@@ -35,6 +37,8 @@ const CartScreen = ({ navigation }) => {
     useEffect(() =>{
         if(!foodLoading && !cartLoading ){
             const filteredFoods = allFoods.filter(food => cartFoods.includes(food.id));
+            const totalPrice = creditProcessor.calculateTotal(filteredFoods);
+            setPrice(totalPrice);
             setCartList(filteredFoods);
         }
     },[cartLoading,foodLoading]);
@@ -125,7 +129,9 @@ const CartScreen = ({ navigation }) => {
                                         style={styles.rightButton}
                                         onPress={() => {
                                             removeFromCart(item.id);
-
+                                            setCartList(cartList.filter(food => food.id != item.id));
+                                            const totalPrice = creditProcessor.calculateTotal(cartList.filter(food => food.id != item.id));
+                                            setPrice(totalPrice);
                                         }}
                                     >
                                         <Image
@@ -145,7 +151,7 @@ const CartScreen = ({ navigation }) => {
                             <View style={{flexDirection: "row"}}>
                                 <Text style={[styles.boldTextGrey, styles.alignLeft]}>Subtotal: </Text>
                                 {/*add the price variable here*/}
-                                <Text style={[styles.boldTextGrey, styles.alignRight]}>R 18</Text>
+                                <Text style={[styles.boldTextGrey, styles.alignRight]}>R {price}</Text>
                             </View>
                             <View style={{flexDirection: "row"}}>
                                 <Text style={[styles.boldTextGrey, styles.alignLeft]}>Delivery fee: </Text>
