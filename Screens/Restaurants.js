@@ -218,6 +218,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         flexDirection: "column",
         alignItems: "left",
+        elevation: 5
     },
     itemImage: {
         position:"relative",
