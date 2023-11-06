@@ -1,103 +1,85 @@
-import React, { useEffect, useState } from "react";
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import Toggle from "react-native-toggle-element";
-import colors from "../colors";
-import { faUserEdit, faUser, faEnvelope, faWallet, faStar} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-
-
-console.log(launchImageLibrary)
-import {
-    Dimensions,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    Image,
-    TouchableWithoutFeedback,
-    Button,
-    Switch
-} from "react-native";
-import * as Font from "expo-font";
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, Text, View, Image, TouchableWithoutFeedback, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { PFPpopup } from "../PopUps/PFPpopup";
-import Colors from "../colors";
-import { signOut } from "firebase/auth";
-
-const { width, height } = Dimensions.get("window");
+import { faUserEdit, faUser, faEnvelope, faWallet, faStar } from '@fortawesome/free-solid-svg-icons';
+import { PFPpopup } from '../PopUps/PFPpopup';
+import Colors from '../colors'; // Import the colors module here
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { collection, getFirestore, query, where, getDocs } from 'firebase/firestore';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+const { width, height } = Dimensions.get('window');
+import Toggle from "react-native-toggle-element";
 
 const ProfileScreen = ({ navigation }) => {
-    let popupRef = React.createRef();
-    const [fontLoaded, setFontLoaded] = useState(false);
+  let popupRef = React.createRef();
+  const [user, setUser] = useState({
+    name: 'Loading...',
+    credits: 'Loading...',
+    email: 'Loading...',
+    student_number: 'Loading...',
+  });
+  const [fontLoaded, setFontLoaded] = useState(false);
 
-    // Delivery status
-    const [toggleValue, setToggleValue] = useState(false);
+  // Delivery status
+  const [toggleValue, setToggleValue] = useState(false);
 
-    //options for the image picker
-    let options = {
-        title: 'Select Avatar',
-        storageOptions: {
-          skipBackup: true,
-          path: 'images',
-        },
-    };
+  const auth = getAuth();
+  const db = getFirestore();
 
-    // This function is currently not working, still trying to figure it out @Panda
-    const pickFromGallery = () => {
-        console.log("adding picture.....")
-        launchImageLibrary(options, (response) => {
-            console.log("adding picture.....")
-            if (response.didCancel) {
-              console.log('User cancelled image picker');
-            } else if (response.error) {
-              console.log('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-              console.log('User tapped custom button: ', response.customButton);
-            } else {
-              const source = { uri: response.uri };
-              this.setState({
-                avatarSource: source,
-              });
+  useEffect(() => {
+    async function loadFont() {
+      // Load your fonts here
+      // ...
+    }
+    loadFont();
+
+    // Listen for changes in the user's authentication state
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+        if (authUser) {
+            console.log('User is signed in:', authUser.email); // Add this line
+            // User is signed in, you can access authUser.email, authUser.uid, etc.
+            // Now, fetch additional user data from Firestore based on their email or UID
+            const email = authUser.email;
+
+            // Query Firestore to get the user's data
+            const usersRef = collection(db, 'users');
+            const userQuery = query(usersRef, where('email', '==', email));
+
+            try {
+                const querySnapshot = await getDocs(userQuery);
+                if (!querySnapshot.empty) {
+                    const userData = querySnapshot.docs[0].data();
+                    console.log('Fetched user data:', userData); // Add this line
+                    setUser(userData);
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
             }
-          });
-    };
-
-    useEffect(() => {
-        async function loadFont() {
-            await Font.loadAsync({
-                "Urbanist-Regular": require("../Fonts/Urbanist-Regular.ttf"),
-                "Urbanist-Bold": require("../Fonts/Urbanist-Bold.ttf"),
-            });
-            setFontLoaded(true);
+        } else {
+            console.log('No user is signed in.'); // Add this line
+            // No user is signed in. Handle this case as needed.
         }
-        loadFont();
-    }, []);
+    });
 
-    if (!fontLoaded) {
-        return null;
-    }
+    return unsubscribe; // Cleanup when component unmounts
+}, []);
 
-    let student_name = "Potlaki"; // Replace this with the name of the logged-in user
-    let student_email = "Potlaki@wits.students";
-    let credits = "100";
-    let student_number = "257382";
 
-    const handleAdd = () => {
-        popupRef.show();
-        console.log('Add button pressed');
-    };
+  const handleAdd = () => {
+    popupRef.show();
+    console.log('Add button pressed');
+  };
 
-    const onClosePopup = () => {
-        popupRef.close()
-    }
+  const onClosePopup = () => {
+    popupRef.close()
+}
 
     return (
         <SafeAreaView style={styles.safecontainer}>
             <View style={styles.container}>
                 <View>
                     <View style={styles.header}>
-                        <Text style={styles.heading}>{student_name}</Text>
+                        <Text style={styles.heading}>{user.username}</Text>
                     </View>
                 </View>
                 <View>
@@ -125,21 +107,21 @@ const ProfileScreen = ({ navigation }) => {
                 <View style={{flexDirection: "row", padding: 10 }}>
                     <FontAwesomeIcon icon={faUser} style={styles.icon} />
                     <Text style={styles.textInfo}>
-                        Student Number: {student_number}
+                        Student Number: {user.studentNum}
                     </Text>
                 </View>
 
                 <View style={styles.smallContainer} >
                     <FontAwesomeIcon icon={faEnvelope} style={styles.icon} />
                     <Text style={styles.textInfo}>
-                        {student_email}
+                        {user.email}
                     </Text>
                 </View>
 
                 <View style={styles.smallContainer}  >
                     <FontAwesomeIcon icon={faWallet} style={styles.icon} />
                     <Text style={styles.textInfo}>
-                        Credit Wallet: {credits} Kudu
+                        Credit Wallet: {user.credits} Kudu
                     </Text>
                 </View>
 
@@ -155,7 +137,7 @@ const ProfileScreen = ({ navigation }) => {
                     <View style={styles.smallContainer}>
                         <FontAwesomeIcon icon={faStar} style={styles.icon} />
                         <Text style={styles.textInfo}>
-                            Ratings: 1
+                            Ratings: {user.rating}
                         </Text>
                     </View>
                 )}
@@ -250,7 +232,7 @@ const styles = StyleSheet.create({
         position: "relative",
     },
     btncontainer : {
-        backgroundColor: colors.primary,
+        backgroundColor: Colors.primary,
         width: '90%',
         padding: 20,
         marginVertical: 40,
