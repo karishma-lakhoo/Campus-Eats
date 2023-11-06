@@ -14,6 +14,7 @@ export class CreditProcessor{
     }
 
     priceProcessor(price){
+        if(!price) return 0;
         price = price.trim().replace(/[Rr]/g, '');
         return parseFloat(price);
     }
