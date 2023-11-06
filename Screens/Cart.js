@@ -33,6 +33,7 @@ const CartScreen = ({ navigation }) => {
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
     const [price, setPrice] = useState(0);
     const deliveryFee = 5
+    const [location, setLocation] = useState("not selected");
 
     useEffect(() =>{
         if(!foodLoading && !cartLoading ){
@@ -72,8 +73,14 @@ const CartScreen = ({ navigation }) => {
     };
 
     const handleCheckout = () => {
+        console.log("place order pressed");
         // Add your checkout logic here
 
+    };
+
+    const changeLoc = () => {
+        console.log("change loc pressed");
+        navigation.navigate("Map");
     };
 
     return (
@@ -161,12 +168,23 @@ const CartScreen = ({ navigation }) => {
                                 <Text style={[styles.boldText17, styles.alignLeft]}>Order total: </Text>
                                 <Text style={[styles.boldText17, styles.alignRight]}>R {price + deliveryFee}</Text>
                             </View>
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={[styles.boldText17, styles.alignLeft]}>Delivery Location: </Text>
+                                <Text style={[styles.boldText17, styles.alignRight]}> {location}</Text>
+                            </View>
                         </View>
                         <View style={{alignContent: "center", backgroundColor: "white"}}>
                             <TouchableOpacity
                                 style={styles.bottomButton}
-                                onPress={handleCheckout()}>
-                                <Text style={styles.bottomButtonText}>Checkout</Text>
+                                onPress={() => { changeLoc()}
+                                }>
+                                <Text style={styles.bottomButtonText}>Change Location</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.bottomButton}
+                                onPress={() => { handleCheckout()}
+                            }>
+                                <Text style={styles.bottomButtonText}>Place Order</Text>
                             </TouchableOpacity>
                         </View>
                     </ScrollView>

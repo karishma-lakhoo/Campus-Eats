@@ -152,7 +152,7 @@ const MapScreen = ({ navigation }) => {
         scrollView.current.scrollTo({ x: x, y: 0, animated: true });
     }
     const handleSelect = (option) => {
-        setSelectedOption(option);
+
     };
     // Define the userLocation function
     const userLocation = async () => {
@@ -200,7 +200,8 @@ const MapScreen = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.backButton}
                         onPress={() => {
-                            navigation.goBack();
+                            navigation.navigate("Cart");
+
                         }}
                     >
                         <Image
@@ -316,12 +317,20 @@ const MapScreen = ({ navigation }) => {
                                     <Text style={styles.subText}>{marker.location}</Text>
                                 </View>
                                 <TouchableOpacity
-                                    style={styles.bottomButton}
+                                    style={[
+                                        styles.bottomButton,
+                                        selectedOption === marker.item
+                                            ? styles.selectedButton
+                                            : styles.unselectedButton
+                                    ]}
                                     onPress={() => {
-                                        setSelectedOption(marker.item)
-                                        console.log(marker.item)
-                                    }}>
-                                    <Text style={styles.bottomButtonText}>Select</Text>
+                                        setSelectedOption(marker.item);
+                                        console.log(marker.item);
+                                    }}
+                                >
+                                    <Text style={styles.bottomButtonText}>
+                                        {selectedOption === marker.item ? "Selected" : "Select"}
+                                    </Text>
                                 </TouchableOpacity>
                             </View>
 
@@ -497,6 +506,15 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 14,
         fontFamily: "Urbanist-Bold",
+    },
+    // Add a style for selected button
+    selectedButton: {
+        backgroundColor: "green",
+    },
+
+    // Add a style for unselected button
+    unselectedButton: {
+        backgroundColor: "orange",
     },
 });
 

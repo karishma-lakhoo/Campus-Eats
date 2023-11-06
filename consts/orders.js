@@ -63,7 +63,9 @@ export async function addNewOrder(cart, userID, location){
             orderersID: userID,
             location: location,
             status: "order placed",
-            deliverer: ""
+            deliverer: "",
+            received: false,
+            delivered: false
         };
         const docRef = await addDoc(ordersRef, orderData);
         const orderCollection = doc(userDoc,'myOrders', docRef.id);
