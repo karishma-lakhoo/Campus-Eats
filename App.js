@@ -12,9 +12,10 @@ import LoginScreen from "./Screens/Login";
 import RestaurantsScreen from "./Screens/Restaurants";
 import CartScreen from "./Screens/Cart";
 import NotificationsScreen from "./Screens/Notifications";
-import FoodScreen from "./Screens/Foods";
 import FoodsScreen from "./Screens/Foods";
 import MapScreen from "./Screens/Map";
+import CreditScreen from './Screens/CreditWallet';
+import UpdateScreen from './Screens/UpdateProfile';
 
 const Stack = createStackNavigator();
 
@@ -36,7 +37,9 @@ export default function App() {
               <Stack.Screen name="Menu" component={MenuScreen}/>
               <Stack.Screen name="Cart" component={CartScreen}/>
               <Stack.Screen name="Notifications" component={NotificationsScreen}/>
+              <Stack.Screen name="CreditWallet" component={CreditScreen}/>
               <Stack.Screen name="Map" component={MapScreen}/>
+              <Stack.Screen name="UpdateProfile" component={UpdateScreen}/>
           </Stack.Navigator>
         </NavigationContainer>
       </MyContext.Provider>
