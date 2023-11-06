@@ -29,16 +29,13 @@ const ProfileScreen = ({ navigation }) => {
   useEffect(() => {
     async function loadFont() {
       // Load your fonts here
-      // ...
     }
     loadFont();
 
     // Listen for changes in the user's authentication state
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
         if (authUser) {
-            console.log('User is signed in:', authUser.email); // Add this line
-            // User is signed in, you can access authUser.email, authUser.uid, etc.
-            // Now, fetch additional user data from Firestore based on their email or UID
+            console.log('User is signed in:', authUser.email);
             const email = authUser.email;
 
             // Query Firestore to get the user's data
