@@ -145,7 +145,7 @@ const HomeScreen = ({navigation}) => {
 
     const ListSubtypes = () => {
       const   numColumns= 2;
-      const   columnWidth = (width - 30) / numColumns ;
+      const   columnWidth = (width - 80) / numColumns ;
         const itemHeight = height * 0.2;
         return (
 
@@ -158,17 +158,21 @@ const HomeScreen = ({navigation}) => {
 
                 renderItem={({ item }) => (
                     <TouchableOpacity onPress={() => {handleFoodPress(item)}} style={styles.itemContainer}>
-                        {item.imageURL.startsWith('../assets/') ? (
-                            <Image source={require('../assets/jimmys.jpg')} style={[styles.itemImage, {width: columnWidth, height: itemHeight}]} />
-                        ) : (
-                            <Image source={{ uri: item.imageURL }} style={[styles.itemImage, {width: columnWidth, height: itemHeight}]} />
-                        )}
-                        <Text style={styles.boldText}>{item.name}</Text>
+                        <View style={{marginBottom: 15}}>
+                            {item.imageURL.startsWith('../assets/') ? (
+                                <Image source={require('../assets/jimmys.jpg')} style={[styles.itemImage, {width: columnWidth-5, height: itemHeight-5 , borderRadius: 10}]} />
+                            ) : (
+                                <Image source={{ uri: item.imageURL }} style={[styles.itemImage, {width: columnWidth-5, height: itemHeight-5 , borderRadius: 10}]} />
+                            )}
+                        </View>
+                        <View>
+                            <Text style={styles.boldText}>{item.name}</Text>
+                        </View>
                     </TouchableOpacity>
                 )}
                 columnWrapperStyle={{
                     justifyContent: 'space-between', // Adjust the alignment as needed
-                    marginVertical: 40, // Add margin between rows
+                    marginVertical: 30, // Add margin between rows
                     marginHorizontal: 10, // Add margin between columns
                 }}
             />
@@ -227,6 +231,17 @@ const styles = StyleSheet.create({
 
 
     },
+    itemContainer: {
+        height: 250,
+        width: 180,
+        elevation: 8,
+        borderRadius: 10,
+        justifyContent: 'center',
+        //backgroundColor: 'white',
+        backgroundColor: "#FFF",
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
     categoryText: {
         fontFamily: "Urbanist-Regular",
         color: "#FFF",
@@ -247,6 +262,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     flatListContainer:{
+        marginTop: 5,
         height: height*0.74,
         padding: 10
     }

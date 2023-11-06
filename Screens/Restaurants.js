@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         flex: 1,
-        marginTop: height * 0.02,
+        marginTop: height * 0.055,
     },
     header: {
         flexDirection: "column",
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     },
 
     flatListContainer:{
-        height: height*0.70,
+        height: height*0.80,
         paddingLeft: 10,
         paddingRight: 10,
         marginTop: 10
