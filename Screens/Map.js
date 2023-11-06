@@ -133,6 +133,16 @@ const MapScreen = ({ navigation }) => {
         return { scale };
     });
 
+    const moveToUserLocation = () => {
+        if(usersLocation){
+            map.current.animateToRegion({
+                latitude: usersLocation.latitude,
+                longitude: usersLocation.longitude,
+                latitudeDelta: 0.009,
+                longitudeDelta: 0.009,
+            }, 350);
+        }
+    }
 
 
     const [selectedOption, setSelectedOption] = useState(options[0]);
@@ -164,6 +174,7 @@ const MapScreen = ({ navigation }) => {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
         });
+
     };
 
     useEffect(() => {
@@ -198,29 +209,21 @@ const MapScreen = ({ navigation }) => {
                         />
                     </TouchableOpacity>
                     <Text style={styles.heading}>Choose Pickup Spot</Text>
-                </View>
-
-                <View style={{ marginHorizontal: 10 }}>
-                    <View style={styles.searchContainer}>
+                    <View style={{ marginHorizontal: 10 }}>
                         <TouchableOpacity style={styles.locationButton}
-                                          onPress={userLocation}>
+                                          onPress={() => {
+                                              userLocation();
+                                              moveToUserLocation();
+                                          }}>
                             <Image
-                                source={require('../assets/placeholder.png')}
+                                source={require('../assets/redLocation.jpg')}
                                 style={{ width: 33, height: 33 }}
                             />
                         </TouchableOpacity>
-                        <View style={{ width: "80%"}}>
-                            <SelectBox
-                                label="Location"
-                                options={options}
-                                value={selectedOption}
-                                arrowIconColor='orange'
-                                searchIconColor='orange'
-                                onChange={(value) => setSelectedOption(value)}
-                            />
-                        </View>
                     </View>
                 </View>
+
+
                 <View style={{flex:1, backgroundColor: "white"}}>
                     <MapView
                         ref={map}
@@ -242,24 +245,24 @@ const MapScreen = ({ navigation }) => {
                                 ],
                             };
                             return (
-                            <Marker
-                                key={id}
-                                coordinate={{
-                                    latitude: marker.coordinate.latitude,
-                                    longitude: marker.coordinate.longitude
-                                }}
-                                title={marker.name}
-                                identifier="origin"
-                                pinColor="orange"
-                                onPress={() => onMarkerPress(id)}
-                            >
-                                <Animated.View style={styles.markerWrap}>
-                                    <Animated.Image
-                                        source={require("../assets/placeholder.png")}
-                                        style={[styles.marker, scaleStyle]}
-                                        resizeMode="cover"/>
-                                </Animated.View>
-                            </Marker>
+                                <Marker
+                                    key={id}
+                                    coordinate={{
+                                        latitude: marker.coordinate.latitude,
+                                        longitude: marker.coordinate.longitude
+                                    }}
+                                    title={marker.name}
+                                    identifier="origin"
+                                    pinColor="orange"
+                                    onPress={() => onMarkerPress(id)}
+                                >
+                                    <Animated.View style={styles.markerWrap}>
+                                        <Animated.Image
+                                            source={require("../assets/placeholder.png")}
+                                            style={[styles.marker, scaleStyle]}
+                                            resizeMode="cover"/>
+                                    </Animated.View>
+                                </Marker>
                             );
 
                         })}
@@ -283,7 +286,7 @@ const MapScreen = ({ navigation }) => {
                         showsHorizontalScrollIndicator={false}
                         style={styles.scrollView}
                         pagingEnabled
-                        snapToInterval={width * 0.8 + 20} // Adjust the value as needed
+                        snapToInterval={width * 0.8 + 20}
                         decelerationRate="fast"
                         contentContainerStyle={{
                             paddingHorizontal: width * 0.1 - 10
@@ -315,7 +318,8 @@ const MapScreen = ({ navigation }) => {
                                 <TouchableOpacity
                                     style={styles.bottomButton}
                                     onPress={() => {
-                                        console.log("asdfasefasdf")
+                                        setSelectedOption(marker.item)
+                                        console.log(marker.item)
                                     }}>
                                     <Text style={styles.bottomButtonText}>Select</Text>
                                 </TouchableOpacity>
@@ -326,6 +330,7 @@ const MapScreen = ({ navigation }) => {
 
                     </Animated.ScrollView>
                 </View>
+
             </View>
         </SafeAreaView>
     );
@@ -347,9 +352,10 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         alignItems:'center',
-        paddingTop: height * 0.02,
+        paddingTop: height * 0.01,
         marginHorizontal: width * 0.05,
-        position: "absolute",
+        marginBottom: 15,
+        position: "relative",
     },
     boldText: {
         fontFamily: "Urbanist-Bold",
@@ -396,9 +402,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         marginTop: height*0.07,
-        marginHorizontal: 10,
-        height: 100,
-        padding: 10
+        height: 2,
     },
     search: {
         position: "absolute"
@@ -428,7 +432,9 @@ const styles = StyleSheet.create({
         borderRadius:30,
         alignItems: 'center', // Center horizontally
         justifyContent: 'center', // Center vertically
-        borderColor: 'orange'
+        borderColor: 'red',
+        position: 'relative',
+
     },
     dropdown: {
         width: 200,

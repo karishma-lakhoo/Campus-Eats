@@ -95,8 +95,9 @@ const FoodsScreen = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={[styles.heading, styles.heading]}>{foodItem.name}</Text>
-                <LikeButton />
+                <View ><LikeButton /></View>
             </View>
+
             <View style={{ marginTop: height * 0.15, marginHorizontal: 10, height: "24%" }}>
                 <Image source={{ uri: foodItem.imageURL }} style={styles.foodImage} />
                 <Text style={styles.boldText}>Price: {foodItem.price}</Text>

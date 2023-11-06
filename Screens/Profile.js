@@ -9,6 +9,7 @@ import { collection, getFirestore, query, where, getDocs } from 'firebase/firest
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 const { width, height } = Dimensions.get('window');
 import Toggle from "react-native-toggle-element";
+import md5 from 'md5';
 
 const ProfileScreen = ({ navigation }) => {
   let popupRef = React.createRef();
@@ -27,10 +28,6 @@ const ProfileScreen = ({ navigation }) => {
   const db = getFirestore();
 
   useEffect(() => {
-    async function loadFont() {
-      // Load your fonts here
-    }
-    loadFont();
 
     // Listen for changes in the user's authentication state
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
@@ -71,6 +68,8 @@ const ProfileScreen = ({ navigation }) => {
     popupRef.close()
 }
 
+    const gravatarUrl = `https://www.gravatar.com/avatar/${md5(user.email)}?s=200`;
+
     return (
         <SafeAreaView style={styles.safecontainer}>
             <View style={styles.container}>
@@ -92,9 +91,9 @@ const ProfileScreen = ({ navigation }) => {
                     </View>
                     <View style={styles.profileImage}>
                         <Image
-                            source={require("../assets/avatar.png")}
+                            source={{ uri: gravatarUrl }}
                             style={styles.image}
-                            resizeMode="center"
+                            resizeMode="cover"
                         />
                     </View>
                 </View>
@@ -143,27 +142,32 @@ const ProfileScreen = ({ navigation }) => {
             </View>
 
             <View style={{flexDirection:'row', width:'90%', padding: 20, alignItems: "center"}}>
-                <Toggle 
-                    thumbButton={{
-                        activeBackgroundColor: "green",
-                        inActiveBackgroundColor: "grey"
-                    }}
-                    trackBarStyle={{
-                        borderColor: 'green',
-                        backgroundColor: "#4DBA0F",
-                    }}
-                
-                    trackBar={{
-                        radius: 10,
-                        borderWidth: 2
-                    }}
-                    value={toggleValue}
-                    onPress={(newState) => setToggleValue(newState)}
-                    leftTitle="Off"
-                    rightTitle="On"
-                />
-                <Text style={styles.text}> Delivery Status</Text>
+                <Text style={styles.text}> Delivery Status             </Text>
+                <View style={{width: 10}}>
+                    <Toggle
+                        thumbButton={{
+                            activeBackgroundColor: "white",
+                            inActiveBackgroundColor: "white"
+                        }}
+                        trackBarStyle={{
+                            borderColor: toggleValue ? 'green' : 'grey', // Change borderColor based on toggleValue
+                            backgroundColor: toggleValue ? 'green' : 'grey', // Change backgroundColor based on toggleValue
+                        }}
+
+                        trackBar={{
+                            radius: 30,
+                            borderWidth: 9,
+                            width: 80,
+                            height: 40
+                        }}
+                        value={toggleValue}
+                        onPress={(newState) => setToggleValue(newState)}
+                        // leftTitle="Off"
+                        // rightTitle="On"
+                    />
+                </View>
             </View>
+
 
             <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                 <TouchableOpacity activeOpacity={0.7} style={styles.btncontainer} onPress={() => console.log("signout")}>
@@ -196,8 +200,9 @@ const styles = StyleSheet.create({
     },
 
     profileImage: {
-        width: 200,
-        height: 200,
+        marginTop: 30,
+        width: 130,
+        height: 130,
         borderRadius: 200,
         overflow: "hidden"
     },
@@ -209,8 +214,8 @@ const styles = StyleSheet.create({
     addpfp: {
         backgroundColor: Colors.primary,
         position: "absolute",
-        bottom: 30,
-        right: 30,
+        bottom: 2,
+        right: 2,
         width: 40,
         height: 40,
         borderRadius: 20,
@@ -259,7 +264,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         flex: 1,
         alignContent: "flex-start",     
-        padding: 20 
+        padding: 20,
+        marginTop: 30
     },
 });
 

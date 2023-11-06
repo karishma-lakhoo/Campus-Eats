@@ -15,6 +15,9 @@ import { } from "../firebase";
 import {foodList} from "../consts/foodData";
 import categories from "../consts/foodCategories";
 import {getFavs} from "../consts/favsData";
+import md5 from "md5";
+import {getAuth, onAuthStateChanged} from "firebase/auth";
+import {collection, getDocs, getFirestore, query, where} from "firebase/firestore";
 
 const { width, height } = Dimensions.get("window");
 
@@ -37,6 +40,49 @@ const HomeScreen = ({navigation}) => {
         }
         loadFont();
     }, []);
+
+    const [user, setUser] = useState({
+        name: 'Loading...',
+        credits: 'Loading...',
+        email: 'Loading...',
+        student_number: 'Loading...',
+    });
+
+    const auth = getAuth();
+    const db = getFirestore();
+
+    useEffect(() => {
+
+        // Listen for changes in the user's authentication state
+        const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+            if (authUser) {
+                console.log('User is signed in:', authUser.email);
+                const email = authUser.email;
+
+                // Query Firestore to get the user's data
+                const usersRef = collection(db, 'users');
+                const userQuery = query(usersRef, where('email', '==', email));
+
+                try {
+                    const querySnapshot = await getDocs(userQuery);
+                    if (!querySnapshot.empty) {
+                        const userData = querySnapshot.docs[0].data();
+                        console.log('Fetched user data:', userData); // Add this line
+                        setUser(userData);
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
+            } else {
+                console.log('No user is signed in.'); // Add this line
+                // No user is signed in. Handle this case as needed.
+            }
+        });
+
+        return unsubscribe; // Cleanup when component unmounts
+    }, []);
+
+    const gravatarUrl = `https://www.gravatar.com/avatar/${md5(user.email)}?s=200`;
 
 
     useEffect(() => {
@@ -145,7 +191,7 @@ const HomeScreen = ({navigation}) => {
 
     const ListSubtypes = () => {
       const   numColumns= 2;
-      const   columnWidth = (width - 30) / numColumns ;
+      const   columnWidth = (width - 80) / numColumns ;
         const itemHeight = height * 0.2;
         return (
 
@@ -158,17 +204,21 @@ const HomeScreen = ({navigation}) => {
 
                 renderItem={({ item }) => (
                     <TouchableOpacity onPress={() => {handleFoodPress(item)}} style={styles.itemContainer}>
-                        {item.imageURL.startsWith('../assets/') ? (
-                            <Image source={require('../assets/jimmys.jpg')} style={[styles.itemImage, {width: columnWidth, height: itemHeight}]} />
-                        ) : (
-                            <Image source={{ uri: item.imageURL }} style={[styles.itemImage, {width: columnWidth, height: itemHeight}]} />
-                        )}
-                        <Text style={styles.boldText}>{item.name}</Text>
+                        <View style={{marginBottom: 15}}>
+                            {item.imageURL.startsWith('../assets/') ? (
+                                <Image source={require('../assets/jimmys.jpg')} style={[styles.itemImage, {width: columnWidth-5, height: itemHeight-5 , borderRadius: 10}]} />
+                            ) : (
+                                <Image source={{ uri: item.imageURL }} style={[styles.itemImage, {width: columnWidth-5, height: itemHeight-5 , borderRadius: 10}]} />
+                            )}
+                        </View>
+                        <View>
+                            <Text style={styles.boldText}>{item.name}</Text>
+                        </View>
                     </TouchableOpacity>
                 )}
                 columnWrapperStyle={{
                     justifyContent: 'space-between', // Adjust the alignment as needed
-                    marginVertical: 40, // Add margin between rows
+                    marginVertical: 15, // Add margin between rows
                     marginHorizontal: 10, // Add margin between columns
                 }}
             />
@@ -182,7 +232,15 @@ const HomeScreen = ({navigation}) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={[styles.heading, styles.boldText]}>Home</Text>
+                <View style={styles.profileImage}>
+                    <Image
+                        source={{ uri: gravatarUrl }}
+                        style={styles.image}
+                        resizeMode="cover"
+                    />
+                </View>
             </View>
+
             <View>
                 <ListCategories />
             </View>
@@ -208,7 +266,7 @@ const styles = StyleSheet.create({
     },
     header: {
         marginTop: height * 0.07,
-        flexDirection: "column",
+        flexDirection: "row",
         marginHorizontal: width * 0.05,
         position: "absolute",
     },
@@ -226,6 +284,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
 
 
+    },
+    itemContainer: {
+        height: 250,
+        width: 180,
+        elevation: 8,
+        borderRadius: 10,
+        justifyContent: 'center',
+        //backgroundColor: 'white',
+        backgroundColor: "#FFF",
+        flexDirection: 'column',
+        alignItems: 'center',
     },
     categoryText: {
         fontFamily: "Urbanist-Regular",
@@ -247,9 +316,22 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     flatListContainer:{
+        marginTop: 5,
         height: height*0.74,
         padding: 10
-    }
+    },
+    profileImage: {
+        marginLeft: 250,
+        width: 45,
+        height: 45,
+        borderRadius: 200,
+        overflow: "hidden"
+    },
+    image: {
+        flex: 1,
+        height: undefined,
+        width: undefined
+    },
 });
 
 export default HomeScreen;

@@ -187,7 +187,7 @@ const NotificationsScreen = ({ navigation }) => {
                         <Text style={styles.noInvitesText}>No notifications as yet</Text>
                     </View>
                 ) : (
-                    <View style={{marginTop:50}}>
+                    <View style={{marginTop:90}}>
                     <FlatList
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={{ paddingBottom: 80 }}
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         flex: 1,
-        marginTop: height * 0.02,
+        marginTop: height * 0.055,
     },
     header: {
         flexDirection: "row",
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     noInvitesContainer: {
         flex: 1,
         alignItems: 'center',
-        marginTop: 120,
+        marginTop: 160,
     },
     noInvitesImage: {
         width: 200,
