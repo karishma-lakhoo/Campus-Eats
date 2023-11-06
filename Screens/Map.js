@@ -306,7 +306,8 @@ const MapScreen = ({ navigation }) => {
                                 <TouchableOpacity
                                     style={styles.bottomButton}
                                     onPress={() => {
-                                        console.log("asdfasefasdf")
+                                        setSelectedOption(marker.item)
+                                        console.log(marker.item)
                                     }}>
                                     <Text style={styles.bottomButtonText}>Select</Text>
                                 </TouchableOpacity>
