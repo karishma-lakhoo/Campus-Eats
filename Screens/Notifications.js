@@ -165,17 +165,7 @@ const NotificationsScreen = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.contentContainer}>
                 <View style={styles.header}>
-                    <TouchableOpacity
-                        style={styles.backButton}
-                        onPress={() => {
-                            navigation.goBack();
-                        }}
-                    >
-                        <Image
-                            source={require("../assets/back_thick.png")}
-                            style={{ width: 24, height: 24 }}
-                        />
-                    </TouchableOpacity>
+
                     <Text style={[styles.heading, styles.boldText]}>My Notifications</Text>
                 </View>
                 {invites.length === 0 ? (
@@ -210,6 +200,9 @@ const styles = StyleSheet.create({
         fontFamily: "Urbanist-Bold",
         fontSize: 26,
     },
+    boldText: {
+        fontFamily: "Urbanist-Bold",
+    },
     contentContainer: {
         flex: 1,
         marginTop: height * 0.055,
@@ -220,9 +213,6 @@ const styles = StyleSheet.create({
         paddingTop: height * 0.02,
         marginHorizontal: width * 0.05,
         position: "absolute",
-    },
-    boldText: {
-        fontFamily: "Urbanist-Bold",
     },
     itemContainer: {
         backgroundColor: "white",

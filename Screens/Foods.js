@@ -64,7 +64,7 @@ const FoodsScreen = ({ navigation }) => {
         return (
             <TouchableOpacity onPress={() => handleLikeButton()}>
                 <MaterialCommunityIcons
-                    style={{ marginLeft: width * 0.35, marginTop: height * 0.002 }}
+                    style={{ marginLeft: (width * 0.35)-10, marginTop: height * 0.002 }}
                     name={liked ? "heart" : "heart-outline"}
                     size={32}
                     color={liked ? "red" : "black"}
@@ -91,7 +91,18 @@ const FoodsScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={[styles.heading, styles.heading]}>{foodItem.name}</Text>
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => {
+                        navigation.goBack();
+                    }}
+                >
+                    <Image
+                        source={require("../assets/back_thick.png")}
+                        style={{width: 24, height: 24}}
+                    />
+                </TouchableOpacity>
+                <Text style={[styles.heading, styles.boldText]}>{foodItem.name}</Text>
                 <View ><LikeButton /></View>
             </View>
 
@@ -143,21 +154,23 @@ const styles = StyleSheet.create({
         fontFamily: "Urbanist-Bold",
         fontSize: 26,
     },
-    header: {
-        marginTop: height * 0.07,
-        flexDirection: "row",
-        marginHorizontal: width * 0.05,
-        position: "absolute",
-    },
     boldText: {
         fontFamily: "Urbanist-Bold",
-        fontSize: 15,
-        paddingBottom: 4
+    },
+    header: {
+        flexDirection: "row",
+        alignItems:'center',
+        paddingTop: height * 0.075,
+        marginHorizontal: width * 0.05,
+        position: "absolute",
     },
     subText: {
         fontFamily: "Urbanist-Bold",
         fontSize: 10,
         color: "gray"
+    },
+    backButton: {
+        marginRight: 10,
     },
 
     subDescr: {
