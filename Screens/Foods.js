@@ -6,19 +6,63 @@ import colors from "../colors";
 import { Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {useRoute} from "@react-navigation/native";
+import { addToCart } from "../consts/cartData";
+import { getFirestore} from 'firebase/firestore';
+import { getAuth} from "firebase/auth";
+import {addToFavs, getFavs, removeFromFavs} from "../consts/favsData";
 
 
 const { width, height } = Dimensions.get("window");
 
-const FoodScreen = ({ navigation }) => {
+const FoodsScreen = ({ navigation }) => {
+
+    const db = getFirestore();
+    const auth = getAuth();
+  //  const favFoodCollectionRef = collection(docRef, 'Favourites');
     const route = useRoute();
     const foodItem = route.params.foodItem;
+    const [favFoods, favsLoading] = getFavs();
     const [fontLoaded, setFontLoaded] = useState(false);
     const [liked, setLiked] = useState(false);
+    const [cartClicked, setCartClicked] = useState(false); // Track if "Add to Cart" is clicked
 
-    const LikeButton = () => {
+
+    useEffect(() => {
+        if(!favsLoading){
+
+            if (favFoods.includes(foodItem.id)) {
+                setLiked(true);
+            } else {
+                setLiked(false);
+            }
+
+        }
+    }, [foodItem.id, favsLoading, favFoods]);
+
+
+
+    const handleLikeButton = () => {
+        setLiked(!liked);
+        if (!liked) {
+            // Call the addToFavs function to add the food item to favorites
+            addToFavs(foodItem.id); // Pass the food item ID or appropriate data
+
+        }else{
+            //Remove from favourites
+            removeFromFavs(foodItem.id);
+
+        }
+
+    };
+
+    const handleAddToCart = () => {
+        addToCart(foodItem.id);
+        setCartClicked(true);
+
+    };
+        const LikeButton = () => {
         return (
-            <TouchableOpacity onPress={() => setLiked(!liked)}>
+            <TouchableOpacity onPress={() => handleLikeButton()}>
                 <MaterialCommunityIcons
                     style={{ marginLeft: width * 0.35, marginTop: height * 0.002 }}
                     name={liked ? "heart" : "heart-outline"}
@@ -57,10 +101,30 @@ const FoodScreen = ({ navigation }) => {
                 <TouchableOpacity
                     style={styles.addToCart}
                     title="Add to cart"
-                    onPress={() => console.log("Added item to cart")}
+
+                    onPress={() => {
+                        console.log("Food item : ", foodItem.id);
+                        handleAddToCart();
+                        alert("Item Added to cart");
+
+                    }}
                 >
                     <Text style={styles.boldText}>Add to cart</Text>
                 </TouchableOpacity>
+                {cartClicked && (
+                    <TouchableOpacity
+                        style={styles.viewCart}
+                        title="View Cart"
+                        onPress={() => {
+                            //handleAddToCart();
+                            navigation.navigate('Cart');
+                        }}
+                    >
+                        <Text style={styles.boldText}>View Cart</Text>
+
+                    </TouchableOpacity>
+                )}
+
             </View>
         </SafeAreaView>
     );
@@ -136,10 +200,19 @@ const styles = StyleSheet.create({
         alignItems:'center',
         borderRadius: 12,
     },
+    viewCart: {
+        position:"relative",
+        backgroundColor: colors.primary,
+        width: "100%",
+        padding: 20,
+        marginVertical: 6,
+        alignItems:'center',
+        borderRadius: 12,
+    },
 
     flatListContainer:{
         padding: 10
     }
 });
 
-export default FoodScreen;
+export default FoodsScreen;

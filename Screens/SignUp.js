@@ -12,7 +12,7 @@ import {
 
 const { width, height } = Dimensions.get('window');
 import * as Font from "expo-font";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext } from "react";
 import colors from "../colors";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUser, faLock, faUserGraduate, faAt} from '@fortawesome/free-solid-svg-icons';
@@ -21,6 +21,8 @@ import { getAuth,   createUserWithEmailAndPassword, onAuthStateChanged  } from "
 import { collection, addDoc, getFirestore, doc, setDoc } from 'firebase/firestore';
 import {PFPpopup} from "../PopUps/PFPpopup";
 import {FontAwesome5} from "@expo/vector-icons";
+
+
 import {widthHeight} from "twrnc/dist/esm/resolve/width-height";
 
 
@@ -64,6 +66,7 @@ const SignUpScreen = ({navigation}) =>{
                 credits: 0,
                 rating: 0,
                 profileImageUrl: '',
+                deliveryStatus: false,
             };
 
             const docRef = doc(db, 'users', userUID);
@@ -83,10 +86,13 @@ const SignUpScreen = ({navigation}) =>{
             const favFoodCollectionRef = collection(docRef, 'Favourites');
             // Add a sample fav document
             await addDoc(favFoodCollectionRef, {
-                restuarant: "KFC",
-                foodItem: 'Dunked wings',
-                //Any other category required in the favourites can be added here with a sample
-                //  I think the all samples should later be deleted as it moght affect query results
+                foodIDs:[]
+            });
+
+            // Create the "Cart" subcollection inside the user's document
+            const cartCollectionRef = collection(docRef,'Cart');
+            await addDoc(cartCollectionRef, {
+                foodIDs: [] 
             });
 
         } catch (error) {

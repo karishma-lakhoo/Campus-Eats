@@ -23,10 +23,11 @@ export function useFetchRestaurants() {
                     const data = doc.data();
                     const id = doc.id;
                     const name = data.Name;
+                    const location = data.Location;
                     let imageURL = data.imgurl || '../assets/jimmys.jpg';
 
-                    fetchedRestaurants.push({ id, name, imageURL });
-                    console.log(`Document ID: ${id}, Name: ${name}`);
+                    fetchedRestaurants.push({ id, name, imageURL, location });
+                  //  console.log(`Document ID: ${id}, Name: ${name}, Location: ${location}`);
                 });
 
                 setRestaurants(fetchedRestaurants);
@@ -68,7 +69,7 @@ export function useFetchRestaurants() {
                     let imageURL = data.imgurl || '../assets/jimmys.jpg';
 
                     fetchedFoods.push({ id, name, imageURL, restaurantName, foodCategory, numberSubtype, description, price, favourited });
-                    console.log(`Document ID: ${id}, Name: ${name}`);
+                   // console.log(`Document ID: ${id}, Name: ${name}`);
                 });
 
                 setFoods(fetchedFoods);
@@ -81,7 +82,7 @@ export function useFetchRestaurants() {
         fetchData();
     }, []);
 
-    return { allFoods , isLoading};
+    return [allFoods , isLoading];
 
 }
 

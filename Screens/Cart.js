@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
+
 import {
     Dimensions,
     SafeAreaView,
@@ -7,20 +9,41 @@ import {
     TouchableOpacity,
     View,
     Image,
-    TouchableWithoutFeedback, FlatList, Button
+    TouchableWithoutFeedback, FlatList, Button, ScrollView
 } from "react-native";
 import * as Font from "expo-font";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { PFPpopup } from "../PopUps/PFPpopup";
 import Colors from "../colors";
 import foodCategories from "../consts/foodCategories";
+import { foodList } from "../consts/foodData";
+import {getCart, removeFromCart} from "../consts/cartData";
+import { CreditProcessor } from "../consts/creditProcessor";
 
 const { width, height } = Dimensions.get("window");
 
 const CartScreen = ({ navigation }) => {
     let popupRef = React.createRef();
+    const [cartList, setCartList] = useState([]);
     const [fontLoaded, setFontLoaded] = useState(false);
+    let [cartFoods, cartLoading] = getCart();
+    const [allFoods, foodLoading] = foodList();
+    const creditProcessor = new CreditProcessor();
+  
+    const [isAtEndOfList, setIsAtEndOfList] = useState(false);
+    const [price, setPrice] = useState(0);
+    const deliveryFee = 5
 
+    useEffect(() =>{
+        if(!foodLoading && !cartLoading ){
+            const filteredFoods = allFoods.filter(food => cartFoods.includes(food.id));
+            const totalPrice = creditProcessor.calculateTotal(filteredFoods);
+            setPrice(totalPrice);
+            setCartList(filteredFoods);
+        }
+    },[cartLoading,foodLoading]);
+
+    
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
@@ -35,7 +58,22 @@ const CartScreen = ({ navigation }) => {
     if (!fontLoaded) {
         return null;
     }
+    const handleScroll = (event) => {
+        const offsetY = event.nativeEvent.contentOffset.y;
+        const contentHeight = event.nativeEvent.contentSize.height;
+        const containerHeight = event.nativeEvent.layoutMeasurement.height;
 
+        // Check if the user has reached the end of the list
+        if (offsetY + containerHeight >= contentHeight) {
+            setIsAtEndOfList(true);
+        } else {
+            setIsAtEndOfList(false);
+        }
+    };
+
+    const handleCheckout = () => {
+        // Add your checkout logic here
+    };
 
 
     return (
@@ -49,46 +87,90 @@ const CartScreen = ({ navigation }) => {
                         }}
                     >
                         <Image
-                            source={require('../assets/back_thick.png')}
-                            style={{ width: 24, height: 24 }}
+                            source={require("../assets/back_thick.png")}
+                            style={{width: 24, height: 24}}
                         />
                     </TouchableOpacity>
                     <Text style={[styles.heading, styles.boldText]}>My Cart</Text>
                 </View>
-                <View style={{marginTop: height*0.06}}>
-                    <FlatList data={foodCategories}
-                              keyExtractor={(item) => item.key}
-                              scrollEnabled={true}
-                              style={styles.flatListContainer}
-                              renderItem={({ item }) => (
-                                  <View style={styles.itemContainer}>
-                                      <Image source={require('../assets/jimmys.jpg')} style={styles.itemImage} />
-                                      <View style={{flexDirection:"column"}}>
-                                          <Text style={[styles.boldText, styles.category]}>{item.category}</Text>
-                                          <Text style={[styles.boldText, styles.subcategory]}>Restaurant Name</Text>
-                                          <Text></Text>
-                                          <Text></Text>
-                                          <Text style={[styles.boldText, styles.category]}>Price </Text>
-                                      </View>
 
-                                      <TouchableOpacity
-                                          style={styles.rightButton}
-                                          onPress={() => {
-                                              // navigation.goBack();
-                                          }}
-                                      >
-                                          <Image
-                                              source={require('../assets/delete.png')}
-                                              style={{ width: 24, height: 24 }}
-                                          />
-                                      </TouchableOpacity>
-                                  </View>
-                                  )}
-                    />
-                </View>
-                <TouchableOpacity style={styles.bottomButton}>
-                    <Text style={styles.bottomButtonText}>Checkout</Text>
-                </TouchableOpacity>
+                {cartLoading || foodLoading ? (
+                    // Display a loading indicator here
+                    <ActivityIndicator size="large" color="orange" style={{marginTop: (height / 2) - height * 0.15}}/>
+                ) : (
+                    <ScrollView
+                        style={{flex: 1, marginTop: height * 0.07, flexDirection: "column"}}
+                        onScroll={handleScroll}
+                        scrollEventThrottle={16}
+                    >
+                        <FlatList
+                            data={cartList}
+                            keyExtractor={(item) => item.key}
+                            scrollEnabled={false} // Disable scrolling of the FlatList
+                            style={styles.flatListContainer}
+                            renderItem={({item, index}) => (
+                                <View style={styles.itemContainer}>
+                                    <Image
+                                        source={{uri: item.imageURL} || require("../assets/jimmys.jpg")}
+                                        style={styles.itemImage}
+                                    />
+                                    <View style={{flexDirection: "column"}}>
+                                        <Text style={[styles.boldText, styles.category]}>
+                                            {item.name}
+                                        </Text>
+                                        <Text style={[styles.boldText, styles.subcategory]}>
+                                            {item.restaurantName}
+                                        </Text>
+                                        <Text></Text>
+                                        <Text></Text>
+                                        <Text style={[styles.boldText, styles.category]}>{item.price}</Text>
+                                    </View>
+                                    <TouchableOpacity
+                                        style={styles.rightButton}
+                                        onPress={() => {
+                                            removeFromCart(item.id);
+                                            setCartList(cartList.filter(food => food.id != item.id));
+                                            const totalPrice = creditProcessor.calculateTotal(cartList.filter(food => food.id != item.id));
+                                            setPrice(totalPrice);
+                                        }}
+                                    >
+                                        <Image
+                                            source={require("../assets/delete.png")}
+                                            style={{width: 24, height: 24}}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            onEndReached={() => {
+                                // You can add additional logic here if needed
+                            }}
+                            onEndReachedThreshold={0.1}
+
+                        />
+                        <View style={{marginTop: 8, backgroundColor: "white", padding: 10, flexDirection: "column"}}>
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={[styles.boldTextGrey, styles.alignLeft]}>Subtotal: </Text>
+                                {/*add the price variable here*/}
+                                <Text style={[styles.boldTextGrey, styles.alignRight]}>R {price}</Text>
+                            </View>
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={[styles.boldTextGrey, styles.alignLeft]}>Delivery fee: </Text>
+                                <Text style={[styles.boldTextGrey, styles.alignRight]}>R {deliveryFee}</Text>
+                            </View>
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={[styles.boldText17, styles.alignLeft]}>Order total: </Text>
+                                <Text style={[styles.boldText17, styles.alignRight]}>R {price + deliveryFee}</Text>
+                            </View>
+                        </View>
+                        <View style={{alignContent: "center", backgroundColor: "white"}}>
+                            <TouchableOpacity
+                                style={styles.bottomButton}
+                                onPress={handleCheckout()}>
+                                <Text style={styles.bottomButtonText}>Checkout</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
+                )}
             </View>
         </SafeAreaView>
     );
@@ -117,6 +199,26 @@ const styles = StyleSheet.create({
     boldText: {
         fontFamily: "Urbanist-Bold",
     },
+    boldText17: {
+        fontFamily: "Urbanist-Bold",
+        fontSize: 17,
+    },
+    boldTextGrey: {
+        fontFamily: "Urbanist-Bold",
+        fontSize: 17,
+        color: "grey"
+    },
+    alignLeft: {
+        flex: 1,
+        textAlign: "left",
+        paddingLeft: 5
+    },
+    alignRight: {
+        flex: 1,
+        textAlign: "right",
+        paddingRight: 5
+
+    },
     itemContainer: {
         backgroundColor: "white",
         padding: 10,
@@ -130,7 +232,7 @@ const styles = StyleSheet.create({
         paddingBottom: 60,
     },
     flatListContainer:{
-        height: height*0.80,
+        flex:1,
         paddingLeft: 10,
         paddingRight: 10,
     },
@@ -168,14 +270,15 @@ const styles = StyleSheet.create({
         marginRight: 10
     },
     bottomButton: {
-        backgroundColor: "orange", // Adjust button styles as needed
+        backgroundColor: "orange",
+        width: "95%",
         alignItems: "center",
         justifyContent: "center",
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 60, // Adjust button height
+        height: 60,
+        borderRadius: 10,
+        marginLeft: "auto",
+        marginRight: "auto",
+        marginBottom: 20, // Add margin from the bottom
     },
     bottomButtonText: {
         color: "white",

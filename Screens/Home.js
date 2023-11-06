@@ -14,15 +14,18 @@ import Colors from "../colors";
 import { } from "../firebase";
 import {foodList} from "../consts/foodData";
 import categories from "../consts/foodCategories";
+import {getFavs} from "../consts/favsData";
 
 const { width, height } = Dimensions.get("window");
 
 const HomeScreen = ({navigation}) => {
-    const [isLoading, setIsLoading] = useState(true);
     const [fontLoaded, setFontLoaded] = useState(false);
     const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
     const [selectedItems, setSelectedItems] = useState([]);
-    const {allFoods } = foodList( isLoading);
+    const [allFoods, isFoodLoading ] = foodList();
+  //  console.log("favFoods runs");
+    const [favFoods, favsLoading] = getFavs();
+ //   console.log("favFoods:", favFoods);
 
     useEffect(() => {
         async function loadFont() {
@@ -35,41 +38,65 @@ const HomeScreen = ({navigation}) => {
         loadFont();
     }, []);
 
-    useEffect(() => {
-        // Use this useEffect to ensure setIsLoading(false) is called
-        if (allFoods.length > 0) {
-            setIsLoading(false);
-        }
-    }, [allFoods]);
 
     useEffect(() => {
         // Check if foodArray is defined before filtering
-        if (!isLoading) {
+        if (!isFoodLoading ) {
             // When the selected category changes, filter the items based on the category type
             const selectedCategory = categories[selectedCategoryIndex];
-            console.log("Selected Category:", selectedCategory.category);
-            if (selectedCategory.category.toLowerCase() === "popular"){
-                //implementation for showing foods with highest favourites
-                console.log("pop pop");
+            if (selectedCategory.category.toLowerCase() === "popular") {
+                // Implementation for showing foods with highest favorites
+                const randomFoods = getRandomFoods(allFoods, 10);
+                setSelectedItems(randomFoods);
+            } else if (selectedCategory.category.toLowerCase() === "your favourites") {
 
-            }else if(selectedCategory.category.toLowerCase() === "your favourites"){
-                //implentation for showing logged in user's favourites
-                console.log("favs");
-            }else{
+                if ( !favsLoading) {
+                    const filteredFoods = allFoods.filter((food) => favFoods.includes(food.id));
+                    setSelectedItems(filteredFoods);
+            //        console.log("favFoods:", favFoods);
+             //       console.log("selectedItems:", selectedItems);
+                } else {
+                    // Handle the case when favFoods is not loaded yet or is empty
+                    setSelectedItems([]);
+                }
+            } else {
                 const filteredItems = allFoods.filter(
                     (item) => item.foodCategory.toLowerCase() === selectedCategory.category.toLowerCase()
                 );
-                console.log("Filtered Items:", filteredItems);
                 setSelectedItems(filteredItems);
             }
-
         }
-    }, [ isLoading ,selectedCategoryIndex, allFoods]);
+    }, [isFoodLoading, favsLoading, selectedCategoryIndex, allFoods, favFoods]);
+
 
 
     if (!fontLoaded) {
         return null;
     }
+
+    const getRandomFoods = (foodList, count) => {
+        const randomFoods = [];
+        const shuffledFoodList = [...foodList]; // Create a copy of the foodList to shuffle
+        let currentIndex = shuffledFoodList.length;
+        let temporaryValue, randomIndex;
+
+        // Shuffle the array to get a random order
+        while (currentIndex !== 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            temporaryValue = shuffledFoodList[currentIndex];
+            shuffledFoodList[currentIndex] = shuffledFoodList[randomIndex];
+            shuffledFoodList[randomIndex] = temporaryValue;
+        }
+
+        // Get the first 'count' items from the shuffled list
+        for (let i = 0; i < count; i++) {
+            randomFoods.push(shuffledFoodList[i]);
+        }
+
+        return randomFoods;
+    };
 
     const ListCategories = () => {
         return (
@@ -84,7 +111,7 @@ const HomeScreen = ({navigation}) => {
                             onPress={() => {
                                 setSelectedCategoryIndex(index);
                               //  setSelectedSubtypes(categories[index].subtypes); // Update selectedSubtypes here
-                                console.log(item.key);
+                          //      console.log(item.key);
                             }}
                         >
                             <View
@@ -121,6 +148,7 @@ const HomeScreen = ({navigation}) => {
       const   columnWidth = (width - 30) / numColumns ;
         const itemHeight = height * 0.2;
         return (
+
             <FlatList
                 style={styles.flatListContainer} // Add this style
                 data={selectedItems}
@@ -148,7 +176,7 @@ const HomeScreen = ({navigation}) => {
     };
 
     const handleFoodPress = (foodItem) => {
-        navigation.navigate('Food', {foodItem});
+        navigation.navigate('Foods', {foodItem});
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -159,7 +187,7 @@ const HomeScreen = ({navigation}) => {
                 <ListCategories />
             </View>
             <View>
-                {!allFoods ? (
+                {isFoodLoading || (selectedCategoryIndex === categories.findIndex(cat => cat.category.toLowerCase() === 'your favourites') && favsLoading)  ? (
                     <ActivityIndicator size="large" color="orange" style={{ marginTop: (height/2) - height*0.15 }} />
                 ) : (
                     <ListSubtypes />
