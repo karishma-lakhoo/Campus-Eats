@@ -198,6 +198,7 @@ const MapScreen = ({ navigation }) => {
                         />
                     </TouchableOpacity>
                     <Text style={styles.heading}>Choose Pickup Spot</Text>
+
                 </View>
 
                 <View style={{ marginHorizontal: 10 }}>
@@ -205,20 +206,10 @@ const MapScreen = ({ navigation }) => {
                         <TouchableOpacity style={styles.locationButton}
                                           onPress={userLocation}>
                             <Image
-                                source={require('../assets/placeholder.png')}
+                                source={require('../assets/redLocation.jpg')}
                                 style={{ width: 33, height: 33 }}
                             />
                         </TouchableOpacity>
-                        <View style={{ width: "80%"}}>
-                            <SelectBox
-                                label="Location"
-                                options={options}
-                                value={selectedOption}
-                                arrowIconColor='orange'
-                                searchIconColor='orange'
-                                onChange={(value) => setSelectedOption(value)}
-                            />
-                        </View>
                     </View>
                 </View>
                 <View style={{flex:1, backgroundColor: "white"}}>
@@ -396,9 +387,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         marginTop: height*0.07,
-        marginHorizontal: 10,
-        height: 100,
-        padding: 10
+        height: 2,
     },
     search: {
         position: "absolute"
