@@ -114,24 +114,14 @@ const NotificationsScreen = ({ navigation }) => {
                                     style={{ height: 50, width: 50 }}
                                 />
                                 <View style={{ marginLeft: 30 }}>
-                                    <Text
-                                        style={{
-                                            fontWeight: 'bold',
-                                            fontSize: 18,
-                                            marginTop: 8,
-                                            marginLeft: -15,
-                                        }}
-                                    >
+                                    <Text style={styles.boldSubtext}>
                                         asdfasdf
                                     </Text>
-                                    <Text
-                                        style={{
-                                            fontSize: 12,
-                                            marginTop: 0,
-                                            marginLeft: -15,
-                                        }}
-                                    >
+                                    <Text style={styles.subText}>
                                         From sdfsddf
+                                    </Text>
+                                    <Text style={styles.subText}>
+                                        Time: asfdkasdf
                                     </Text>
                                 </View>
                             </View>
@@ -178,12 +168,12 @@ const NotificationsScreen = ({ navigation }) => {
                     </View>
                 ) : (
                     <View style={{marginTop:90}}>
-                    <FlatList
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ paddingBottom: 80 }}
-                        data={invites}
-                        renderItem={({ item }) => <LogCard item={item} />}
-                    />
+                        <FlatList
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={{ paddingBottom: 80 }}
+                            data={invites}
+                            renderItem={({ item }) => <LogCard item={item} />}
+                        />
                     </View>
                 )}
             </View>
@@ -363,6 +353,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 20,
     },
+    boldSubtext: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        marginTop: 8,
+        marginLeft: -15,
+    },
+    subText: {
+        fontSize: 12,
+        marginTop: 0,
+        marginLeft: -15,
+    }
 });
 
 export default NotificationsScreen;

@@ -10,6 +10,7 @@ import { addToCart } from "../consts/cartData";
 import { getFirestore} from 'firebase/firestore';
 import { getAuth} from "firebase/auth";
 import {addToFavs, getFavs, removeFromFavs} from "../consts/favsData";
+import HomeScreen from "./Home";
 
 
 const { width, height } = Dimensions.get("window");
@@ -94,7 +95,7 @@ const FoodsScreen = ({ navigation }) => {
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => {
-                        navigation.goBack();
+                        navigation.navigate("Home");
                     }}
                 >
                     <Image
@@ -108,7 +109,7 @@ const FoodsScreen = ({ navigation }) => {
 
             <View style={{ marginTop: height * 0.15, marginHorizontal: 10, height: "24%" }}>
                 <Image source={{ uri: foodItem.imageURL }} style={styles.foodImage} />
-                <Text style={styles.boldText}>Price: {foodItem.price}</Text>
+                <Text style={styles.boldText}>Price: R{foodItem.price}</Text>
                 <Text style={styles.subDescr}>Description: {foodItem.description}</Text>
                 <TouchableOpacity
                     style={styles.addToCart}

@@ -97,7 +97,7 @@ const CartScreen = ({ navigation }) => {
                 {cartLoading || foodLoading ? (
                     // Display a loading indicator here
                     <ActivityIndicator size="large" color="orange" style={{marginTop: (height / 2) - height * 0.15}}/>
-                ) : (
+                ) : cartList.length > 0 ? (
                     <ScrollView
                         style={{flex: 1, marginTop: height * 0.07, flexDirection: "column"}}
                         onScroll={handleScroll}
@@ -145,7 +145,6 @@ const CartScreen = ({ navigation }) => {
                                 // You can add additional logic here if needed
                             }}
                             onEndReachedThreshold={0.1}
-
                         />
                         <View style={{marginTop: 8, backgroundColor: "white", padding: 10, flexDirection: "column"}}>
                             <View style={{flexDirection: "row"}}>
@@ -170,6 +169,15 @@ const CartScreen = ({ navigation }) => {
                             </TouchableOpacity>
                         </View>
                     </ScrollView>
+                ) : (
+                    // Wrap the "empty cart" image and text in a parent View
+                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                        <Image
+                            source={require("../assets/sad.png")}
+                            style={{ width: 200, height: 200 }}
+                        />
+                        <Text style={[styles.emptyText]}>Your cart is empty</Text>
+                    </View>
                 )}
             </View>
         </SafeAreaView>
@@ -202,6 +210,11 @@ const styles = StyleSheet.create({
     boldText17: {
         fontFamily: "Urbanist-Bold",
         fontSize: 17,
+    },
+    emptyText: {
+        fontFamily: "Urbanist-Bold",
+        fontSize: 19,
+        marginTop: 20
     },
     boldTextGrey: {
         fontFamily: "Urbanist-Bold",
