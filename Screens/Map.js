@@ -324,8 +324,10 @@ const MapScreen = ({ navigation }) => {
                                             : styles.unselectedButton
                                     ]}
                                     onPress={() => {
+                                        const selectedLocation = marker.item;
                                         setSelectedOption(marker.item);
                                         console.log(marker.item);
+                                        navigation.navigate('Cart', { selectedLocation});
                                     }}
                                 >
                                     <Text style={styles.bottomButtonText}>

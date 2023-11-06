@@ -17,12 +17,13 @@ import { PFPpopup } from "../PopUps/PFPpopup";
 import Colors from "../colors";
 import foodCategories from "../consts/foodCategories";
 import { foodList } from "../consts/foodData";
-import {getCart, removeFromCart} from "../consts/cartData";
+import {clearCart, getCart, removeFromCart} from "../consts/cartData";
 import { CreditProcessor } from "../consts/creditProcessor";
+import {addNewOrder} from "../consts/orders";
 
 const { width, height } = Dimensions.get("window");
 
-const CartScreen = ({ navigation }) => {
+const CartScreen = ({ navigation, route }) => {
     let popupRef = React.createRef();
     const [cartList, setCartList] = useState([]);
     const [fontLoaded, setFontLoaded] = useState(false);
@@ -43,6 +44,12 @@ const CartScreen = ({ navigation }) => {
             setCartList(filteredFoods);
         }
     },[cartLoading,foodLoading]);
+
+    useEffect(() => {
+        if (route.params && route.params.selectedLocation) {
+            setLocation(route.params.selectedLocation);
+        }
+    }, [route.params]);
 
     
     useEffect(() => {
@@ -72,9 +79,18 @@ const CartScreen = ({ navigation }) => {
         }
     };
 
-    const handleCheckout = () => {
-        console.log("place order pressed");
-        // Add your checkout logic here
+    const handleCheckout = async () => {
+        if(location !== "not selected"){
+            //cartLoading = true;
+   //        await addNewOrder(cartList,location );
+   //        await clearCart();
+   //        [cartFoods, cartLoading] = getCart();
+
+     //       alert("Order Placed");
+            //navigation.navigate();         //navigate to a myOrders page
+        }else{
+            alert("Select a pick up point");
+        }
 
     };
 

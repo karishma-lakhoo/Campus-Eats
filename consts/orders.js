@@ -43,7 +43,7 @@ export function getOrders(){
     return [allOrders, loading];
 }
 
-export async function addNewOrder(cart, userID, location){
+export async function addNewOrder(cart, location){
     const auth = getAuth();
     const currentUser = auth.currentUser;
     let userUID;
@@ -60,7 +60,7 @@ export async function addNewOrder(cart, userID, location){
     try{
         const orderData = {
             cart: cart,
-            orderersID: userID,
+            orderersID: userUID,
             location: location,
             status: "order placed",
             deliverer: "",
