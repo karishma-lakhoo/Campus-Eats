@@ -56,6 +56,9 @@ const FoodsScreen = ({ navigation }) => {
     };
 
     const handleAddToCart = () => {
+        // if( foodItem.numberSubtype > 1){
+        //     // pop up picket to select the type
+        // }
         addToCart(foodItem.id);
         setCartClicked(true);
 

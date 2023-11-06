@@ -57,18 +57,43 @@ export function useFetchRestaurants() {
                 const fetchedFoods = [];
 
                 querySnapshot.forEach((doc) => {
+
                     const data = doc.data();
                     const id = doc.id;
-                    const name = data.Name;
+                    let name = data.Name;
                     const restaurantName = data.Restaurant;
                     const foodCategory = data.Type;
                     const numberSubtype = data.NumberSubtype;
                     const description = data.Description;
-                    const price = data.Price;
+                    let price = data.Price;
                     const favourited = data.Favourited;
                     let imageURL = data.imgurl || '../assets/jimmys.jpg';
 
-                    fetchedFoods.push({ id, name, imageURL, restaurantName, foodCategory, numberSubtype, description, price, favourited });
+                   // fetchedFoods.push({ id, name, imageURL, restaurantName, foodCategory, numberSubtype, description, price, favourited });
+
+                    if (numberSubtype === 2 ){
+                        let name1   = name +  " " +  data.Subtype1;
+                        let name2   = name +  " " +  data.Subtype2;
+                        let price1 = data.Price1;
+                        let price2 = data.Price2;
+                        price = price1 + " / " + price2
+
+                        fetchedFoods.push({ id, name, name1, name2, imageURL, restaurantName, foodCategory, numberSubtype, description,price, price1, price2, favourited });
+                    }else if (numberSubtype === 3){
+                        let name1   = name +  " " +  data.Subtype1;
+                        let name2   = name +  " " +  data.Subtype2;
+                        let name3   = name +  " " +  data.Subtype3;
+                        let price1 = data.Price1;
+                        let price2 = data.Price2;
+                        let price3 = data.Price3;
+                        price = price1 + " / " + price2 + " / " + price3;
+
+                        fetchedFoods.push({ id,name, name1, name2, name3, imageURL, restaurantName, foodCategory, numberSubtype, description, price, price1, price2, price3, favourited });
+                    }else{
+                        fetchedFoods.push({ id, name, imageURL, restaurantName, foodCategory, numberSubtype, description, price, favourited });
+                    }
+
+
                    // console.log(`Document ID: ${id}, Name: ${name}`);
                 });
 
