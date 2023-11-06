@@ -73,8 +73,8 @@ const CartScreen = ({ navigation }) => {
 
     const handleCheckout = () => {
         // Add your checkout logic here
-    };
 
+    };
 
     return (
         <SafeAreaView style={styles.container}>
