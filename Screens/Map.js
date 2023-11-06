@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         flex: 1,
-        marginTop: height * 0.02,
+        marginTop: height * 0.045,
     },
     header: {
         flexDirection: "row",
@@ -434,7 +434,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center', // Center vertically
         borderColor: 'red',
         position: 'relative',
-
+        marginLeft: 25,
+        elevation: 3
     },
     dropdown: {
         width: 200,
