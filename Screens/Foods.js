@@ -10,6 +10,7 @@ import { addToCart } from "../consts/cartData";
 import { getFirestore} from 'firebase/firestore';
 import { getAuth} from "firebase/auth";
 import {addToFavs, getFavs, removeFromFavs} from "../consts/favsData";
+import HomeScreen from "./Home";
 
 
 const { width, height } = Dimensions.get("window");
@@ -67,7 +68,7 @@ const FoodsScreen = ({ navigation }) => {
         return (
             <TouchableOpacity onPress={() => handleLikeButton()}>
                 <MaterialCommunityIcons
-                    style={{ marginLeft: width * 0.35, marginTop: height * 0.002 }}
+                    style={{ marginLeft: (width * 0.35)-10, marginTop: height * 0.002 }}
                     name={liked ? "heart" : "heart-outline"}
                     size={32}
                     color={liked ? "red" : "black"}
@@ -93,14 +94,28 @@ const FoodsScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={[styles.heading, styles.heading]}>{foodItem.name}</Text>
+            <View style={{flexDirection: "row", alignItems: "center", marginTop: 90 }}>
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        style={styles.backButton}
+                        onPress={() => {
+                            navigation.goBack();
+                        }}
+                    >
+                        <Image
+                            source={require("../assets/back_thick.png")}
+                            style={{width: 24, height: 24}}
+                        />
+                    </TouchableOpacity>
+                    <Text style={[styles.heading, styles.boldText]}>{foodItem.name}</Text>
+                </View>
                 <View ><LikeButton /></View>
             </View>
 
-            <View style={{ marginTop: height * 0.15, marginHorizontal: 10, height: "24%" }}>
+
+            <View style={{marginTop: 50, marginHorizontal: 10, height: "22%" }}>
                 <Image source={{ uri: foodItem.imageURL }} style={styles.foodImage} />
-                <Text style={styles.boldText}>Price: {foodItem.price}</Text>
+                <Text style={styles.boldText}>Price: R{foodItem.price}</Text>
                 <Text style={styles.subDescr}>Description: {foodItem.description}</Text>
                 <TouchableOpacity
                     style={styles.addToCart}
@@ -146,21 +161,22 @@ const styles = StyleSheet.create({
         fontFamily: "Urbanist-Bold",
         fontSize: 26,
     },
-    header: {
-        marginTop: height * 0.07,
-        flexDirection: "row",
-        marginHorizontal: width * 0.05,
-        position: "absolute",
-    },
     boldText: {
         fontFamily: "Urbanist-Bold",
-        fontSize: 15,
-        paddingBottom: 4
+    },
+    header: {
+        flexDirection: "row",
+        alignItems:'center',
+        width: width*0.5,
+        marginLeft: 10
     },
     subText: {
         fontFamily: "Urbanist-Bold",
         fontSize: 10,
         color: "gray"
+    },
+    backButton: {
+        marginRight: 10,
     },
 
     subDescr: {

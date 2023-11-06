@@ -58,8 +58,8 @@ const MenuScreen = ({navigation}) => {
 
 
     const ListSubtypes = () => {
-        const numColumns = 2;
-        const columnWidth = (width - 30) / numColumns;
+        const   numColumns= 2;
+        const   columnWidth = (width - 80) / numColumns ;
         const itemHeight = height * 0.2;
 
         // Create an object to group items by category
@@ -91,19 +91,23 @@ const MenuScreen = ({navigation}) => {
                             numColumns={numColumns}
                             keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => {handleFoodPress(item)}} style={[styles.itemContainer, { width: columnWidth, height: itemHeight }]}>
-                                    {item.imageURL.startsWith('../assets/') ? (
-                                        <Image source={require('../assets/jimmys.jpg')} style={[styles.itemImage, { width: columnWidth, height: itemHeight }]} />
-                                    ) : (
-                                        <Image source={{ uri: item.imageURL }} style={[styles.itemImage, { width: columnWidth, height: itemHeight }]} />
-                                    )}
-                                    <Text style={styles.boldText}>{item.name}</Text>
+                                <TouchableOpacity onPress={() => {handleFoodPress(item)}} style={styles.itemContainer}>
+                                    <View style={{marginBottom: 40}}>
+                                        {item.imageURL.startsWith('../assets/') ? (
+                                            <Image source={require('../assets/jimmys.jpg')} style={[styles.itemImage, {width: columnWidth, height: itemHeight , borderRadius: 10}]} />
+                                        ) : (
+                                            <Image source={{ uri: item.imageURL }} style={[styles.itemImage, {width: columnWidth-5, height: itemHeight , borderRadius: 10}]} />
+                                        )}
+                                    </View>
+                                    <View style={{paddingTop: 185, position: "absolute"}}>
+                                        <Text style={styles.boldText}>{item.name}</Text>
+                                    </View>
                                 </TouchableOpacity>
                             )}
                             columnWrapperStyle={{
                                 justifyContent: 'space-between', // Adjust the alignment as needed
-                                marginVertical: 40, // Add margin between rows
-                                marginHorizontal: 20, // Add margin between columns
+                                marginVertical: 15, // Add margin between rows
+                                marginHorizontal: 10, // Add margin between columns
                             }}
                         />
                     </>
@@ -130,7 +134,7 @@ const MenuScreen = ({navigation}) => {
                     </TouchableOpacity>
                     <Text style={[styles.heading, styles.boldText]}>Menu</Text>
                 </View>
-                <View style={{marginTop: height*0.06}}>
+                <View style={{marginTop: height*0.04}}>
                     <ListSubtypes/>
                 </View>
             </View>
@@ -149,8 +153,12 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         flex: 1,
-        marginTop: height * 0.02,
+        marginTop: height * 0.055,
 
+    },
+    categoryHeading: {
+        marginLeft: 15,
+        fontFamily: "Urbanist-Bold",
     },
     header: {
         flexDirection: "row",
@@ -161,6 +169,16 @@ const styles = StyleSheet.create({
     },
     boldText: {
         fontFamily: "Urbanist-Bold",
+    },
+    itemContainer: {
+        height: 250,
+        width: 180,
+        elevation: 8,
+        borderRadius: 10,
+        justifyContent: 'center',
+        backgroundColor: "#FFF",
+        flexDirection: 'column',
+        alignItems: 'center',
     },
 
     subtypeItem: {
@@ -178,7 +196,8 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     flatListContainer:{
-        height: height*0.80,
+        marginTop: 40,
+        height: height*0.955,
         paddingLeft: 10,
         paddingRight: 10,
 

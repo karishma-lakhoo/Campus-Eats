@@ -120,14 +120,14 @@ const ProfileScreen = ({ navigation }) => {
                         Credit Wallet: {user.credits} Kudu
                     </Text>
                 </View>
-
-                <TouchableOpacity style={styles.smallContainer}  >
-                    
-                    <FontAwesomeIcon icon={faUserEdit} style={styles.icon} />
-                    <Text style={styles.textInfo}>
-                        Edit profile
-                    </Text>
-                </TouchableOpacity>
+                {/*removed this because we shouldnt be able to edit our student number or email*/}
+                {/*<TouchableOpacity style={styles.smallContainer}  >*/}
+                {/*    */}
+                {/*    <FontAwesomeIcon icon={faUserEdit} style={styles.icon} />*/}
+                {/*    <Text style={styles.textInfo}>*/}
+                {/*        Edit profile*/}
+                {/*    </Text>*/}
+                {/*</TouchableOpacity>*/}
 
                 {toggleValue && (
                     <View style={styles.smallContainer}>
@@ -171,7 +171,7 @@ const ProfileScreen = ({ navigation }) => {
 
             <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                 <TouchableOpacity activeOpacity={0.7} style={styles.btncontainer} onPress={() => console.log("signout")}>
-                    <Text>Sign Out</Text>
+                    <Text style={[styles.boldText, styles.pressableText]}>Sign Out</Text>
                 </TouchableOpacity>
                 
             </View>
@@ -184,6 +184,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#F2F5F9",
         alignItems: "center"
+    },
+    boldText: {
+        fontFamily: 'Urbanist-Bold',
+    },
+    pressableText:{
+        color: "#FFF",
+        fontSize:16
     },
 
     safecontainer: {
