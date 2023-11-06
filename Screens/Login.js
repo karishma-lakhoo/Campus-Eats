@@ -63,24 +63,24 @@ const LoginScreen = ({navigation}) => {
             <View style={styles.header}>
                 <Text style={[styles.heading, styles.bold_text]}>Login</Text>
                 <View style={{marginTop: 40}}>
-                    <Text style={[styles.bold_text, {marginTop: 0.03*height,fontSize: 16, marginBottom: 0.006*height}]}>Email</Text>
-                    <View style={styles.input}>
+                    <Text style={[styles.bold_text, styles.subHeadings]}>Email</Text>
+                    <View style={styles.combo}>
                         <FontAwesomeIcon icon={faUser} style={styles.icon} />
                         <TextInput
                             onChangeText={handleEmailChange}
                             value={email}
-                            style={[styles.reg_text]}
+                            style={[styles.reg_text, styles.textBoxes]}
                             placeholder="Email"
                         />
                     </View>
-                    <Text style={[styles.bold_text, {marginTop: 0.03*height, fontSize: 16, marginBottom: 0.006*height}]}>Password</Text>
-                    <View style={styles.input}>
+                    <Text style={[styles.bold_text, styles.subHeadings]}>Password</Text>
+                    <View style={styles.combo}>
                         <FontAwesomeIcon icon={faLock} style={styles.icon} />
                         <TextInput
                             onChangeText={handlePasswordChange}
                             value={password}
                             placeholder="Password"
-                            style={[styles.reg_text]}
+                            style={[styles.reg_text, styles.textBoxes]}
                             secureTextEntry={true}
                         />
                     </View>
@@ -129,6 +129,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         // elevation: 5,
     },
+    subHeadings:{
+        fontSize:16,
+        marginTop: 0.03*height,
+        marginBottom: 0.006*height,
+    },
     btncontainer : {
         backgroundColor: colors.primary,
         width: '100%',
@@ -141,9 +146,23 @@ const styles = StyleSheet.create({
         color:'white',
     },
     icon: {
-        marginRight: 10,
-        marginVertical: height*0.006,
-        position: "relative"
+        position: "relative",
+        alignItems: "flex-start",
+        marginLeft: 16,
+        marginTop: 16
+    },
+    textBoxes:{
+        display: "flex",
+        alignItems:"flex-start",
+        backgroundColor:"white",
+        padding:16,
+        width:0.8*width,
+        borderRadius: 12,
+    },
+    combo:{
+        flexDirection: "row",
+        backgroundColor: "white",
+        borderRadius: 12,
     },
 });
 
