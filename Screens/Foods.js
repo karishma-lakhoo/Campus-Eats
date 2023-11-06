@@ -91,23 +91,26 @@ const FoodsScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => {
-                        navigation.navigate("Home");
-                    }}
-                >
-                    <Image
-                        source={require("../assets/back_thick.png")}
-                        style={{width: 24, height: 24}}
-                    />
-                </TouchableOpacity>
-                <Text style={[styles.heading, styles.boldText]}>{foodItem.name}</Text>
+            <View style={{flexDirection: "row", alignItems: "center", marginTop: 90 }}>
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        style={styles.backButton}
+                        onPress={() => {
+                            navigation.goBack();
+                        }}
+                    >
+                        <Image
+                            source={require("../assets/back_thick.png")}
+                            style={{width: 24, height: 24}}
+                        />
+                    </TouchableOpacity>
+                    <Text style={[styles.heading, styles.boldText]}>{foodItem.name}</Text>
+                </View>
                 <View ><LikeButton /></View>
             </View>
 
-            <View style={{ marginTop: height * 0.15, marginHorizontal: 10, height: "24%" }}>
+
+            <View style={{marginTop: 50, marginHorizontal: 10, height: "22%" }}>
                 <Image source={{ uri: foodItem.imageURL }} style={styles.foodImage} />
                 <Text style={styles.boldText}>Price: R{foodItem.price}</Text>
                 <Text style={styles.subDescr}>Description: {foodItem.description}</Text>
@@ -161,9 +164,8 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         alignItems:'center',
-        paddingTop: height * 0.075,
-        marginHorizontal: width * 0.05,
-        position: "absolute",
+        width: width*0.5,
+        marginLeft: 10
     },
     subText: {
         fontFamily: "Urbanist-Bold",
