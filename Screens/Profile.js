@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Toggle from "react-native-toggle-element";
 import colors from "../colors";
-import { faUserEdit, faUser, faEnvelope, faWallet, faStar} from '@fortawesome/free-solid-svg-icons';
+import { faUserEdit, faUser, faEnvelope, faPencil, faWallet, faStar} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 
@@ -78,9 +78,9 @@ const ProfileScreen = ({ navigation }) => {
         return null;
     }
 
-    let student_name = "Potlaki"; // Replace this with the name of the logged-in user
+    let student_name = "Potlaki"; // Replace this with data from DB of the logged-in user
     let student_email = "Potlaki@wits.students";
-    let credits = "100";
+    let credits = 0;
     let student_number = "257382";
 
     const handleAdd = () => {
@@ -122,32 +122,37 @@ const ProfileScreen = ({ navigation }) => {
             </View>
                 
             <View style={styles.updateSection}>
-                <View style={{flexDirection: "row", padding: 10 }}>
+                <View style={{flexDirection: "row", padding: 10}}>
                     <FontAwesomeIcon icon={faUser} style={styles.icon} />
                     <Text style={styles.textInfo}>
                         Student Number: {student_number}
                     </Text>
                 </View>
 
-                <View style={styles.smallContainer} >
-                    <FontAwesomeIcon icon={faEnvelope} style={styles.icon} />
-                    <Text style={styles.textInfo}>
-                        {student_email}
-                    </Text>
+                <View style={[styles.smallContainer, {justifyContent: "space-between"}]} >
+                    <View style={{flexDirection: "row"}}>
+                        <FontAwesomeIcon icon={faEnvelope} style={styles.icon} />
+                        <Text style={styles.textInfo}>
+                            {student_email}
+                        </Text>
+                    </View>
+
+                    <TouchableOpacity 
+                        onPress={()=>{
+                            navigation.navigate("UpdateProfile")
+                        }}>
+                        <FontAwesomeIcon icon={faPencil} style={styles.icon} />
+                    </TouchableOpacity>
                 </View>
 
-                <View style={styles.smallContainer}  >
+                <TouchableOpacity 
+                    style={styles.smallContainer} 
+                    onPress={() => {
+                        navigation.navigate('CreditWallet');
+                    }}>
                     <FontAwesomeIcon icon={faWallet} style={styles.icon} />
                     <Text style={styles.textInfo}>
                         Credit Wallet: {credits} Kudu
-                    </Text>
-                </View>
-
-                <TouchableOpacity style={styles.smallContainer}  >
-                    
-                    <FontAwesomeIcon icon={faUserEdit} style={styles.icon} />
-                    <Text style={styles.textInfo}>
-                        Edit profile
                     </Text>
                 </TouchableOpacity>
 
@@ -159,8 +164,6 @@ const ProfileScreen = ({ navigation }) => {
                         </Text>
                     </View>
                 )}
-            </View>
-            <View style={{height: 20}}>
             </View>
 
             <View style={{flexDirection:'row', width:'90%', padding: 20, alignItems: "center"}}>
@@ -175,7 +178,7 @@ const ProfileScreen = ({ navigation }) => {
                     }}
                 
                     trackBar={{
-                        radius: 10,
+                        radius: 30,
                         borderWidth: 2
                     }}
                     value={toggleValue}
@@ -261,7 +264,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         fontFamily: 'Urbanist-Bold',
         alignContent: "center",
-        fontSize: 28,
+        fontSize: 20,
     },
     textInfo:{
         justifyContent: "center",
@@ -275,12 +278,19 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         position: "relative",
     },
+    updateIcon: {
+        marginRight: 10,
+        marginVertical: 10,
+        position: "relative",
+        justifyContent: "space-evenly"
+    },
 
     updateSection : {
         borderRadius: 10,
         flex: 1,
         alignContent: "flex-start",     
-        padding: 20 
+        padding: 20,
+        justifyContent: "space-evenly"
     },
 });
 
