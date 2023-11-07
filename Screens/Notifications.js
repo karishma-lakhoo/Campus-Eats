@@ -7,10 +7,10 @@ import {
     TouchableOpacity,
     View,
     Image,
-    TouchableWithoutFeedback, FlatList, Button, ScrollView, Pressable
+    TouchableWithoutFeedback, FlatList, Button, ScrollView, Pressable, TextInput
 } from "react-native";
 import * as Font from "expo-font";
-
+import {getAllOrders} from "../consts/orders";
 import foodCategories from "../consts/foodCategories";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 
@@ -19,37 +19,68 @@ const { width, height } = Dimensions.get("window");
 const NotificationsScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
-    const [invites, setInvites] = useState([]);
+    const [orders, setOrders] = useState([]);
+    const [orders2, setOrders2] = useState([]);
     // if the user is a customer then the information that it should load should be delivery notifications l
     // ike your driver is nearby or come and pick up your food
     // if the user is a driver
     // then the notifications should be the list of all deliveries that they are open to
     useEffect(() => {
-        // Set invites data here, for example, after an API call.
-        // Avoid setting invites in the render method.
-        const dummyInvites = [
+        // Set orders data here, for example, after an API call.
+        // Avoid setting orders in the render method.
+        const dummyorders = [
             {
-                id: 1,
-                senderName: "John Doe",
-                senderLocation: "New York",
+                name: "John Doe",
+                location: "East Campus",
+                cart: [{
+                    imageURL: "https://azucaryoregano.com/wp-content/uploads/2021/01/cronut3.jpg",
+                    name: "Choc mousse cronut",
+                    price: "12",
+                    restaurantName: "Xpresso"
+                },{
+                    imageURL: "https://pickfreshfoods.com/wp-content/uploads/2014/06/Chocolate-Frosted-Donuts-Pick-Fresh-Foods-9.jpg",
+                    name: "chocolate doughnut",
+                    price: "12",
+                    restaurantName: "Xpresso"
+                },
+                    {
+                        imageURL: "https://azucaryoregano.com/wp-content/uploads/2021/01/cronut3.jpg",
+                        name: "afsjklsalkjflkds ",
+                        price: "12",
+                        restaurantName: "Xpresso"
+                    }],
             },
             {
-                id: 2,
-                senderName: "Alice Smith",
-                senderLocation: "Los Angeles",
+                name: "John Doe",
+                location: "East Campus",
+                cart:[{
+                    imageURL: "https://azucaryoregano.com/wp-content/uploads/2021/01/cronut3.jpg",
+                    name: "2 cronut",
+                    price: "12",
+                    restaurantName: "Xpresso"
+                }]
             },
             {
-                id: 3,
-                senderName: "Bob Johnson",
-                senderLocation: "Chicago",
+                name: "John Doe",
+                location: "East Campus",
+                cart:[{
+                    imageURL: "https://azucaryoregano.com/wp-content/uploads/2021/01/cronut3.jpg",
+                    name: "3 cronut",
+                    price: "12",
+                    restaurantName: "Xpresso"
+                }]
             },
-            // Add more dummy invites as needed
+            // Add more dummy orders as needed
         ];
 
-        setInvites(dummyInvites);
+        setOrders(dummyorders);
     }, []);
-
-
+    //
+    // useEffect(() => {
+    //     const getOrders = getAllOrders();
+    //     console.log(getOrders)
+    //     setOrders2(getOrders)
+    // }, []);
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
@@ -77,27 +108,49 @@ const NotificationsScreen = ({ navigation }) => {
         }
     };
 
-    const handleDecline = () => {
-        console.log("declined")
-    }
-    const handleAccept = () => {
-        console.log("accepted")
-    }
+
 
     const LogCard = ({ item }) => {
+        const cartItems = item.cart;
+        const restaurantName = item.cart[0].restaurantName;
+        const cardHeight = 165 + cartItems.length*15;
+        const [showComplete, setShowComplete] = useState(false);
+        const [accepted, setAccepted] = useState(true);
+        const [pin, setPin] = useState("")
+
+        const handlePinChange = (text) => {
+            setPin(text);
+        };
+        const handleDecline = () => {
+            console.log("declined")
+        //     BACKEND INTEGRATION??
+        }
+        const handleAccept = () => {
+            console.log("accepted");
+            setAccepted(false);
+            setShowComplete(true);
+        }
+        const handleComplete = () => {
+            console.log("completed");
+        //     need to add backend
+        }
+
+
+
         return (
-            <View style={styles.LogCard}>
+            <View style={{...styles.LogCard, height: cardHeight}}>
+
                 <View
                     style={{
-                        height: 100,
+                        height: cardHeight,
                         marginLeft: 20,
-                        paddingVertical: 20,
+                        paddingVertical: 5,
                         flex: 1,
                     }}
                 >
-                    {invites.length === 0 ? (
+                    {orders.length === 0 ? (
                         <View>
-                            <Text>No invites</Text>
+                            <Text>No orders</Text>
                         </View>
                     ) : (
                         <>
@@ -111,42 +164,107 @@ const NotificationsScreen = ({ navigation }) => {
                             >
                                 <Image
                                     source={require("../assets/profile.jpg")}
-                                    style={{ height: 50, width: 50 }}
+                                    style={{ height: 60, width: 60, borderRadius:50 }}
                                 />
                                 <View style={{ marginLeft: 30 }}>
                                     <Text style={styles.boldSubtext}>
-                                        asdfasdf
+                                        Delivery
                                     </Text>
                                     <Text style={styles.subText}>
-                                        From sdfsddf
+                                        From: {item.name}
+                                    </Text>
+
+                                    <Text style={styles.subText}>
+                                        Restaurant: {restaurantName}
                                     </Text>
                                     <Text style={styles.subText}>
-                                        Time: asfdkasdf
+                                        Location: {item.location}
+                                    </Text>
+                                    {/* Render all the names of the items in the cart */}
+                                    <View>
+                                        <Text style={[styles.subText, styles.boldText]}>
+                                            Items:
+                                        </Text>
+                                        {cartItems.map((cartItem, index) => (
+                                            <Text style={{...styles.subText}} key={index}>
+                                                {cartItem.name}
+                                            </Text>
+                                        ))}
+                                    </View>
+                                    <Text style={styles.subText}>
+                                        Time: 10:00
                                     </Text>
                                 </View>
                             </View>
                         </>
                     )}
                 </View>
-                <View style={{ marginBottom: 40, right: 60 }}>
-                    <Pressable
-                        style={styles.actionBtn}
-                        onPress={() => handleAccept()}
-                    >
-                        <Text style={styles.actionBtnText}>Accept</Text>
-                    </Pressable>
-                </View>
-                <View style={{ marginBottom: 40, right: 10 }}>
-                    <Pressable
-                        style={styles.actionBtn2}
-                        onPress={() => handleDecline()}
-                    >
-                        <Text style={styles.actionBtnText}>X</Text>
-                        {/*<Text style={{alignContent:"center", fontFamily:"Urbanist-Bold", color: "white"}}>x</Text>*/}
+                <View style={{flexDirection:"row"}}>
+                    {accepted && (
+                        <View style={{ marginBottom: 50, paddingLeft: width-200}}>
+                            <Pressable
+                                style={styles.actionBtn}
+                                onPress={() => handleAccept()}
+                            >
+                                <Text style={styles.actionBtnText}>Accept</Text>
+                            </Pressable>
+                        </View>
+                    )
+                    }
+                    {accepted && (
+                        <View style={{ marginBottom: 50, paddingLeft: 50}}>
+                            <Pressable
+                                style={styles.actionBtn2}
+                                onPress={() => handleDecline()}
+                            >
+                                <Text style={styles.actionBtnText}>X</Text>
+                                {/*<Text style={{alignContent:"center", fontFamily:"Urbanist-Bold", color: "white"}}>x</Text>*/}
 
-                    </Pressable>
+                            </Pressable>
+                        </View>
+                    )
+                    }
+                    { showComplete && (
+                        <View style={{ marginBottom: 10, paddingLeft: 30}}>
+                            <TextInput
+                                onChangeText={handlePinChange}
+                                value={pin}
+                                style={[styles.regularText, styles.textBoxes]}
+                                placeholder="Pin"
+                                keyboardType="numeric"></TextInput>
+                        </View>
+                    )
+                    }
+                    { showComplete && (
+                        <View style={{ marginBottom: 10, paddingLeft: 90}}>
+                            <Pressable
+                                style={styles.actionBtnComplete}
+                                onPress={() => handleComplete()}
+                            >
+                                <Text style={styles.actionBtnText}>Complete</Text>
+                                <Text style={styles.actionBtnText}>order</Text>
+
+                            </Pressable>
+                        </View>
+                    )
+                    }
+
+                    { showComplete && (
+                        <View style={{ marginBottom: 10, paddingLeft: 90}}>
+                            <Pressable
+                                style={styles.actionBtnReport}
+                                onPress={() => handleComplete()}
+                            >
+                                <Text style={styles.actionBtnText}>Report</Text>
+                            </Pressable>
+                        </View>
+                    )
+                    }
+
+
                 </View>
             </View>
+
 
         )
     }
@@ -156,22 +274,22 @@ const NotificationsScreen = ({ navigation }) => {
             <View style={styles.contentContainer}>
                 <View style={styles.header}>
 
-                    <Text style={[styles.heading, styles.boldText]}>My Notifications</Text>
+                    <Text style={[styles.heading, styles.boldText]}>My Delivery Notifications</Text>
                 </View>
-                {invites.length === 0 ? (
-                    <View style={styles.noInvitesContainer}>
+                {orders.length === 0 ? (
+                    <View style={styles.noordersContainer}>
                         <Image
                             source={require('../assets/sad.png')}
-                            style={styles.noInvitesImage}
+                            style={styles.noordersImage}
                         />
-                        <Text style={styles.noInvitesText}>No notifications as yet</Text>
+                        <Text style={styles.noordersText}>Activate Deliveries to get delivery notifications</Text>
                     </View>
                 ) : (
                     <View style={{marginTop:90}}>
                         <FlatList
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={{ paddingBottom: 80 }}
-                            data={invites}
+                            data={orders}
                             renderItem={({ item }) => <LogCard item={item} />}
                         />
                     </View>
@@ -192,6 +310,18 @@ const styles = StyleSheet.create({
     },
     boldText: {
         fontFamily: "Urbanist-Bold",
+    },
+    textBoxes:{
+        display: "flex",
+        alignItems:"flex-start",
+        backgroundColor:"white",
+        padding:11,
+        width:0.2*width,
+        borderRadius: 12,
+        borderWidth:0.2
+    },
+    regularText: {
+        fontFamily: 'Urbanist-Regular',
     },
     contentContainer: {
         flex: 1,
@@ -270,7 +400,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontFamily: "Urbanist-Bold",
     },
-    inviteContainer: {
+    orderContainer: {
         backgroundColor: "white",
         borderRadius: 5,
         padding: 10,
@@ -279,7 +409,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
     },
-    inviteText: {
+    orderText: {
         fontSize: 16,
     },
     acceptButton: {
@@ -297,8 +427,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         marginHorizontal: 20,
         paddingHorizontal: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'column',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.07,
@@ -309,6 +438,34 @@ const styles = StyleSheet.create({
         height: 40,
         width: 80,
         backgroundColor: '#5DBB63',
+        marginBottom: 10,
+        borderRadius: 10,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        marginRight: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1,
+    },
+    actionBtnComplete: {
+        height: 40,
+        width: 80,
+        backgroundColor: '#5DBB63',
+        marginBottom: 10,
+        borderRadius: 10,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        marginRight: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1,
+    },
+    actionBtnReport: {
+        height: 40,
+        width: 80,
+        backgroundColor: 'red',
         marginBottom: 10,
         borderRadius: 10,
         position: 'absolute',
@@ -337,18 +494,18 @@ const styles = StyleSheet.create({
         color: "white",
 
     },
-    noInvitesContainer: {
+    noordersContainer: {
         flex: 1,
         alignItems: 'center',
         marginTop: 160,
     },
-    noInvitesImage: {
+    noordersImage: {
         width: 200,
         height: 200,
         resizeMode: 'contain',
         marginTop: 20
     },
-    noInvitesText: {
+    noordersText: {
         fontSize: 20,
         fontWeight: 'bold',
         marginTop: 20,
