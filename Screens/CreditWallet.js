@@ -99,6 +99,7 @@ const CreditScreen = ({ navigation }) => {
                         <View style={styles.btncontainer}>
                             <TouchableOpacity activeOpacity={0.7} onPress={()=>{
                                 alert(`Added to ${cash_in_amount} Kudus to your account`);
+                                navigation.navigate("Profile")
                             }}>
                                 <Text>Add to wallet</Text>
                             </TouchableOpacity>
