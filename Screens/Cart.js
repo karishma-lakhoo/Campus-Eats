@@ -82,7 +82,7 @@ const CartScreen = ({ navigation, route }) => {
     const handleCheckout = async () => {
         if(location !== "not selected"){
             //cartLoading = true;
-           await addNewOrder(cartList,location );
+           await addNewOrder(cartList,location, price);
            await clearCart();
            setCartList([]);
            const totalPrice = creditProcessor.calculateTotal([]);
