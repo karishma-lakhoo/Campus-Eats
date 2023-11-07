@@ -82,11 +82,13 @@ const CartScreen = ({ navigation, route }) => {
     const handleCheckout = async () => {
         if(location !== "not selected"){
             //cartLoading = true;
-   //        await addNewOrder(cartList,location );
-   //        await clearCart();
-   //        [cartFoods, cartLoading] = getCart();
+           await addNewOrder(cartList,location );
+           await clearCart();
+           setCartList([]);
+           const totalPrice = creditProcessor.calculateTotal([]);
+           setPrice(totalPrice);
+           alert("Order Placed");
 
-     //       alert("Order Placed");
             //navigation.navigate();         //navigate to a myOrders page
         }else{
             alert("Select a pick up point");

@@ -10,6 +10,7 @@ import { addToCart } from "../consts/cartData";
 import { getFirestore} from 'firebase/firestore';
 import { getAuth} from "firebase/auth";
 import {addToFavs, getFavs, removeFromFavs} from "../consts/favsData";
+import { Picker } from "@react-native-picker/picker";
 import HomeScreen from "./Home";
 
 
@@ -26,6 +27,8 @@ const FoodsScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [liked, setLiked] = useState(false);
     const [cartClicked, setCartClicked] = useState(false); // Track if "Add to Cart" is clicked
+    const [selectedSubtype, setSelectedSubtype] = useState(foodItem.name1); // Track the selected subtype
+    const [selectedPrice, setSelectedPrice] = useState(foodItem.price1); // Track the selected price
 
 
     useEffect(() => {
@@ -56,11 +59,24 @@ const FoodsScreen = ({ navigation }) => {
 
     };
 
-    const handleAddToCart = () => {
-        // if( foodItem.numberSubtype > 1){
-        //     // pop up picket to select the type
-        // }
-        addToCart(foodItem.id);
+    const handleAddToCart = async () => {
+
+        let tempName = foodItem.name;
+        let tempPrice = foodItem.price;
+        //console.log("before");
+        //  console.log(foodItem.name);
+        //  console.log(foodItem.price);
+        if (foodItem.numberSubtype > 1) {
+            foodItem.name = selectedSubtype;
+            foodItem.price = selectedPrice;
+         }
+        //   console.log("after");
+        //    console.log(foodItem.name);
+        //    console.log(foodItem.price);
+        await addToCart(foodItem.id);
+        alert("Item Added to cart");
+        foodItem.name = tempName;
+        foodItem.price = tempPrice;
         setCartClicked(true);
 
     };
@@ -113,10 +129,36 @@ const FoodsScreen = ({ navigation }) => {
             </View>
 
 
-            <View style={{marginTop: 50, marginHorizontal: 10, height: "22%" }}>
+            <View style={{marginTop: 50, marginHorizontal: 10, height: "45%" }}>
                 <Image source={{ uri: foodItem.imageURL }} style={styles.foodImage} />
+            </View>
+            <View>
+
                 <Text style={styles.boldText}>Price: R{foodItem.price}</Text>
                 <Text style={styles.subDescr}>Description: {foodItem.description}</Text>
+
+
+                {foodItem.numberSubtype > 1  && (
+                    <Picker
+                        style={styles.picker}
+                        selectedValue={selectedPrice}
+                        onValueChange={(itemValue, itemIndex) => {
+                            setSelectedPrice(itemValue);
+                            // Set selectedSubtype here based on the selected itemValue
+                            if (itemValue === foodItem.price1) {
+                                setSelectedSubtype(foodItem.name1);
+                            } else if (itemValue === foodItem.price2) {
+                                setSelectedSubtype(foodItem.name2);
+                            }
+
+                    }}
+                    >
+                        <Picker.Item label={foodItem.name1 + " - " + foodItem.price1} value={foodItem.price1} />
+                        <Picker.Item label={foodItem.name2 + " - " + foodItem.price2} value={foodItem.price2} />
+
+                    </Picker>
+                )}
+
                 <TouchableOpacity
                     style={styles.addToCart}
                     title="Add to cart"
@@ -124,7 +166,7 @@ const FoodsScreen = ({ navigation }) => {
                     onPress={() => {
                         console.log("Food item : ", foodItem.id);
                         handleAddToCart();
-                        alert("Item Added to cart");
+
 
                     }}
                 >
@@ -135,7 +177,6 @@ const FoodsScreen = ({ navigation }) => {
                         style={styles.viewCart}
                         title="View Cart"
                         onPress={() => {
-                            //handleAddToCart();
                             navigation.navigate('Cart');
                         }}
                     >
@@ -205,7 +246,7 @@ const styles = StyleSheet.create({
     foodImage: {
         position:"relative",
         width: "100%",
-        height: "600%",
+        height: "400%",
         marginBottom: 10,
         borderRadius: 10,
 
@@ -228,6 +269,13 @@ const styles = StyleSheet.create({
         marginVertical: 6,
         alignItems:'center',
         borderRadius: 12,
+    },
+    picker: {
+        borderColor: "#fff",
+        flex: 1,
+        borderWidth: 1,
+        borderRadius: 4,
+
     },
 
     flatListContainer:{

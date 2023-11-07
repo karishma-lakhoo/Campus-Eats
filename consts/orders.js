@@ -44,6 +44,8 @@ export function getOrders(){
 }
 
 export async function addNewOrder(cart, location){
+    //TODO: Change to work with credits
+
     const auth = getAuth();
     const currentUser = auth.currentUser;
     let userUID;
