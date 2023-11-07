@@ -114,12 +114,17 @@ const ProfileScreen = ({ navigation }) => {
                     </Text>
                 </View>
 
-                <View style={styles.smallContainer}  >
+                <TouchableOpacity 
+                    style={styles.smallContainer} 
+                    onPress={() => {
+                        navigation.navigate('CreditWallet');
+                    }}>
                     <FontAwesomeIcon icon={faWallet} style={styles.icon} />
                     <Text style={styles.textInfo}>
                         Credit Wallet: {user.credits} Kudu
                     </Text>
-                </View>
+                </TouchableOpacity>
+
                 {/*removed this because we shouldnt be able to edit our student number or email*/}
                 {/*<TouchableOpacity style={styles.smallContainer}  >*/}
                 {/*    */}

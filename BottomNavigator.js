@@ -29,14 +29,9 @@ const BottomNavigator = () => {
 
         <Tab.Screen name="Restaurants" component={RestaurantsScreen} options={{
             tabBarIcon: ({color}) => (
-                <Icon name="home-filled" color={color} size={28}/>
+                <Icon name="store" color={color} size={28}/>
             ),
         }}/>
-        <Tab.Screen name="Profile" component={ProfileScreen} options={{
-                    tabBarIcon: ({color}) => (
-                        <Icon name="home-filled" color={color} size={28}/>
-                    ),
-                }}/>
         <Tab.Screen name="FoodDB" component={FormPage} options={{
             tabBarIcon: ({color}) => (
                 <Icon name="home-filled" color={color} size={28}/>
@@ -44,18 +39,18 @@ const BottomNavigator = () => {
         }}/>
         <Tab.Screen name="Cart" component={CartScreen} options={{
             tabBarIcon: ({color}) => (
-                <Icon name="home-filled" color={color} size={28}/>
+                <Icon name="shopping-cart" color={color} size={28}/>
             ),
         }}/>
         <Tab.Screen name="Notifications" component={NotificationsScreen} options={{
             tabBarIcon: ({color}) => (
-                <Icon name="home-filled" color={color} size={28}/>
+                <Icon name="notifications" color={color} size={28}/>
             ),
         }}/>
-        <Tab.Screen name="Map" component={MapScreen} options={{
-            tabBarIcon: ({color}) => (
-                <Icon name="home-filled" color={color} size={28}/>
-            ),
+                <Tab.Screen name="Profile" component={ProfileScreen} options={{
+                    tabBarIcon: ({color}) => (
+                        <Icon name="person" color={color} size={28}/>
+                    ),
         }}/>
         </Tab.Navigator>
 }
