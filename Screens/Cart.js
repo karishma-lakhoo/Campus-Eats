@@ -193,7 +193,7 @@ const CartScreen = ({ navigation, route }) => {
                                 style={styles.bottomButton}
                                 onPress={() => { changeLoc()}
                                 }>
-                                <Text style={styles.bottomButtonText}>Change Location</Text>
+                                <Text style={styles.bottomButtonText}>Select Location</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={styles.bottomButton}
