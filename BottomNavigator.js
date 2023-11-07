@@ -34,7 +34,7 @@ const BottomNavigator = () => {
         }}/>
         <Tab.Screen name="Profile" component={ProfileScreen} options={{
                     tabBarIcon: ({color}) => (
-                        <Icon name="home-filled" color={color} size={28}/>
+                        <Icon name="person" color={color} size={28}/>
                     ),
                 }}/>
         <Tab.Screen name="FoodDB" component={FormPage} options={{

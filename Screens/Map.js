@@ -18,6 +18,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import * as Location from 'expo-location'
 const { width, height } = Dimensions.get("window");
 
+import witsScienceStadiumImage from '../assets/wits_science_stadium.jpg';
+import chamberOfMinesImage from  '../assets/chamber_of_mines.jpeg'
+import solomonMahlanguImage from  '../assets/solomon.jpeg'
+import libraryLawnsImage from  '../assets/library_lawns.jpg'
+import lawLawnsImage from  '../assets/law.jpg' 
+
 const MapScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const map = React.useRef(null); // Use mapRef instead of this.map
@@ -38,7 +44,7 @@ const MapScreen = ({ navigation }) => {
                 latitude: -26.191417404967527,
                 longitude:  28.0270147972487,
             },
-            image: "../assets/profile.jpg",
+            image: chamberOfMinesImage,
             location: "West Campus"
         },
 
@@ -49,7 +55,7 @@ const MapScreen = ({ navigation }) => {
                 latitude: -26.192953158356087,
                 longitude: 28.03078356356788,
             },
-            image: "../assets/profile.jpg",
+            image: solomonMahlanguImage,
             location: "East Campus"
         },
         {
@@ -59,7 +65,7 @@ const MapScreen = ({ navigation }) => {
                 latitude: -26.190621267281905,
                 longitude: 28.030315002576547,
             },
-            image: "../assets/profile.jpg",
+            image: libraryLawnsImage,
             location: "East Campus"
         },
         {
@@ -69,7 +75,7 @@ const MapScreen = ({ navigation }) => {
                 latitude: -26.187739569419605,
                 longitude:  28.0253896027605,
             },
-            image: "../assets/profile.jpg",
+            image: lawLawnsImage,
             location: "West Campus"
         },
         {
@@ -79,7 +85,7 @@ const MapScreen = ({ navigation }) => {
                 latitude: -26.190680274339,
                 longitude: 28.025609301102797,
             },
-            image: "../assets/profile.jpg",
+            image: witsScienceStadiumImage,
             location: "West Campus"
         },
 
@@ -308,7 +314,7 @@ const MapScreen = ({ navigation }) => {
                         {options.map((marker, id) => (
                             <View style={styles.card} key={id}>
                                 <Image
-                                    source={require("../assets/profile.jpg")}
+                                    source={marker.image} 
                                     style={styles.cardImage}
                                     resizeMode="cover"
                                 />
