@@ -20,7 +20,7 @@ const NotificationsScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
     const [orders, setOrders] = useState([]);
-    const [orders2, setOrders2] = useState([]);
+    const [orders2, setOrders2] = getAllOrders();
     // if the user is a customer then the information that it should load should be delivery notifications l
     // ike your driver is nearby or come and pick up your food
     // if the user is a driver
@@ -76,11 +76,10 @@ const NotificationsScreen = ({ navigation }) => {
         setOrders(dummyorders);
     }, []);
     //
-    // useEffect(() => {
-    //     const getOrders = getAllOrders();
-    //     console.log(getOrders)
-    //     setOrders2(getOrders)
-    // }, []);
+    useEffect(() => {
+        // console.log(orders2);
+        console.log(orders2[0]);
+    }, [orders2]);
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
@@ -113,11 +112,15 @@ const NotificationsScreen = ({ navigation }) => {
     const LogCard = ({ item }) => {
         const cartItems = item.cart;
         const restaurantName = item.cart[0].restaurantName;
-        const cardHeight = 165 + cartItems.length*15;
+        let totalPrice = 0;
+        const cardHeight = 175 + cartItems.length*15;
         const [showComplete, setShowComplete] = useState(false);
         const [accepted, setAccepted] = useState(true);
         const [pin, setPin] = useState("")
-
+        for(let i = 0; i < item.cart.length; i++){
+            let price = item.cart[i].price.trim().replace(/[Rr]/g, '');
+            totalPrice += parseFloat(price)
+        }
         const handlePinChange = (text) => {
             setPin(text);
         };
@@ -171,15 +174,13 @@ const NotificationsScreen = ({ navigation }) => {
                                         Delivery
                                     </Text>
                                     <Text style={styles.subText}>
-                                        From: {item.name}
+                                        From: {item.orderersID}
                                     </Text>
 
                                     <Text style={styles.subText}>
                                         Restaurant: {restaurantName}
                                     </Text>
-                                    <Text style={styles.subText}>
-                                        Location: {item.location}
-                                    </Text>
+
                                     {/* Render all the names of the items in the cart */}
                                     <View>
                                         <Text style={[styles.subText, styles.boldText]}>
@@ -192,7 +193,13 @@ const NotificationsScreen = ({ navigation }) => {
                                         ))}
                                     </View>
                                     <Text style={styles.subText}>
-                                        Time: 10:00
+                                        Price: R{totalPrice}
+                                    </Text>
+                                    <Text style={styles.subText}>
+                                        Meet up point: {item.location}
+                                    </Text>
+                                    <Text style={styles.subText}>
+                                        Time: TEST
                                     </Text>
                                 </View>
                             </View>
@@ -289,7 +296,7 @@ const NotificationsScreen = ({ navigation }) => {
                         <FlatList
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={{ paddingBottom: 80 }}
-                            data={orders}
+                            data={orders2}
                             renderItem={({ item }) => <LogCard item={item} />}
                         />
                     </View>

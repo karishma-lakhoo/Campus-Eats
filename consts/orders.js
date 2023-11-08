@@ -24,10 +24,10 @@ export function getAllOrders(){
                 querySnapshot.forEach((doc) =>{
                     const data = doc.data();
                     const id = doc.id;
-                    const orderersID = data.reqID;
+                    const orderersID = data.orderersID;
                     //TODO: use name instead of ID
                     //const reqName = ;
-                    const location = data.meetPoint;
+                    const location = data.location;
                     const cart = data.cart;
 
                     listOfOrders.push({id, orderersID, location, cart});
