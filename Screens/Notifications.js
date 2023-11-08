@@ -20,66 +20,16 @@ const NotificationsScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
     const [orders, setOrders] = useState([]);
-    const [orders2, setOrders2] = getAllOrders();
+    const [allOrders, isOrdersLoading] = getAllOrders();
     // if the user is a customer then the information that it should load should be delivery notifications l
     // ike your driver is nearby or come and pick up your food
     // if the user is a driver
     // then the notifications should be the list of all deliveries that they are open to
     useEffect(() => {
-        // Set orders data here, for example, after an API call.
-        // Avoid setting orders in the render method.
-        const dummyorders = [
-            {
-                name: "John Doe",
-                location: "East Campus",
-                cart: [{
-                    imageURL: "https://azucaryoregano.com/wp-content/uploads/2021/01/cronut3.jpg",
-                    name: "Choc mousse cronut",
-                    price: "12",
-                    restaurantName: "Xpresso"
-                },{
-                    imageURL: "https://pickfreshfoods.com/wp-content/uploads/2014/06/Chocolate-Frosted-Donuts-Pick-Fresh-Foods-9.jpg",
-                    name: "chocolate doughnut",
-                    price: "12",
-                    restaurantName: "Xpresso"
-                },
-                    {
-                        imageURL: "https://azucaryoregano.com/wp-content/uploads/2021/01/cronut3.jpg",
-                        name: "afsjklsalkjflkds ",
-                        price: "12",
-                        restaurantName: "Xpresso"
-                    }],
-            },
-            {
-                name: "John Doe",
-                location: "East Campus",
-                cart:[{
-                    imageURL: "https://azucaryoregano.com/wp-content/uploads/2021/01/cronut3.jpg",
-                    name: "2 cronut",
-                    price: "12",
-                    restaurantName: "Xpresso"
-                }]
-            },
-            {
-                name: "John Doe",
-                location: "East Campus",
-                cart:[{
-                    imageURL: "https://azucaryoregano.com/wp-content/uploads/2021/01/cronut3.jpg",
-                    name: "3 cronut",
-                    price: "12",
-                    restaurantName: "Xpresso"
-                }]
-            },
-            // Add more dummy orders as needed
-        ];
-
-        setOrders(dummyorders);
-    }, []);
-    //
-    useEffect(() => {
-        // console.log(orders2);
-        console.log(orders2[0]);
-    }, [orders2]);
+        if(!isOrdersLoading){
+            setOrders(allOrders);
+        }
+    }, [isOrdersLoading, allOrders]);
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
@@ -174,7 +124,7 @@ const NotificationsScreen = ({ navigation }) => {
                                         Delivery
                                     </Text>
                                     <Text style={styles.subText}>
-                                        From: {item.orderersID}
+                                        From: {item.orderersName}
                                     </Text>
 
                                     <Text style={styles.subText}>
@@ -296,7 +246,7 @@ const NotificationsScreen = ({ navigation }) => {
                         <FlatList
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={{ paddingBottom: 80 }}
-                            data={orders2}
+                            data={orders}
                             renderItem={({ item }) => <LogCard item={item} />}
                         />
                     </View>

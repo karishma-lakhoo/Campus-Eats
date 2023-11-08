@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import {collection, getFirestore, addDoc, setDoc, doc, getDocs, updateDoc, arrayUnion, arrayRemove, query} from 'firebase/firestore';
+import {collection, getFirestore, addDoc, setDoc, doc, getDocs, updateDoc, arrayUnion, arrayRemove, query,where} from 'firebase/firestore';
 import { getAuth} from "firebase/auth";
 
 
 const db = getFirestore();
 
 const ordersRef = collection(db, 'orders');
+const usersRef = collection(db, 'users');
 
 export function getAllOrders(){
     const [loading, setLoading] = useState(true);
@@ -19,19 +20,28 @@ export function getAllOrders(){
                 const querySnapshot = await getDocs(q);
 
                 const listOfOrders = [];
-
-
-                querySnapshot.forEach((doc) =>{
-                    const data = doc.data();
-                    const id = doc.id;
+                
+                for (const myDoc of querySnapshot.docs) {
+                    const id = myDoc.id; // Firestore document ID
+                    const data = myDoc.data();
                     const orderersID = data.orderersID;
-                    //TODO: use name instead of ID
-                    //const reqName = ;
                     const location = data.location;
                     const cart = data.cart;
+                    let orderersName = "";
+          
+                    const userQuery = query(usersRef, where('__name__', '==', orderersID));
+                    const userSnapshot = await getDocs(userQuery);
+          
+                    if (!userSnapshot.empty) {
+                      const userDoc = userSnapshot.docs[0];
+                      const userData = userDoc.data();
+                      orderersName = userData.username;
+                    }
+          
+                    listOfOrders.push({ id, orderersID, location, cart, orderersName });
+                  }
 
-                    listOfOrders.push({id, orderersID, location, cart});
-                })
+                
                 setOrders(listOfOrders);
                 setLoading(false);
             } catch (error) {
