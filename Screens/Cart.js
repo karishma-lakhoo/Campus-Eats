@@ -20,6 +20,8 @@ import { foodList } from "../consts/foodData";
 import {clearCart, getCart, removeFromCart} from "../consts/cartData";
 import { CreditProcessor } from "../consts/creditProcessor";
 import {addNewOrder} from "../consts/orders";
+import {getFirestore} from "firebase/firestore";
+import {getAuth} from "firebase/auth";
 
 const { width, height } = Dimensions.get("window");
 
@@ -35,6 +37,9 @@ const CartScreen = ({ navigation, route }) => {
     const [price, setPrice] = useState(0);
     const deliveryFee = 5
     const [location, setLocation] = useState("not selected");
+
+    const db = getFirestore();
+    const auth = getAuth();
 
     useEffect(() =>{
         if(!foodLoading && !cartLoading ){
@@ -89,7 +94,7 @@ const CartScreen = ({ navigation, route }) => {
            setPrice(totalPrice);
            alert("Order Placed");
 
-            //navigation.navigate();         //navigate to a myOrders page
+            navigation.navigate("Status");         //navigate to a myOrders page
         }else{
             alert("Select a pick up point");
         }
@@ -124,7 +129,7 @@ const CartScreen = ({ navigation, route }) => {
                     <ActivityIndicator size="large" color="orange" style={{marginTop: (height / 2) - height * 0.15}}/>
                 ) : cartList.length > 0 ? (
                     <ScrollView
-                        style={{flex: 1, marginTop: height * 0.07, flexDirection: "column"}}
+                        style={{flex: 1, marginTop: height * 0.1, flexDirection: "column"}}
                         onScroll={handleScroll}
                         scrollEventThrottle={16}
                     >

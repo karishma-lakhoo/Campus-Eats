@@ -45,7 +45,7 @@ const SignUpScreen = ({navigation}) =>{
 
     const handleEmailChange = (text) => {
         setEmail(text);
-    };
+    };``
 
     const handlePasswordChange = (text) => {
         setPassword(text);

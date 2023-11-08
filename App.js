@@ -16,6 +16,8 @@ import FoodsScreen from "./Screens/Foods";
 import MapScreen from "./Screens/Map";
 import CreditScreen from './Screens/CreditWallet';
 import UpdateScreen from './Screens/UpdateProfile';
+import ProfileScreen from "./Screens/Profile";
+import StatusScreen from "./Screens/Status";
 
 const Stack = createStackNavigator();
 
@@ -39,7 +41,8 @@ export default function App() {
               <Stack.Screen name="Notifications" component={NotificationsScreen}/>
               <Stack.Screen name="CreditWallet" component={CreditScreen}/>
               <Stack.Screen name="Map" component={MapScreen}/>
-              <Stack.Screen name="UpdateProfile" component={UpdateScreen}/>
+              <Stack.Screen name="Profile" component={ProfileScreen}/>
+              <Stack.Screen name="Status" component={StatusScreen}/>
           </Stack.Navigator>
         </NavigationContainer>
       </MyContext.Provider>

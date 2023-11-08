@@ -228,17 +228,21 @@ const HomeScreen = ({navigation}) => {
     const handleFoodPress = (foodItem) => {
         navigation.navigate('Foods', {foodItem});
     }
+
+    const handlePicPress = () => {
+        navigation.navigate('Profile');
+    }
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={[styles.heading, styles.boldText]}>Home</Text>
-                <View style={styles.profileImage}>
+                <TouchableOpacity style={styles.profileImage} onPress={handlePicPress}>
                     <Image
                         source={{ uri: gravatarUrl }}
                         style={styles.image}
                         resizeMode="cover"
                     />
-                </View>
+                </TouchableOpacity>
             </View>
 
             <View>
