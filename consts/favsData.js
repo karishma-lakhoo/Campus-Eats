@@ -43,7 +43,7 @@ export function getFavs() {
             getFavsData();
         } else {
            // setLoading(false);
-            console.log('User not logged in!');
+            console.log('User not logged in! 2');
         }
     }, [currentUser]);
 
@@ -54,7 +54,7 @@ export async function addToFavs(foodID) {
 
 
     if (!currentUser) {
-        console.log("User not logged in!");
+        console.log("User not logged in! 3");
         return;
     }
 
@@ -90,7 +90,7 @@ export async function addToFavs(foodID) {
 export async function removeFromFavs(foodID) {
 
     if (!currentUser) {
-        console.log("User not logged in!");
+        console.log("User not logged in! 1");
         return;
     }
 

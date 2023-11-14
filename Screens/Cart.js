@@ -19,7 +19,7 @@ import foodCategories from "../consts/foodCategories";
 import { foodList } from "../consts/foodData";
 import {clearCart, getCart, removeFromCart} from "../consts/cartData";
 import { CreditProcessor } from "../consts/creditProcessor";
-import {addNewOrder} from "../consts/orders";
+import {addNewOrder, CheckCartValidity} from "../consts/orders";
 import {getFirestore} from "firebase/firestore";
 import {getAuth} from "firebase/auth";
 
@@ -85,16 +85,22 @@ const CartScreen = ({ navigation, route }) => {
     };
 
     const handleCheckout = async () => {
+        // console.log("WIthin");
+        // if(CheckCartValidity(cartList)){
+        //     console.log("it works");
+        // }else{
+        //     alert("You cannot order from stores in different locations");
+        // }
         if(location !== "not selected"){
             //cartLoading = true;
-           await addNewOrder(cartList,location, price);
+          const orderID =  await addNewOrder(cartList,location, price);
            await clearCart();
            setCartList([]);
            const totalPrice = creditProcessor.calculateTotal([]);
            setPrice(totalPrice);
            alert("Order Placed");
 
-            navigation.navigate("Status");         //navigate to a myOrders page
+            navigation.navigate("Status" , { orderID });         //navigate to a myOrders page
         }else{
             alert("Select a pick up point");
         }

@@ -13,6 +13,7 @@ import * as Font from "expo-font";
 import {getAllOrders} from "../consts/orders";
 import foodCategories from "../consts/foodCategories";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
+import {serverTimestamp} from "firebase/firestore";
 
 const { width, height } = Dimensions.get("window");
 
@@ -27,9 +28,18 @@ const NotificationsScreen = ({ navigation }) => {
     // then the notifications should be the list of all deliveries that they are open to
     useEffect(() => {
         if(!isOrdersLoading){
-            setOrders(allOrders);
+            const currTime = serverTimestamp();
+            const filteredOrders = allOrders.filter(order => {
+                // Assuming order.time is a timestamp or a similar representation of time
+                const orderTime = order.time;
+                const twoHoursAgo = currTime - 2 * 60 * 60 * 1000; // Two hours in milliseconds
+
+                return orderTime >= twoHoursAgo && orderTime <= currTime;
+            });
+            setOrders(filteredOrders);
         }
     }, [isOrdersLoading, allOrders]);
+
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
@@ -84,6 +94,7 @@ const NotificationsScreen = ({ navigation }) => {
             setShowComplete(true);
         }
         const handleComplete = () => {
+
             console.log("completed");
         //     need to add backend
         }

@@ -97,7 +97,7 @@ const HomeScreen = ({navigation}) => {
             } else if (selectedCategory.category.toLowerCase() === "your favourites") {
 
                 if ( !favsLoading) {
-                    const filteredFoods = allFoods.filter((food) => favFoods.includes(food.id));
+                    const filteredFoods = allFoods.filter((food) => favFoods.includes(food?.id));
                     setSelectedItems(filteredFoods);
             //        console.log("favFoods:", favFoods);
              //       console.log("selectedItems:", selectedItems);
@@ -199,7 +199,7 @@ const HomeScreen = ({navigation}) => {
                 style={styles.flatListContainer} // Add this style
                 data={selectedItems}
                 numColumns={numColumns}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item?.id}
                 scrollEnabled={true}
 
                 renderItem={({ item }) => (

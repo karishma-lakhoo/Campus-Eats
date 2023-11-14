@@ -19,7 +19,7 @@ import foodCategories from "../consts/foodCategories";
 import { foodList } from "../consts/foodData";
 import {clearCart, getCart, removeFromCart} from "../consts/cartData";
 import { CreditProcessor } from "../consts/creditProcessor";
-import {addNewOrder} from "../consts/orders";
+import {addNewOrder, getAllOrders, getCurrentUsersOrders} from "../consts/orders";
 import LottieView from "lottie-react-native";
 import StarRating from 'react-native-star-rating-widget';
 
@@ -33,6 +33,19 @@ const StatusScreen = ({ navigation, route }) => {
     const [deliveryAccepted, setDeliveryAccepted] = useState(true);
     const [deliveryArrived, setDeliveryArrived] = useState(false);
     const [rating, setRating] = useState(2.5);
+    const orderID = route.params.orderID;
+    const [currOrder, setOrder] = useState([]);
+    const [allOrders, isOrdersLoading ] = getAllOrders();
+
+    useEffect(() => {
+        if (!isOrdersLoading) {
+            // Find the order in myOrders with the same ID as orderId
+            const orderWithId = allOrders.find(order => order.id === orderID);
+
+            // Set currOrder to the found order
+            setOrder(orderWithId);
+        }
+    }, [isOrdersLoading, allOrders, orderID]);
 
     useEffect(() => {
         async function loadFont() {
@@ -86,7 +99,7 @@ const StatusScreen = ({ navigation, route }) => {
                     {deliveryAccepted && (
                         <View>
                             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                <Text style={[styles.boldText17, { fontSize: 20 }]}>Addname-here is on the way</Text>
+                                <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.deliverer} is on the way</Text>
                                 <View style={styles.animationContainer}>
                                     <LottieView
                                         source={require('../animations/dots.json')}
@@ -104,7 +117,7 @@ const StatusScreen = ({ navigation, route }) => {
                                     />
                                 </View>
                                 <View>
-                                    <Text style={[styles.boldText17, { fontSize: 20 }]}>Deliverer Name</Text>
+                                    <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.deliverer}</Text>
                                 </View>
                                 <View style={{ pointerEvents: 'none', marginTop: 30}}>
                                     <StarRating
@@ -113,7 +126,7 @@ const StatusScreen = ({ navigation, route }) => {
                                     />
                                 </View>
                                 <View style={{paddingTop: 20}}>
-                                    <Text style={[styles.boldText17, { fontSize: 20 }]}>Confirmation Code: 12345</Text>
+                                    <Text style={[styles.boldText17, { fontSize: 20 }]}>Confirmation Code: {currOrder.pin}</Text>
                                     {/*add randomised code*/}
                                 </View>
                             </View>
