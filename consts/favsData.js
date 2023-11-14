@@ -13,9 +13,12 @@ export function getFavs() {
 
     useEffect(() => {
 
+        const userUID = currentUser.uid;
 
-        if (currentUser) {
-            const userUID = currentUser.uid;
+        if (!currentUser) {
+            console.log("User not logged in! 2");
+            return;
+        }
 
             async function getFavsData() {
                 try {
@@ -41,10 +44,7 @@ export function getFavs() {
             }
 
             getFavsData();
-        } else {
-           // setLoading(false);
-            console.log('User not logged in! 2');
-        }
+
     }, [currentUser]);
 
     return [foodIDs, loading];
