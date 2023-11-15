@@ -77,6 +77,43 @@ const CreditScreen = ({ navigation }) => {
             console.error('Error updating credits:', error);
         }
     };
+
+    const handleWithdraw = async () => {
+        try {
+          // Get the current user's UID
+          const uid = auth.currentUser.uid;
+      
+          // Reference to the user's document in the database
+          const userDocRef = doc(db, 'users', uid);
+      
+          // Get the current credits from the database
+          const userDoc = await getDoc(userDocRef);
+          const currentCredits = userDoc.data().credits || 0;
+      
+          // Ensure that the user has sufficient credits for the withdrawal
+          if (currentCredits < parseFloat(cash_in_amount)) {
+            alert('Insufficient credits for withdrawal');
+            return;
+          }
+      
+          // Calculate the new credits by subtracting the withdrawn amount
+          const newCredits = currentCredits - parseFloat(cash_in_amount);
+      
+          // Update the credits field in the user's document
+          await updateDoc(userDocRef, {
+            credits: newCredits,
+          });
+      
+          // Update the local state
+          setCredits(newCredits);
+      
+          // Show an alert or navigate to another screen after a successful update
+          alert(`Withdrawn ${cash_in_amount} Kudus from your account`);
+          navigation.navigate("Profile");
+        } catch (error) {
+          console.error('Error updating credits:', error);
+        }
+      };
     
 
     const handleAdd = () => {
@@ -95,50 +132,57 @@ const CreditScreen = ({ navigation }) => {
             </View>
 
            
-                <View style={styles.container}>
-                    
-                    <View style={styles.imageBox}>
-                        <Image
-                            source={require("../assets/24.jpg")}
-                            style={styles.image}
-                            resizeMode="center"
-                        />
-                    </View>
-                    
-                        {!credits && 
-                            <View style={styles.noCredit}>
-                                <Text style={styles.textInfo}> You have no credits</Text>
-                                <Text style={{alignItems: "center", justifyContent: "center", fontSize: 11}}>Add credits to order food</Text>
-                            </View>
-                        }
+            <View style={styles.container}>
+  <View style={styles.imageBox}>
+    <Image
+      source={require("../assets/24.jpg")}
+      style={styles.image}
+      resizeMode="center"
+    />
+  </View>
 
-                        {credits>0 && 
-                            <View style={styles.noCredit}>
-                                <Text style={styles.textInfo}> Credits: {credits} </Text>
-                                <Text style={styles.textInfo} >Balance: {balance}</Text>
-                            </View>
-                        }
+  {!credits && (
+    <View style={styles.noCredit}>
+      <Text style={styles.textInfo}> You have no credits</Text>
+      <Text style={{ alignItems: "center", justifyContent: "center", fontSize: 11 }}>
+        Add credits to order food
+      </Text>
+    </View>
+  )}
 
-                        <View style={styles.formGroup} >
-                            <Text style={styles.label}>Enter the amount you want to cash-in to your Campus-Eats account:</Text>
-                            <TextInput
-                                keyboardType='numeric'
-                                maxLength={6}
-                                style={styles.input}
-                                value={cash_in_amount}
-                                placeholder="0.0"
-                                onChangeText={(text) => setAmount(text)}
-                            />
-                        </View>
-                        
-                        <View style={styles.btncontainer}>
-                        <TouchableOpacity activeOpacity={0.7} onPress={handleAddToWallet}>
-                                <Text>Add to wallet</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-        
+  {credits > 0 && (
+    <View style={styles.noCredit}>
+      <Text style={styles.textInfo}> Credits: {credits} </Text>
+      <Text style={styles.textInfo}>Balance: {balance}</Text>
+    </View>
+  )}
 
+  <View style={styles.formGroup}>
+    <Text style={styles.label}>
+      Enter the amount you want to cash-in to your Campus-Eats account:
+    </Text>
+    <TextInput
+      keyboardType="numeric"
+      maxLength={6}
+      style={styles.input}
+      value={cash_in_amount}
+      placeholder="0.0"
+      onChangeText={(text) => setAmount(text)}
+    />
+  </View>
+
+  <View style={styles.btncontainer}>
+    <TouchableOpacity activeOpacity={0.7} onPress={handleAddToWallet}>
+      <Text>Add to wallet</Text>
+    </TouchableOpacity>
+  </View>
+
+  <View style={styles.btncontainer}>
+    <TouchableOpacity activeOpacity={0.7} onPress={handleWithdraw}>
+      <Text>Withdraw</Text>
+    </TouchableOpacity>
+  </View>
+</View>
         </SafeAreaView>
     );
 };
