@@ -18,6 +18,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {serverTimestamp} from "firebase/firestore";
 import  {useCallback } from "react";
 import { useFocusEffect } from '@react-navigation/native';
+import COLORS from "../colors";
 
 
 
@@ -125,7 +126,7 @@ const NotificationsScreen = ({ navigation }) => {
         const cartItems = item.cart;
         const restaurantName = item.cart[0].restaurantName;
         let totalPrice = 0;
-        const cardHeight = 175 + cartItems.length*15;
+        const cardHeight = 290 + cartItems.length*15;
         const [showComplete, setShowComplete] = useState(false);
         const [accepted, setAccepted] = useState(true);
         const [pin, setPin] = useState("")
@@ -136,11 +137,6 @@ const NotificationsScreen = ({ navigation }) => {
         const handlePinChange = (text) => {
             setPin(text);
         };
-        const handleDecline = () => {
-            console.log("Declined")
-        //     BACKEND INTEGRATION??
-
-        }
         const handleAccept = () => {
             console.log("accepted");
             setAccepted(false);
@@ -161,7 +157,6 @@ const NotificationsScreen = ({ navigation }) => {
                 <View
                     style={{
                         height: cardHeight,
-                        marginLeft: 20,
                         paddingVertical: 5,
                         flex: 1,
                     }}
@@ -172,6 +167,12 @@ const NotificationsScreen = ({ navigation }) => {
                         </View>
                     ) : (
                         <>
+                            <View style={{backgroundColor: 'rgba(255, 167, 38, 0.8)', alignItems: "center", height: 100, borderRadius: 10, marginTop: 5}}>
+                                <Image
+                                    source={require("../assets/profile.jpg")}
+                                    style={{ height: 80, width: 80, borderRadius: 50, marginTop: 10}}
+                                />
+                            </View>
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -180,10 +181,6 @@ const NotificationsScreen = ({ navigation }) => {
                                     right: 15,
                                 }}
                             >
-                                <Image
-                                    source={require("../assets/profile.jpg")}
-                                    style={{ height: 60, width: 60, borderRadius:50 }}
-                                />
                                 <View style={{ marginLeft: 30 }}>
                                     <Text style={styles.boldSubtext}>
                                         Delivery
@@ -220,71 +217,56 @@ const NotificationsScreen = ({ navigation }) => {
                             </View>
                         </>
                     )}
+                    <View style={{flexDirection:"row"}}>
+                        {accepted && (
+                            <View style={{ marginBottom: 50, paddingLeft: width/2 + 12}}>
+                                <Pressable
+                                    style={styles.actionBtn}
+                                    onPress={() => handleAccept()}
+                                >
+                                    <Text style={styles.actionBtnText}>Accept</Text>
+                                </Pressable>
+                            </View>
+                        )
+                        }
+                        { showComplete && (
+                            <View style={{ marginBottom: 10, paddingLeft: 30}}>
+                                <TextInput
+                                    onChangeText={handlePinChange}
+                                    value={pin}
+                                    style={[styles.regularText, styles.textBoxes]}
+                                    placeholder="Pin"
+                                    keyboardType="numeric"></TextInput>
+                            </View>
+                        )
+                        }
+                        { showComplete && (
+                            <View style={{ marginBottom: 10, paddingLeft: 90}}>
+                                <Pressable
+                                    style={styles.actionBtnComplete}
+                                    onPress={() => handleComplete()}
+                                >
+                                    <Text style={styles.actionBtnText}>Complete</Text>
+                                    <Text style={styles.actionBtnText}>order</Text>
+
+                                </Pressable>
+                            </View>
+                        )
+                        }
+                        { showComplete && (
+                            <View style={{ marginBottom: 10, paddingLeft: 90}}>
+                                <Pressable
+                                    style={styles.actionBtnReport}
+                                    onPress={() => handleComplete()}
+                                >
+                                    <Text style={styles.actionBtnText}>Report</Text>
+                                </Pressable>
+                            </View>
+                        )
+                        }
+                    </View>
                 </View>
-                <View style={{flexDirection:"row"}}>
-                    {accepted && (
-                        <View style={{ marginBottom: 50, paddingLeft: width-200}}>
-                            <Pressable
-                                style={styles.actionBtn}
-                                onPress={() => handleAccept()}
-                            >
-                                <Text style={styles.actionBtnText}>Accept</Text>
-                            </Pressable>
-                        </View>
-                    )
-                    }
-                    {accepted && (
-                        <View style={{ marginBottom: 50, paddingLeft: 50}}>
-                            <Pressable
-                                style={styles.actionBtn2}
-                                onPress={() => handleDecline()}
-                            >
-                                <Text style={styles.actionBtnText}>X</Text>
-                                {/*<Text style={{alignContent:"center", fontFamily:"Urbanist-Bold", color: "white"}}>x</Text>*/}
 
-                            </Pressable>
-                        </View>
-                    )
-                    }
-                    { showComplete && (
-                        <View style={{ marginBottom: 10, paddingLeft: 30}}>
-                            <TextInput
-                                onChangeText={handlePinChange}
-                                value={pin}
-                                style={[styles.regularText, styles.textBoxes]}
-                                placeholder="Pin"
-                                keyboardType="numeric"></TextInput>
-                        </View>
-                    )
-                    }
-                    { showComplete && (
-                        <View style={{ marginBottom: 10, paddingLeft: 90}}>
-                            <Pressable
-                                style={styles.actionBtnComplete}
-                                onPress={() => handleComplete()}
-                            >
-                                <Text style={styles.actionBtnText}>Complete</Text>
-                                <Text style={styles.actionBtnText}>order</Text>
-
-                            </Pressable>
-                        </View>
-                    )
-                    }
-
-                    { showComplete && (
-                        <View style={{ marginBottom: 10, paddingLeft: 90}}>
-                            <Pressable
-                                style={styles.actionBtnReport}
-                                onPress={() => handleComplete()}
-                            >
-                                <Text style={styles.actionBtnText}>Report</Text>
-                            </Pressable>
-                        </View>
-                    )
-                    }
-
-
-                </View>
             </View>
 
 
@@ -459,7 +441,21 @@ const styles = StyleSheet.create({
     actionBtn: {
         height: 40,
         width: 80,
-        backgroundColor: '#5DBB63',
+        backgroundColor: '#50C878',
+        marginBottom: 10,
+        borderRadius: 10,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        marginRight: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1,
+    },
+    actionBtn2: {
+        height: 40,
+        width: 80,
+        backgroundColor: '#ff4c4c',
         marginBottom: 10,
         borderRadius: 10,
         position: 'absolute',
@@ -473,7 +469,7 @@ const styles = StyleSheet.create({
     actionBtnComplete: {
         height: 40,
         width: 80,
-        backgroundColor: '#5DBB63',
+        backgroundColor: '#50C878',
         marginBottom: 10,
         borderRadius: 10,
         position: 'absolute',
@@ -498,19 +494,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         zIndex: 1,
     },
-    actionBtn2: {
-        height: 40,
-        width: 40,
-        backgroundColor: 'red',
-        marginBottom: 10,
-        borderRadius: 25,
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1,
-    },
+
     actionBtnText: {
         fontFamily:"Urbanist-Bold",
         color: "white",
