@@ -80,7 +80,7 @@ export async function getCurrentUsersOrders(){
                 const querySnapshot = await getDocs(orderCollection);
                 const ordersFetched = [];
                 console.log("1. here");
-                querySnapshot.forEach((doc) =>{
+                for (const myDoc of querySnapshot.docs) {
                    console.log("witihn loop");
                     const docData = doc.data();
                     const docID = doc.id;
@@ -92,10 +92,9 @@ export async function getCurrentUsersOrders(){
                     const totalCost = docData.totalCost;
                     const timePlaced = docData.timestamp;
                     const pin = docData.pin;
-                    //TODO: If order is older than two hours, delete it
                     ordersFetched.push({docID, foodItems, isReceived, deliverer, location, status, totalCost, timePlaced, pin});
 
-                })
+                }
                 console.log("After the for loop");
                 setOrders(ordersFetched);
                 setLoading(false);

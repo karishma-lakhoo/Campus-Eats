@@ -29,9 +29,10 @@ const NotificationsScreen = ({ navigation }) => {
     useEffect(() => {
         if(!isOrdersLoading){
             const currTime = serverTimestamp();
+            //Instead of deleting from DB, just filter to show orders that are at most 2 hours old
+            //TODO: also filter to show orders where status != order completed
             const filteredOrders = allOrders.filter(order => {
-                // Assuming order.time is a timestamp or a similar representation of time
-                const orderTime = order.time;
+                                const orderTime = order.time;
                 const twoHoursAgo = currTime - 2 * 60 * 60 * 1000; // Two hours in milliseconds
 
                 return orderTime >= twoHoursAgo && orderTime <= currTime;

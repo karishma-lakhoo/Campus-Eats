@@ -13,8 +13,6 @@ export function getFavs() {
 
     useEffect(() => {
 
-        const userUID = currentUser.uid;
-
         if (!currentUser) {
             console.log("User not logged in! 2");
             return;
@@ -22,6 +20,7 @@ export function getFavs() {
 
             async function getFavsData() {
                 try {
+                    const userUID = currentUser.uid;
                     const usersCollection = collection(db, 'users');
                     const userDoc = doc(usersCollection, userUID);
                     const favsCollection = collection(userDoc, 'Favourites');
