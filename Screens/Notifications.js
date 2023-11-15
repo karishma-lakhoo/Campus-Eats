@@ -28,16 +28,23 @@ const NotificationsScreen = ({ navigation }) => {
     // then the notifications should be the list of all deliveries that they are open to
     useEffect(() => {
         if(!isOrdersLoading){
-            const currTime = serverTimestamp();
-            //Instead of deleting from DB, just filter to show orders that are at most 2 hours old
-            //TODO: also filter to show orders where status != order completed
-            const filteredOrders = allOrders.filter(order => {
-                                const orderTime = order.time;
-                const twoHoursAgo = currTime - 2 * 60 * 60 * 1000; // Two hours in milliseconds
+            // const currTime = new Date();
+            // console.log("currTime");
+            // console.log(currTime);
+            // //Instead of deleting from DB, just filter to show orders that are at most 2 hours old
+            // //TODO: also filter to show orders where status != order completed
+            // const filteredOrders = allOrders.filter(order => {
+            //                     const orderTime = order.timePlaced;
+            //     const twoHoursAgo = new Date();
+            //     twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
+            //     console.log("orderTime")
+            //     console.log(order.timePlaced.toDate());
+            //     console.log("twoTime")
+            //     console.log(twoHoursAgo);
+            //     return orderTime >= twoHoursAgo && orderTime <= currTime;
+            // });
 
-                return orderTime >= twoHoursAgo && orderTime <= currTime;
-            });
-            setOrders(filteredOrders);
+            setOrders(allOrders);
         }
     }, [isOrdersLoading, allOrders]);
 

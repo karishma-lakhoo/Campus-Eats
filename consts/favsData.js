@@ -4,12 +4,15 @@ import {collection,getFirestore, doc, getDocs, addDoc, updateDoc, arrayUnion, de
 import { getAuth} from "firebase/auth";
 
 
-const db = getFirestore();
-const auth = getAuth();
-const currentUser = auth.currentUser;
+
 export function getFavs() {
     const [foodIDs, setFoodIDs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const db = getFirestore();
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+ //   console.log("first");
+   // console.log(currentUser);
 
     useEffect(() => {
 
@@ -52,6 +55,12 @@ export function getFavs() {
 export async function addToFavs(foodID) {
 
 
+    const db = getFirestore();
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+  //  console.log("second");
+  //  console.log(currentUser);
+
     if (!currentUser) {
         console.log("User not logged in! 3");
         return;
@@ -87,6 +96,9 @@ export async function addToFavs(foodID) {
 }
 
 export async function removeFromFavs(foodID) {
+    const db = getFirestore();
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
 
     if (!currentUser) {
         console.log("User not logged in! 1");
