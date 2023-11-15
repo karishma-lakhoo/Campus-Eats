@@ -139,11 +139,13 @@ const NotificationsScreen = ({ navigation }) => {
         const handleDecline = () => {
             console.log("Declined")
         //     BACKEND INTEGRATION??
+
         }
         const handleAccept = () => {
             console.log("accepted");
             setAccepted(false);
             setShowComplete(true);
+
         }
         const handleComplete = () => {
 

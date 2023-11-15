@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import {collection, getFirestore, addDoc, setDoc, doc, getDocs, updateDoc, arrayUnion, arrayRemove, query,where, serverTimestamp} from 'firebase/firestore';
+import {collection, getFirestore, addDoc, setDoc, doc, getDocs,getDoc, updateDoc, arrayUnion, arrayRemove, query,where, serverTimestamp} from 'firebase/firestore';
 import { getAuth} from "firebase/auth";
 import {useFetchRestaurants} from "./foodData";
 
@@ -136,8 +136,6 @@ export function CheckCartValidity(cart) {
 }
 
 export async function addNewOrder(cart, location, tCost){
-    //TODO: Change to work with credits
-
     const auth = getAuth();
     const currentUser = auth.currentUser;
     let userUID;
@@ -151,25 +149,43 @@ export async function addNewOrder(cart, location, tCost){
     const usersCollection = collection(db, 'users');
     const userDoc = doc(usersCollection,userUID);
 
-    try{
-        const pin = generateRandomPin();
-        const orderData = {
-            cart: cart,
-            orderersID: userUID,
-            location: location,
-            status: "order placed",
-            deliverer: "",
-            received: false,
-            delivered: false,
-            totalCost: tCost,
-            timestamp: serverTimestamp(),
-            pin: pin
 
-        };
-        const docRef = await addDoc(ordersRef, orderData);
-        const orderCollection = doc(userDoc,'myOrders', docRef.id);
-        await setDoc(orderCollection, orderData);
-        return  docRef.id;
+    try{
+        // Retrieve user credits
+        const userSnapshot = await getDoc(userDoc);
+        const userData = userSnapshot.data();
+        const userCredits = userData.credits || 0;
+
+        if (userCredits >= tCost) {
+            // Deduct credits
+            const updatedCredits = userCredits - tCost;
+            await updateDoc(userDoc, {credits: updatedCredits});
+
+
+            const pin = generateRandomPin();
+            const orderData = {
+                cart: cart,
+                orderersID: userUID,
+                location: location,
+                status: "order placed",
+                deliverer: "",
+                received: false,
+                delivered: false,
+                totalCost: tCost,
+                timestamp: serverTimestamp(),
+                pin: pin
+
+            };
+            const docRef = await addDoc(ordersRef, orderData);
+            const orderCollection = doc(userDoc, 'myOrders', docRef.id);
+            await setDoc(orderCollection, orderData);
+          //  alert("Order Placed");
+            return docRef.id;
+        }else{
+            // Not enough credits
+            console.log("Not enough credits! Add credits in profile");
+            return null;
+        }
 
     }catch (error){
         alert(error.message);
