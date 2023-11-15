@@ -16,6 +16,8 @@ import {
 } from "react-native";
 import * as Font from "expo-font";
 import { FontAwesome5 } from '@expo/vector-icons';
+import { getAuth } from 'firebase/auth';
+import { getDoc,doc, getFirestore, updateDoc } from 'firebase/firestore';
 import Colors from "../colors";
 
 const { width, height } = Dimensions.get("window");
@@ -24,6 +26,8 @@ const CreditScreen = ({ navigation }) => {
     let popupRef = React.createRef();
     const [fontLoaded, setFontLoaded] = useState(false);
     const [cash_in_amount, setAmount] = useState("");
+    const [credits, setCredits] = useState(0);
+    const [balance, setBalance] = useState(0); 
     
     useEffect(() => {
         async function loadFont() {
@@ -40,9 +44,40 @@ const CreditScreen = ({ navigation }) => {
         return null;
     }
 
-    // Replace with values from DB - credits and balance can be the same
-    let credits = 0; 
-    let balance = 0;
+    const auth = getAuth();
+    const db = getFirestore();
+
+    const handleAddToWallet = async () => {
+        try {
+            // Get the current user's UID
+            const uid = auth.currentUser.uid;
+    
+            // Reference to the user's document in the database
+            const userDocRef = doc(db, 'users', uid);
+    
+            // Get the current credits from the database
+            const userDoc = await getDoc(userDocRef);
+            const currentCredits = userDoc.data().credits || 0;
+    
+            // Calculate the new credits by adding the entered amount
+            const newCredits = currentCredits + parseFloat(cash_in_amount);
+    
+            // Update the credits field in the user's document
+            await updateDoc(userDocRef, {
+                credits: newCredits,
+            });
+    
+            // Update the local state
+            setCredits(newCredits);
+    
+            // Show an alert or navigate to another screen after a successful update
+            alert(`Added ${cash_in_amount} Kudus to your account`);
+            navigation.navigate("Profile");
+        } catch (error) {
+            console.error('Error updating credits:', error);
+        }
+    };
+    
 
     const handleAdd = () => {
         popupRef.show();
@@ -97,10 +132,7 @@ const CreditScreen = ({ navigation }) => {
                         </View>
                         
                         <View style={styles.btncontainer}>
-                            <TouchableOpacity activeOpacity={0.7} onPress={()=>{
-                                alert(`Added to ${cash_in_amount} Kudus to your account`);
-                                navigation.navigate("Profile")
-                            }}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={handleAddToWallet}>
                                 <Text>Add to wallet</Text>
                             </TouchableOpacity>
                         </View>

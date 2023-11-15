@@ -4,7 +4,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { faUserEdit, faUser, faEnvelope, faWallet, faStar } from '@fortawesome/free-solid-svg-icons';
 import { PFPpopup } from '../PopUps/PFPpopup';
 import Colors from '../colors'; // Import the colors module here
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged , signOut} from 'firebase/auth';
 import { collection, getFirestore,updateDoc, query, where, getDocs } from 'firebase/firestore';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 const { width, height } = Dimensions.get('window');
@@ -30,36 +30,39 @@ const ProfileScreen = ({ navigation }) => {
   const db = getFirestore();
 
   useEffect(() => {
-
     // Listen for changes in the user's authentication state
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-        if (authUser) {
-            console.log('User is signed in:', authUser.email);
-            const email = authUser.email;
-
-            // Query Firestore to get the user's data
-            const usersRef = collection(db, 'users');
-            const userQuery = query(usersRef, where('email', '==', email));
-
-            try {
-                const querySnapshot = await getDocs(userQuery);
-                if (!querySnapshot.empty) {
-                    const userData = querySnapshot.docs[0].data();
-                    console.log('Fetched user data:', userData); // Add this line
-                    setUser(userData);
-                }
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        } else {
-            console.log('No user is signed in.'); // Add this line
-            // No user is signed in. Handle this case as needed.
+      if (authUser) {
+        console.log('User is signed in:', authUser.email);
+        const email = authUser.email;
+  
+        // Query Firestore to get the user's data
+        const usersRef = collection(db, 'users');
+        const userQuery = query(usersRef, where('email', '==', email));
+  
+        try {
+          const querySnapshot = await getDocs(userQuery);
+          if (!querySnapshot.empty) {
+            const userData = querySnapshot.docs[0].data();
+            console.log('Fetched user data:', userData);
+            setUser(userData);
+            
+            // Set the initial value of toggle based on the fetched databaseStatus
+            setToggleValue(userData.deliveryStatus);
+            setDatabaseStatus(userData.deliveryStatus);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
         }
+      } else {
+        console.log('No user is signed in.');
+        // No user is signed in. Handle this case as needed.
+      }
     });
-
+  
     return unsubscribe; // Cleanup when component unmounts
-}, []);
-
+  }, []);
+  
 const updateDeliveryStatus = async (newState) => {
     // Log the current and new delivery status values
     console.log('Current Delivery Status:', databaseStatus);
@@ -90,7 +93,16 @@ const updateDeliveryStatus = async (newState) => {
     }
   };
   
-  
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      console.log('User signed out');
+      // You can navigate to the login screen or any other screen after sign-out
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
 
   const handleAdd = () => {
@@ -210,13 +222,12 @@ const updateDeliveryStatus = async (newState) => {
             </View>
 
 
-            <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-                <TouchableOpacity activeOpacity={0.7} style={styles.btncontainer} onPress={() => console.log("signout")}>
-                    <Text style={[styles.boldText, styles.pressableText]}>Sign Out</Text>
-                </TouchableOpacity>
-                
-            </View>
-        </SafeAreaView>
+            <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
+        <TouchableOpacity activeOpacity={0.7} style={styles.btncontainer} onPress={handleSignOut}>
+          <Text style={[styles.boldText, styles.pressableText]}>Sign Out</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
     );
 };
 
