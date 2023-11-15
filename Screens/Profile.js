@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 const { width, height } = Dimensions.get('window');
 import Toggle from "react-native-toggle-element";
 import md5 from 'md5';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 const ProfileScreen = ({ navigation }) => {
   let popupRef = React.createRef();
@@ -29,39 +31,78 @@ const ProfileScreen = ({ navigation }) => {
   const auth = getAuth();
   const db = getFirestore();
 
-  useEffect(() => {
-    // Listen for changes in the user's authentication state
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-      if (authUser) {
-        console.log('User is signed in:', authUser.email);
-        const email = authUser.email;
-  
-        // Query Firestore to get the user's data
-        const usersRef = collection(db, 'users');
-        const userQuery = query(usersRef, where('email', '==', email));
-  
-        try {
-          const querySnapshot = await getDocs(userQuery);
-          if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            console.log('Fetched user data:', userData);
-            setUser(userData);
-            
-            // Set the initial value of toggle based on the fetched databaseStatus
-            setToggleValue(userData.deliveryStatus);
-            setDatabaseStatus(userData.deliveryStatus);
-          }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      } else {
-        console.log('No user is signed in.');
-        // No user is signed in. Handle this case as needed.
-      }
-    });
-  
-    return unsubscribe; // Cleanup when component unmounts
-  }, []);
+  // useEffect(() => {
+  //   // Listen for changes in the user's authentication state
+  //   const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+  //     if (authUser) {
+  //       console.log('User is signed in:', authUser.email);
+  //       const email = authUser.email;
+  //
+  //       // Query Firestore to get the user's data
+  //       const usersRef = collection(db, 'users');
+  //       const userQuery = query(usersRef, where('email', '==', email));
+  //
+  //       try {
+  //         const querySnapshot = await getDocs(userQuery);
+  //         if (!querySnapshot.empty) {
+  //           const userData = querySnapshot.docs[0].data();
+  //           console.log('Fetched user data:', userData);
+  //           setUser(userData);
+  //
+  //           // Set the initial value of toggle based on the fetched databaseStatus
+  //           setToggleValue(userData.deliveryStatus);
+  //           setDatabaseStatus(userData.deliveryStatus);
+  //         }
+  //       } catch (error) {
+  //         console.error('Error fetching user data:', error);
+  //       }
+  //     } else {
+  //       console.log('No user is signed in.');
+  //       // No user is signed in. Handle this case as needed.
+  //     }
+  //   });
+  //
+  //   return unsubscribe; // Cleanup when component unmounts
+  // }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            // Listen for changes in the user's authentication state
+            const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+                if (authUser) {
+                    console.log('User is signed in:', authUser.email);
+                    const email = authUser.email;
+
+                    // Query Firestore to get the user's data
+                    const usersRef = collection(db, 'users');
+                    const userQuery = query(usersRef, where('email', '==', email));
+
+                    try {
+                        const querySnapshot = await getDocs(userQuery);
+                        if (!querySnapshot.empty) {
+                            const userData = querySnapshot.docs[0].data();
+                            console.log('Fetched user data:', userData);
+                            setUser(userData);
+
+                            // Set the initial value of toggle based on the fetched databaseStatus
+                            setToggleValue(userData.deliveryStatus);
+                            setDatabaseStatus(userData.deliveryStatus);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching user data:', error);
+                    }
+                } else {
+                    console.log('No user is signed in.');
+                    // No user is signed in. Handle this case as needed.
+                }
+            });
+
+            return () => {
+                // Cleanup when the component unmounts or loses focus
+                unsubscribe();
+            };
+        }, []) // Empty dependency array ensures it only runs on mount and unmount
+    );
   
 const updateDeliveryStatus = async (newState) => {
     // Log the current and new delivery status values

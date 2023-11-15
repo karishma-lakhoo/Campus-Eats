@@ -11,6 +11,7 @@ import FormPage from "./Screens/addFoodtoDB";
 import CartScreen from "./Screens/Cart";
 import NotificationsScreen from "./Screens/Notifications";
 import MapScreen from "./Screens/Map";
+import CreditScreen from "./Screens/CreditWallet";
 
 const Tab = createBottomTabNavigator();
 const BottomNavigator = () => {
@@ -52,6 +53,11 @@ const BottomNavigator = () => {
                         <Icon name="person" color={color} size={28}/>
                     ),
         }}/>
+        {/*<Tab.Screen name="Credits" component={CreditScreen} options={{*/}
+        {/*    tabBarIcon: ({color}) => (*/}
+        {/*        <Icon name="home-filled" color={color} size={28}/>*/}
+        {/*    ),*/}
+        {/*}}/>*/}
         </Tab.Navigator>
 }
 
