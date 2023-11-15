@@ -5,7 +5,7 @@ import { faUserEdit, faUser, faEnvelope, faWallet, faStar } from '@fortawesome/f
 import { PFPpopup } from '../PopUps/PFPpopup';
 import Colors from '../colors'; // Import the colors module here
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { collection, getFirestore, query, where, getDocs } from 'firebase/firestore';
+import { collection, getFirestore,updateDoc, query, where, getDocs } from 'firebase/firestore';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 const { width, height } = Dimensions.get('window');
 import Toggle from "react-native-toggle-element";
@@ -21,9 +21,11 @@ const ProfileScreen = ({ navigation }) => {
   });
   const [fontLoaded, setFontLoaded] = useState(false);
 
+
   // Delivery status
   const [toggleValue, setToggleValue] = useState(false);
-
+  const [databaseStatus, setDatabaseStatus] = useState(false);
+  
   const auth = getAuth();
   const db = getFirestore();
 
@@ -57,6 +59,38 @@ const ProfileScreen = ({ navigation }) => {
 
     return unsubscribe; // Cleanup when component unmounts
 }, []);
+
+const updateDeliveryStatus = async (newState) => {
+    // Log the current and new delivery status values
+    console.log('Current Delivery Status:', databaseStatus);
+    console.log('New Delivery Status:', newState);
+  
+    // Update the local state
+    setToggleValue(newState);
+  
+    // Update the Firestore database using the email as a reference
+    const email = auth.currentUser.email;
+    const usersRef = collection(db, 'users');
+    const userQuery = query(usersRef, where('email', '==', email));
+  
+    try {
+      const querySnapshot = await getDocs(userQuery);
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0].ref;
+        console.log('Updating Delivery Status for user with email:', email);
+  
+        await updateDoc(userDoc, {
+          deliveryStatus: newState,
+        });
+  
+        console.log('Delivery Status updated in Firestore:', newState);
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+    }
+  };
+  
+  
 
 
   const handleAdd = () => {
@@ -149,27 +183,29 @@ const ProfileScreen = ({ navigation }) => {
             <View style={{flexDirection:'row', width:'90%', padding: 20, alignItems: "center"}}>
                 <Text style={styles.text}> Delivery Status             </Text>
                 <View style={{width: 10}}>
-                    <Toggle
-                        thumbButton={{
-                            activeBackgroundColor: "white",
-                            inActiveBackgroundColor: "white"
-                        }}
-                        trackBarStyle={{
-                            borderColor: toggleValue ? 'green' : 'grey', // Change borderColor based on toggleValue
-                            backgroundColor: toggleValue ? 'green' : 'grey', // Change backgroundColor based on toggleValue
-                        }}
-
-                        trackBar={{
-                            radius: 30,
-                            borderWidth: 9,
-                            width: 80,
-                            height: 40
-                        }}
-                        value={toggleValue}
-                        onPress={(newState) => setToggleValue(newState)}
-                        // leftTitle="Off"
-                        // rightTitle="On"
-                    />
+                <Toggle
+  thumbButton={{
+    activeBackgroundColor: "white",
+    inActiveBackgroundColor: "white"
+  }}
+  trackBarStyle={{
+    borderColor: toggleValue ? 'green' : 'grey',
+    backgroundColor: toggleValue ? 'green' : 'grey',
+  }}
+  
+  trackBar={{
+    radius: 30,
+    borderWidth: 9,
+    width: 80,
+    height: 40
+  }}
+  value={databaseStatus}
+  onPress={(newState) => {
+    console.log('Toggle Pressed. New State:', newState);
+    // Call the function to update the Firestore database
+    updateDeliveryStatus(newState);
+  }}
+/>
                 </View>
             </View>
 

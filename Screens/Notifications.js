@@ -10,10 +10,16 @@ import {
     TouchableWithoutFeedback, FlatList, Button, ScrollView, Pressable, TextInput
 } from "react-native";
 import * as Font from "expo-font";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { collection, getFirestore,updateDoc, query, where, getDocs } from 'firebase/firestore';
 import {getAllOrders} from "../consts/orders";
 import foodCategories from "../consts/foodCategories";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {serverTimestamp} from "firebase/firestore";
+import  {useCallback } from "react";
+import { useFocusEffect } from '@react-navigation/native';
+
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -22,6 +28,44 @@ const NotificationsScreen = ({ navigation }) => {
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
     const [orders, setOrders] = useState([]);
     const [allOrders, isOrdersLoading] = getAllOrders();
+    const [deliveryStatus, setDeliveryStatus] = useState(false);
+
+    const auth = getAuth();
+    const db = getFirestore();
+    const fetchDeliveryStatus = async () => {
+        try {
+            // Get the user's email
+            const email = auth.currentUser.email;
+
+            // Update the Firestore database using the email as a reference
+            const usersRef = collection(db, 'users');
+            const userQuery = query(usersRef, where('email', '==', email));
+
+            const querySnapshot = await getDocs(userQuery);
+            if (!querySnapshot.empty) {
+                // Extract the delivery status from the user document
+                const userDoc = querySnapshot.docs[0].data();
+                const userDeliveryStatus = userDoc.deliveryStatus;
+
+                // Update state based on the fetched status
+                setDeliveryStatus(userDeliveryStatus);
+            }
+        } catch (error) {
+            console.error('Error fetching delivery status:', error);
+        }
+    };
+
+    useEffect(() => {
+        // Fetch the delivery status when the component mounts
+        fetchDeliveryStatus();
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchDeliveryStatus();
+        }, [])
+    );
+
     // if the user is a customer then the information that it should load should be delivery notifications l
     // ike your driver is nearby or come and pick up your food
     // if the user is a driver
@@ -93,7 +137,7 @@ const NotificationsScreen = ({ navigation }) => {
             setPin(text);
         };
         const handleDecline = () => {
-            console.log("declined")
+            console.log("Declined")
         //     BACKEND INTEGRATION??
         }
         const handleAccept = () => {
@@ -249,19 +293,10 @@ const NotificationsScreen = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.contentContainer}>
                 <View style={styles.header}>
-
                     <Text style={[styles.heading, styles.boldText]}>My Delivery Notifications</Text>
                 </View>
-                {orders.length === 0 ? (
-                    <View style={styles.noordersContainer}>
-                        <Image
-                            source={require('../assets/sad.png')}
-                            style={styles.noordersImage}
-                        />
-                        <Text style={styles.noordersText}>Activate Deliveries to get delivery notifications</Text>
-                    </View>
-                ) : (
-                    <View style={{marginTop:90}}>
+                {deliveryStatus ? (
+                    <View style={{ marginTop: 90 }}>
                         <FlatList
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={{ paddingBottom: 80 }}
@@ -269,10 +304,19 @@ const NotificationsScreen = ({ navigation }) => {
                             renderItem={({ item }) => <LogCard item={item} />}
                         />
                     </View>
+                ) : (
+                    <View style={styles.noordersContainer}>
+                        <Image
+                            source={require('../assets/sad.png')}
+                            style={styles.noordersImage}
+                        />
+                        <Text style={styles.noordersText}>Activate Deliveries to get delivery notifications</Text>
+                    </View>
                 )}
             </View>
         </SafeAreaView>
     );
+    
 };
 
 const styles = StyleSheet.create({
