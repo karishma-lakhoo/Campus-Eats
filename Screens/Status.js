@@ -169,7 +169,24 @@ const StatusScreen = ({ navigation, route }) => {
                         </View>
                     )}
                     {deliveryArrived && (
-                        <Text style={styles.boldText17}>Delivery Arrived!</Text>
+                        <View style={styles.card}>
+                            <View>
+                                <LottieView
+                                    source={require('../animations/tick.json')}
+                                    autoPlay
+                                    loop={false}
+                                    style={styles.animation}
+                                />
+                            </View>
+                            <Text style={[styles.boldText17, { fontSize: 20 , padding: 10 }]}>Order Complete!</Text>
+                            <Text style={styles.boldText17}>Please rate {currOrder.delivererName}</Text>
+                            <View style={{ marginTop: 10}}>
+                                <StarRating
+                                    rating={rating}
+                                    onChange={setRating}
+                                />
+                            </View>
+                        </View>
                     )}
 
                 </View>
