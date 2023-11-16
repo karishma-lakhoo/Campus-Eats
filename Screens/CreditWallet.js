@@ -71,7 +71,7 @@ const CreditScreen = ({ navigation }) => {
             setCredits(newCredits);
     
             // Show an alert or navigate to another screen after a successful update
-            alert(`Added ${cash_in_amount} Kudus to your account`);
+            alert(`Added ${cash_in_amount} credits to your account`);
             navigation.navigate("Profile");
         } catch (error) {
             console.error('Error updating credits:', error);

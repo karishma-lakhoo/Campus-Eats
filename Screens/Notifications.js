@@ -12,7 +12,7 @@ import {
 import * as Font from "expo-font";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { collection, getFirestore,updateDoc, query, where, getDocs } from 'firebase/firestore';
-import {getAllOrders} from "../consts/orders";
+import {acceptOrder, completeOrder, getAllOrders} from "../consts/orders";
 import foodCategories from "../consts/foodCategories";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {serverTimestamp} from "firebase/firestore";
@@ -139,18 +139,23 @@ const NotificationsScreen = ({ navigation }) => {
         const handleDecline = () => {
             console.log("Declined")
         //     BACKEND INTEGRATION??
-
         }
-        const handleAccept = () => {
-            console.log("accepted");
-            setAccepted(false);
+        const handleAccept = (item) => {
+            acceptOrder(item);
+            setAccepted(false); //Shouldnt this be set to true?
             setShowComplete(true);
 
         }
-        const handleComplete = () => {
 
-            console.log("completed");
-        //     need to add backend
+        const handleComplete = (item) => {
+
+            if(pin === item.pin.toString()){
+                 completeOrder(item);
+               // console.log("pin check works");
+            }else{
+                alert("Incorrect pin");
+            }
+
         }
 
 
@@ -226,7 +231,7 @@ const NotificationsScreen = ({ navigation }) => {
                         <View style={{ marginBottom: 50, paddingLeft: width-200}}>
                             <Pressable
                                 style={styles.actionBtn}
-                                onPress={() => handleAccept()}
+                                onPress={() => handleAccept(item)}
                             >
                                 <Text style={styles.actionBtnText}>Accept</Text>
                             </Pressable>
@@ -261,7 +266,7 @@ const NotificationsScreen = ({ navigation }) => {
                         <View style={{ marginBottom: 10, paddingLeft: 90}}>
                             <Pressable
                                 style={styles.actionBtnComplete}
-                                onPress={() => handleComplete()}
+                                onPress={() => handleComplete(item)}
                             >
                                 <Text style={styles.actionBtnText}>Complete</Text>
                                 <Text style={styles.actionBtnText}>order</Text>
@@ -275,7 +280,7 @@ const NotificationsScreen = ({ navigation }) => {
                         <View style={{ marginBottom: 10, paddingLeft: 90}}>
                             <Pressable
                                 style={styles.actionBtnReport}
-                                onPress={() => handleComplete()}
+                                onPress={() => handleComplete(item)}
                             >
                                 <Text style={styles.actionBtnText}>Report</Text>
                             </Pressable>

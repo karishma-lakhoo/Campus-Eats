@@ -30,17 +30,28 @@ export function getAllOrders(){
                     const cart = data.cart;
                     let orderersName = "";
                     const deliverer = data.deliverer;
+                    let delivererName = "";
                     const timePlaced = data.timestamp;
+                    const finalCost = data.totalCost;
                     const userQuery = query(usersRef, where('__name__', '==', orderersID));
+
                     const userSnapshot = await getDocs(userQuery);
+
                     const pin = data.pin;
                     if (!userSnapshot.empty) {
-                      const userDoc = userSnapshot.docs[0];
-                      const userData = userDoc.data();
-                      orderersName = userData.username;
+                        const userDoc = userSnapshot.docs[0];
+                        const userData = userDoc.data();
+                        orderersName = userData.username;
+                    }
+                    if(deliverer){
+                        const userQuery2 = query(usersRef, where('__name__', '==', deliverer));
+                        const userSnapshot2 = await getDocs(userQuery2);
+                        const userDoc2 = userSnapshot2.docs[0];
+                        const userData2 = userDoc2.data();
+                        delivererName = userData2.username;
                     }
           
-                    listOfOrders.push({ id, orderersID, location, cart, orderersName, timePlaced, pin, deliverer });
+                    listOfOrders.push({ id, orderersID, location, cart, orderersName, timePlaced, pin, delivererName, finalCost });
                   }
 
 
@@ -194,9 +205,75 @@ export async function addNewOrder(cart, location, tCost){
 
 }
 
+export async function acceptOrder(item){
+    const ordersRef = collection(db, 'orders');
+    const orderID = item.id;
+    const orderDoc = doc(ordersRef, orderID);
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    let userUID;
+
+    if(currentUser){
+        userUID = currentUser.uid;
+    }
+    else{
+        console.log("User not logged in!");
+    }
+
+    try{
+        await updateDoc(orderDoc, {status: "Accepted", deliverer: userUID});
+        item.status = "Accepted";
+        item.deliverer = userUID;
+       // alert("Order accepted. Please enter pin on delivery");
+
+    }catch (error) {
+        console.error('Error updating accepted order', error);
+    }
+}
+
+export async function completeOrder(item){
+
+    const ordersRef = collection(db, 'orders');
+    const orderID = item.id;
+    const orderDoc = doc(ordersRef, orderID);
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    let userUID;
+
+    if(currentUser){
+        userUID = currentUser.uid;
+    }
+    else{
+        console.log("User not logged in!");
+    }
+
+
+    try{
+        const userDocRef = doc(db, 'users', userUID);
+        const userDoc = await getDoc(userDocRef);
+        const currentCredits = userDoc.data().credits || 0;
+        const newCredits = currentCredits + item.finalCost;
+        // Update the credits field in the user's document
+        await updateDoc(userDocRef, {
+            credits: newCredits,
+        });
+
+        await updateDoc(orderDoc, {status: "Completed", delivered: true});
+        item.status = "Completed";
+        item.delivered = true;
+
+       alert('Order completed. Your account has been credited');
+
+    }catch (error) {
+        console.error('Error updating accepted order', error);
+    }
+}
+
 
 //TODO: use this for declined orders?
 export async function removeOrder(){
 
 }
+
+
 

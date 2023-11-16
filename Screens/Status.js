@@ -99,7 +99,7 @@ const StatusScreen = ({ navigation, route }) => {
                     {deliveryAccepted && (
                         <View>
                             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.deliverer} is on the way</Text>
+                                <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.delivererName} is on the way</Text>
                                 <View style={styles.animationContainer}>
                                     <LottieView
                                         source={require('../animations/dots.json')}
@@ -117,7 +117,7 @@ const StatusScreen = ({ navigation, route }) => {
                                     />
                                 </View>
                                 <View>
-                                    <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.deliverer}</Text>
+                                    <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.delivererName}</Text>
                                 </View>
                                 <View style={{ pointerEvents: 'none', marginTop: 30}}>
                                     <StarRating
