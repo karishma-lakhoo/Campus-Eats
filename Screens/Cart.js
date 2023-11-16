@@ -22,6 +22,7 @@ import { CreditProcessor } from "../consts/creditProcessor";
 import {addNewOrder, CheckCartValidity} from "../consts/orders";
 import {getFirestore} from "firebase/firestore";
 import {getAuth} from "firebase/auth";
+import colors from "../colors";
 
 const { width, height } = Dimensions.get("window");
 
@@ -227,6 +228,11 @@ const CartScreen = ({ navigation, route }) => {
                             style={{ width: 200, height: 200 }}
                         />
                         <Text style={[styles.emptyText]}>Your cart is empty</Text>
+                        <TouchableOpacity style={styles.pressable} activeOpacity={0.7} onPress={() => {
+                            navigation.navigate("TrackOrders");
+                        }}>
+                            <Text style={[styles.boldText, styles.pressableText]}> Track orders</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
             </View>
@@ -246,6 +252,18 @@ const styles = StyleSheet.create({
     contentContainer: {
         flex: 1,
         marginTop: height * 0.055,
+    },
+    pressable:{
+        backgroundColor: colors.primary,
+        width: '80%',
+        padding: 20,
+        marginVertical: 40,
+        alignItems:'center',
+        borderRadius: 12,
+    },
+    pressableText:{
+        color: "#FFF",
+        fontSize:16
     },
     header: {
         flexDirection: "row",
