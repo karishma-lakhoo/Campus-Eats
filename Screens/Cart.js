@@ -92,8 +92,11 @@ const CartScreen = ({ navigation, route }) => {
         //     alert("You cannot order from stores in different locations");
         // }
         if(location !== "not selected"){
-            //cartLoading = true;
-          const orderID =  await addNewOrder(cartList,location, price);
+
+            cartLoading = true;
+            const fee = price + deliveryFee;
+           // console.log(fee);
+            const orderID =  await addNewOrder(cartList,location, fee);
            await clearCart();
            setCartList([]);
            const totalPrice = creditProcessor.calculateTotal([]);
