@@ -28,6 +28,7 @@ const HomeScreen = ({navigation}) => {
     const [allFoods, isFoodLoading ] = foodList();
   //  console.log("favFoods runs");
     const [favFoods, favsLoading] = getFavs();
+    const [lfavFoods, setFavs] = useState([]);
  //   console.log("favFoods:", favFoods);
 
     useEffect(() => {

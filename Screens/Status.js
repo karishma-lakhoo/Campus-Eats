@@ -29,8 +29,8 @@ const StatusScreen = ({ navigation, route }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
 
     // Delivery process states
-    const [findingDeliveryPerson, setFindingDeliveryPerson] = useState(false);
-    const [deliveryAccepted, setDeliveryAccepted] = useState(true);
+    const [findingDeliveryPerson, setFindingDeliveryPerson] = useState(true);
+    const [deliveryAccepted, setDeliveryAccepted] = useState(false);
     const [deliveryArrived, setDeliveryArrived] = useState(false);
     const [rating, setRating] = useState(2.5);
     const orderID = route.params.orderID;
@@ -38,13 +38,25 @@ const StatusScreen = ({ navigation, route }) => {
     const [allOrders, isOrdersLoading ] = getAllOrders();
 
     useEffect(() => {
-        if (!isOrdersLoading) {
-            // Find the order in myOrders with the same ID as orderId
-            const orderWithId = allOrders.find(order => order.id === orderID);
+        const intervalId = setInterval(() => {
 
-            // Set currOrder to the found order
-            setOrder(orderWithId);
-        }
+            if (!isOrdersLoading) {
+                const orderWithId = allOrders.find(order => order.id === orderID);
+                setOrder(orderWithId);
+
+                if (currOrder.status === "Accepted") {
+                    setDeliveryAccepted(true);
+                    setFindingDeliveryPerson(false);
+                }
+                if (currOrder.status === "Completed") {
+                    setDeliveryArrived(true);
+                    setDeliveryAccepted(false);
+                }
+            }
+        }, 5000); // 5 seconds in milliseconds
+
+        // Cleanup the interval when the component unmounts or when dependencies change
+        return () => clearInterval(intervalId);
     }, [isOrdersLoading, allOrders, orderID]);
 
     useEffect(() => {

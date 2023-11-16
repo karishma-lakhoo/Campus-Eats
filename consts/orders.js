@@ -205,7 +205,7 @@ export async function addNewOrder(cart, location, tCost){
 
 }
 
-export async function acceptOrder(item){
+export async function acceptOrder(item, callback){
     const ordersRef = collection(db, 'orders');
     const orderID = item.id;
     const orderDoc = doc(ordersRef, orderID);
@@ -219,19 +219,27 @@ export async function acceptOrder(item){
     else{
         console.log("User not logged in!");
     }
+    if(item.status !== "Accepted"){
+        try{
+            await updateDoc(orderDoc, {status: "Accepted", deliverer: userUID});
+            item.status = "Accepted";
+            item.deliverer = userUID;
+            // alert("Order accepted. Please enter pin on delivery");
+            if(callback){
+                callback();
+            }
 
-    try{
-        await updateDoc(orderDoc, {status: "Accepted", deliverer: userUID});
-        item.status = "Accepted";
-        item.deliverer = userUID;
-       // alert("Order accepted. Please enter pin on delivery");
-
-    }catch (error) {
-        console.error('Error updating accepted order', error);
+        }catch (error) {
+            console.error('Error updating accepted order', error);
+        }
+    }else{
+        alert("Order already accepted");
     }
+
+
 }
 
-export async function completeOrder(item){
+export async function completeOrder(item, callback){
 
     const ordersRef = collection(db, 'orders');
     const orderID = item.id;
@@ -263,6 +271,9 @@ export async function completeOrder(item){
         item.delivered = true;
 
        alert('Order completed. Your account has been credited');
+       if (callback){
+           callback();
+       }
 
     }catch (error) {
         console.error('Error updating accepted order', error);
