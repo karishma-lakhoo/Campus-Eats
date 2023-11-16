@@ -155,7 +155,6 @@ const FoodsScreen = ({ navigation }) => {
                     >
                         <Picker.Item label={foodItem.name1 + " - " + foodItem.price1} value={foodItem.price1} />
                         <Picker.Item label={foodItem.name2 + " - " + foodItem.price2} value={foodItem.price2} />
-
                     </Picker>
                 )}
 

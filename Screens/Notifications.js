@@ -32,7 +32,7 @@ const NotificationsScreen = ({ navigation }) => {
     const [filteredOrders, setFilteredOrders] = useState(allOrders);
     const [deliveryStatus, setDeliveryStatus] = useState(false);
     const [isDropdownVisible, setDropdownVisible] = useState(false);
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedOption, setSelectedOption] = useState("Entire Campus");
     const options = ["Entire Campus", "East", "West" ];
 
     useEffect(() => {
