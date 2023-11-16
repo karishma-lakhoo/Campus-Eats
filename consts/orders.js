@@ -31,6 +31,7 @@ export function getAllOrders(){
                     let orderersName = "";
                     const deliverer = data.deliverer;
                     let delivererName = "";
+                    const delivered = data.delivered;
                     const timePlaced = data.timestamp;
                     const status = data.status;
                     const received = data.received;
@@ -53,7 +54,7 @@ export function getAllOrders(){
                         delivererName = userData2.username;
                     }
           
-                    listOfOrders.push({ id, orderersID, location, cart, orderersName, timePlaced, pin, delivererName, finalCost, status, received });
+                    listOfOrders.push({ id, orderersID, location, cart, orderersName, timePlaced, pin, delivererName, finalCost, status, received, delivered });
                   }
 
 

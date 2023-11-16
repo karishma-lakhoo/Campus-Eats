@@ -33,6 +33,8 @@ const TrackOrdersScreen = ({navigation}) => {
     }
 
     const filtered = allOrders.filter(item => item.orderersID === userUID)
+    const sortedFilteredOrders = filtered.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
+
     // useEffect(() => {
     //     const filtered = allOrders.filter(item => item.orderersID === "3P6lxfR5LtX7tj6vsesSXH8cLT22");
     //     setFilteredOrders(filtered)
@@ -138,7 +140,7 @@ const TrackOrdersScreen = ({navigation}) => {
                                             Status: {item.status}
                                         </Text>
                                         <Text style={styles.subText}>
-                                            Order Complete: {complete}
+                                            Order Complete: {item.delivered.toString()}
                                         </Text>
                                     </View>
                                 </View>
@@ -160,7 +162,7 @@ const TrackOrdersScreen = ({navigation}) => {
                 </View>
                 <View>
                     <FlatList
-                        data={filtered}
+                        data={sortedFilteredOrders}
                         keyExtractor={(item) => item}
                         renderItem={({ item }) => <LogCard item={item} />}
                     />
