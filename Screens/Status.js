@@ -70,6 +70,7 @@ const StatusScreen = ({ navigation, route }) => {
 
     useEffect(() => {
             if (currOrder.status === "Accepted") {
+
                 setDeliveryAccepted(true);
                 setFindingDeliveryPerson(false);
             }

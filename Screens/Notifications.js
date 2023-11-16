@@ -19,7 +19,6 @@ import {serverTimestamp} from "firebase/firestore";
 import  {useCallback } from "react";
 import { useFocusEffect } from '@react-navigation/native';
 import COLORS from "../colors";
-import md5 from "md5";
 
 
 
@@ -35,25 +34,23 @@ const NotificationsScreen = ({ navigation }) => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const [selectedOption, setSelectedOption] = useState("Entire Campus");
     const options = ["Entire Campus", "East", "West" ];
-
-
-
     useEffect(() => {
         // console.log("jaos")
         // console.log(allOrders)
-        setFilteredOrders(allOrders)
+        const completeFiltered = allOrders.filter(item => {item.delivered === false})
+
         // console.log(selectedOption);
         // console.log("asdfsdaffsdafsdafsdarfsdafsdafsdagfsdagdfs")
         // i need to do date ascending here
         if (selectedOption === null || selectedOption === "Entire Campus" ) {
-          //  console.log(allOrders)
+            // console.log(allOrders)
             const sortedFilteredOrders = allOrders.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
 
             setFilteredOrders(allOrders);
             // setFilteredOrders(allOrders);
         }
         else{
-         //   console.log('B')
+            console.log('B')
 
             const filtered = allOrders.filter(item => {
                     if (selectedOption === "East") {
@@ -124,6 +121,22 @@ const NotificationsScreen = ({ navigation }) => {
     useEffect(() => {
         if(!isOrdersLoading){
             setOrders(allOrders);
+            // const currTime = new Date();
+            // console.log("currTime");
+            // console.log(currTime);
+            // //Instead of deleting from DB, just filter to show orders that are at most 2 hours old
+            // //TODO: also filter to show orders where status != order completed
+            // const filteredOrders = allOrders.filter(order => {
+            //                     const orderTime = order.timePlaced;
+            //     const twoHoursAgo = new Date();
+            //     twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
+            //     console.log("orderTime")
+            //     console.log(order.timePlaced.toDate());
+            //     console.log("twoTime")
+            //     console.log(twoHoursAgo);
+            //     return orderTime >= twoHoursAgo && orderTime <= currTime;
+            // });
+
             setOrders(allOrders);
         }
     }, [isOrdersLoading, allOrders]);
@@ -161,7 +174,7 @@ const NotificationsScreen = ({ navigation }) => {
         const cartItems = item.cart;
         const restaurantName = item.cart[0].restaurantName;
         let totalPrice = 0;
-        const cardHeight = 320 + cartItems.length*15;
+        const cardHeight = 290 + cartItems.length*15;
         const [showComplete, setShowComplete] = useState(false);
         const [accepted, setAccepted] = useState(true);
         const [pin, setPin] = useState("")
@@ -174,35 +187,25 @@ const NotificationsScreen = ({ navigation }) => {
         const handlePinChange = (text) => {
             setPin(text);
         };
-        const handleDecline = () => {
-            console.log("Declined")
-        //     BACKEND INTEGRATION??
-        }
-        // notifications page
+
         const handleAccept = (item) => {
-            acceptOrder(item, () => {
-                // Callback function to be executed after accepting the order
-                setAccepted(false);
-                setShowComplete(true);
-                // Add a callback to fetch updated orders in the statusPage
-                if (updateOrdersCallback) {
-                    updateOrdersCallback();
-                }
-            });
-        };
+            acceptOrder(item);
+            setAccepted(false); //Shouldnt this be set to true?
+            setShowComplete(true);
+
+        }
 
         const handleComplete = (item) => {
-            if (pin === item.pin.toString()) {
-                completeOrder(item, () => {
-                    // Callback function to be executed after completing the order
-                    if (updateOrdersCallback) {
-                        updateOrdersCallback();
-                    }
-                });
-            } else {
+
+            if(pin === item.pin.toString()){
+                 completeOrder(item);
+                setFilteredOrders(prevOrders => prevOrders.filter(order => order.id !== item.id));
+
+            }else{
                 alert("Incorrect pin");
             }
-        };
+
+        }
 
 
 
@@ -224,10 +227,8 @@ const NotificationsScreen = ({ navigation }) => {
                         <>
                             <View style={{backgroundColor: 'rgba(255, 167, 38, 0.8)', alignItems: "center", height: 100, borderRadius: 10, marginTop: 5}}>
                                 <Image
-
-                                    source={{uri: `https://www.gravatar.com/avatar/${md5(item.orderersEmail)}?s=200`}}
+                                    source={require("../assets/profile.jpg")}
                                     style={{ height: 80, width: 80, borderRadius: 50, marginTop: 10}}
-                                    resizeMode= "cover"
                                 />
                             </View>
                             <View
@@ -265,10 +266,13 @@ const NotificationsScreen = ({ navigation }) => {
                                         Price: R{totalPrice}
                                     </Text>
                                     <Text style={styles.subText}>
-                                        Meet up point: {item.location}
+                                        Time: {item.timePlaced.toDate().toLocaleString('en-US', options )}
                                     </Text>
                                     <Text style={styles.subText}>
-                                        Time: {item.timePlaced.toDate().toLocaleString('en-US', options )}
+                                        Meet-up spot: {item.location}
+                                    </Text>
+                                    <Text style={styles.subText}>
+                                       DELIVERED: {item.delivered.toString()}
                                     </Text>
                                 </View>
                             </View>
@@ -276,7 +280,7 @@ const NotificationsScreen = ({ navigation }) => {
                     )}
                     <View style={{flexDirection:"row"}}>
                         {accepted && (
-                            <View style={{ marginTop: 18, paddingLeft: width/2 + 12}}>
+                            <View style={{ marginBottom: 50, paddingLeft: width/2 + 12}}>
                                 <Pressable
                                     style={styles.actionBtn}
                                     onPress={() => handleAccept(item)}
@@ -287,7 +291,7 @@ const NotificationsScreen = ({ navigation }) => {
                         )
                         }
                         { showComplete && (
-                            <View style={{ marginTop: 18, paddingLeft: 30}}>
+                            <View style={{ marginBottom: 10, paddingLeft: 30}}>
                                 <TextInput
                                     onChangeText={handlePinChange}
                                     value={pin}
@@ -582,7 +586,7 @@ const styles = StyleSheet.create({
         height: 40,
         width: 80,
         backgroundColor: '#50C878',
-        // marginBottom: 10,
+        marginBottom: 10,
         borderRadius: 10,
         position: 'absolute',
         top: 0,
