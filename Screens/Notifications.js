@@ -29,45 +29,65 @@ const NotificationsScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
     const [orders, setOrders] = useState([]);
-    let [allOrders, isOrdersLoading] = getAllOrders();
+    const [allOrders, isOrdersLoading] = getAllOrders();
     const [filteredOrders, setFilteredOrders] = useState(allOrders);
     const [deliveryStatus, setDeliveryStatus] = useState(false);
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const [selectedOption, setSelectedOption] = useState("Entire Campus");
     const options = ["Entire Campus", "East", "West" ];
+    // useEffect(() => {
+    //     // console.log("jaos")
+    //     // console.log(allOrders)
+    //     const completeFiltered = allOrders.filter(item => {item.delivered === false})
+    //
+    //     // console.log(selectedOption);
+    //     // console.log("asdfsdaffsdafsdafsdarfsdafsdafsdagfsdagdfs")
+    //     // i need to do date ascending here
+    //     if (selectedOption === null || selectedOption === "Entire Campus" ) {
+    //         // console.log(allOrders)
+    //         const sortedFilteredOrders = allOrders.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
+    //
+    //         setFilteredOrders(allOrders);
+    //         // setFilteredOrders(allOrders);
+    //     }
+    //     else{
+    //         console.log('B')
+    //
+    //         const filtered = allOrders.filter(item => {
+    //             if (selectedOption === "East") {
+    //                 // Assuming "East" locations are ["Library Lawns", "Solomon Mahlangu House"]
+    //                 return ["Chinese Lantern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"  ].includes(item.cart[0].restaurantName);
+    //             } else if (selectedOption === "West") {
+    //                 // Assuming "West" locations are ["Law Lawns", "The Tower", "Chamber of Mines", "Science Stadium"]
+    //                 return ["Jimmy's West Campus", "The Tower", "Olives and Plates", "vida e caffe", "Zesty Lemonz"].includes(item.location);
+    //             }
+    //         });
+    //         // console.log("filtering");
+    //         // console.log(filtered);
+    //         const sortedFilteredOrders = filtered.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
+    //         setFilteredOrders(sortedFilteredOrders);
+    //     }
+    // }, [selectedOption, deliveryStatus,allOrders]);
     useEffect(() => {
+        // Filter orders based on delivery status and selected option
+        const filtered = allOrders.filter(item => {
+            if (!item.delivered) { // Only include orders where delivered is false
+                if (selectedOption === null || selectedOption === "Entire Campus") {
+                    return true; // Include all orders when selectedOption is null or "Entire Campus"
+                } else if (selectedOption === "East") {
+                    return ["Chinese Lantern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"].includes(item.cart[0].restaurantName);
+                } else if (selectedOption === "West") {
+                    return ["Jimmy's West Campus", "The Tower", "Olives and Plates", "vida e caffe", "Zesty Lemonz"].includes(item.location);
+                }
+            }
+            return false; // Exclude orders where delivered is true
+        });
 
-        const completeFiltered = allOrders.filter(item => item.delivered === false)
-      //  console.log(allOrders);
-        // console.log(selectedOption);
-        // console.log("asdfsdaffsdafsdafsdarfsdafsdafsdagfsdagdfs")
-        // i need to do date ascending here
-        if (selectedOption === null || selectedOption === "Entire Campus" ) {
-            // console.log(allOrders)
-            const sortedFilteredOrders = allOrders.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
+        // Sort the filtered orders by timePlaced in descending order
+        const sortedFilteredOrders = filtered.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
 
-            setFilteredOrders(completeFiltered);
-           // console.log(filteredOrders);
-            // setFilteredOrders(allOrders);
-        }
-        else{
-         //   console.log('B')
-
-            const filtered = completeFiltered.filter(item => {
-                    if (selectedOption === "East") {
-                        // Assuming "East" locations are ["Library Lawns", "Solomon Mahlangu House"]
-                        return ["Chinese Lantern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"  ].includes(item.cart[0].restaurantName);
-                    } else if (selectedOption === "West") {
-                        // Assuming "West" locations are ["Law Lawns", "The Tower", "Chamber of Mines", "Science Stadium"]
-                        return ["Jimmy's West Campus", "The Tower", "Olives and Plates", "vida e caffe", "Zesty Lemonz"].includes(item.location);
-                    }
-                });
-                // console.log("filtering");
-                // console.log(filtered);
-            const sortedFilteredOrders = filtered.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
-            setFilteredOrders(sortedFilteredOrders);
-        }
-    }, [selectedOption, deliveryStatus,allOrders, filteredOrders]);
+        setFilteredOrders(sortedFilteredOrders);
+    }, [selectedOption, deliveryStatus, allOrders]);
     const handleFilterPress = () => {
         toggleDropdown()
     };
@@ -122,7 +142,23 @@ const NotificationsScreen = ({ navigation }) => {
     useEffect(() => {
         if(!isOrdersLoading){
             setOrders(allOrders);
-           // setOrders(allOrders);
+            // const currTime = new Date();
+            // console.log("currTime");
+            // console.log(currTime);
+            // //Instead of deleting from DB, just filter to show orders that are at most 2 hours old
+            // //TODO: also filter to show orders where status != order completed
+            // const filteredOrders = allOrders.filter(order => {
+            //                     const orderTime = order.timePlaced;
+            //     const twoHoursAgo = new Date();
+            //     twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
+            //     console.log("orderTime")
+            //     console.log(order.timePlaced.toDate());
+            //     console.log("twoTime")
+            //     console.log(twoHoursAgo);
+            //     return orderTime >= twoHoursAgo && orderTime <= currTime;
+            // });
+
+            setOrders(allOrders);
         }
     }, [isOrdersLoading, allOrders]);
 
@@ -174,27 +210,23 @@ const NotificationsScreen = ({ navigation }) => {
         };
 
         const handleAccept = (item) => {
-            acceptOrder(item, () => {
-                // Callback function to be executed after accepting the order
-                setAccepted(false);
-                setShowComplete(true);
-                [allOrders, isOrdersLoading] = getAllOrders();
-                // Add a callback to fetch updated orders in the statusPage
+            acceptOrder(item);
+            setAccepted(false); //Shouldnt this be set to true?
+            setShowComplete(true);
 
-            });
-        };
+        }
 
         const handleComplete = (item) => {
-            if (pin === item.pin.toString()) {
-                completeOrder(item, () => {
-                    [allOrders, isOrdersLoading] = getAllOrders();
-                    // Callback function to be executed after completing the order
 
-                });
-            } else {
+            if(pin === item.pin.toString()){
+                completeOrder(item);
+                setFilteredOrders(prevOrders => prevOrders.filter(order => order.id !== item.id));
+
+            }else{
                 alert("Incorrect pin");
             }
-        };
+
+        }
 
 
 
@@ -261,9 +293,9 @@ const NotificationsScreen = ({ navigation }) => {
                                     <Text style={styles.subText}>
                                         Meet-up spot: {item.location}
                                     </Text>
-                                    <Text style={styles.subText}>
-                                       DELIVERED: {item.delivered.toString()}
-                                    </Text>
+                                    {/*<Text style={styles.subText}>*/}
+                                    {/*    DELIVERED: {item.delivered.toString()}*/}
+                                    {/*</Text>*/}
                                 </View>
                             </View>
                         </>
@@ -416,7 +448,7 @@ const NotificationsScreen = ({ navigation }) => {
             </View>
         </SafeAreaView>
     );
-    
+
 };
 
 const styles = StyleSheet.create({

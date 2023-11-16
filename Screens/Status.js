@@ -58,26 +58,26 @@ const StatusScreen = ({ navigation, route }) => {
 
 
     useEffect(() => {
-            if (!isOrdersLoading) {
-                console.log("ALL")
-                console.log(allOrders)
-                const orderWithId = allOrders.find(order => order.id === orderID);
-                setOrder(orderWithId)
-            }
+        if (!isOrdersLoading) {
+            console.log("ALL")
+            console.log(allOrders)
+            const orderWithId = allOrders.find(order => order.id === orderID);
+            setOrder(orderWithId)
+        }
         // Cleanup the interval when the component unmounts or when dependencies change
     }, [allOrders]);
 
 
     useEffect(() => {
-            if (currOrder.status === "Accepted") {
+        if (currOrder.status === "Accepted") {
 
-                setDeliveryAccepted(true);
-                setFindingDeliveryPerson(false);
-            }
-            if (currOrder.status === "Completed") {
-                setDeliveryArrived(true);
-                setDeliveryAccepted(false);
-            }
+            setDeliveryAccepted(true);
+            setFindingDeliveryPerson(false);
+        }
+        if (currOrder.status === "Completed") {
+            setDeliveryArrived(true);
+            setDeliveryAccepted(false);
+        }
     }, [currOrder]);
 
     useEffect(() => {
@@ -144,10 +144,10 @@ const StatusScreen = ({ navigation, route }) => {
                             </View>
                             <View style={styles.card}>
                                 <View style={styles.profileImage}>
-                                    <Image
-                                        source={{uri: `https://www.gravatar.com/avatar/${md5(currOrder.orderersEmail)}?s=200`}}
-                                        style={styles.cardImage}
-                                        resizeMode= "cover"
+                                    {/*<Image*/}
+                                    {/*    source={{uri: `https://www.gravatar.com/avatar/${md5(currOrder.orderersEmail)}?s=200`}}*/}
+                                    {/*    style={styles.cardImage}*/}
+                                    {/*    resizeMode= "cover"*/}
 
                                     />
                                 </View>
