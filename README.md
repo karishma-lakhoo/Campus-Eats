@@ -37,7 +37,7 @@ CampusEats is a delivery app that streamlines the process of ordering and delive
 
 ## Built With
 
-![Firebase Logo](firebase-logo.png) [![React Native](https://img.shields.io/badge/React_Native-0.64.2-blue.svg)](https://reactnative.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-9.4.0-orange.svg)](https://firebase.google.com/) [![React Native](https://img.shields.io/badge/React_Native-0.64.2-blue.svg)](https://reactnative.dev/)
 
 CampusEats is built with Firebase for backend services and React Native for the cross-platform mobile application.
 
