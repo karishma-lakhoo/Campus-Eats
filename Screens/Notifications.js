@@ -41,13 +41,24 @@ const NotificationsScreen = ({ navigation }) => {
         // i need to do date ascending here
         if (selectedOption === null || selectedOption === "Entire Campus" ) {
             console.log('null')
-            setFilteredOrders(orders);
+            const sortedFilteredOrders = orders.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
+
+            setFilteredOrders(sortedFilteredOrders);
         }
         else{
-            const filtered = orders.filter(item => item.location === selectedOption)
-            console.log("filtering")
-            console.log(filtered)
-            setFilteredOrders(filtered)
+                const filtered = orders.filter(item => {
+                    if (selectedOption === "East") {
+                        // Assuming "East" locations are ["Library Lawns", "Solomon Mahlangu House"]
+                        return ["Chinese Latern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"  ].includes(item.cart[0].restaurantName);
+                    } else if (selectedOption === "West") {
+                        // Assuming "West" locations are ["Law Lawns", "The Tower", "Chamber of Mines", "Science Stadium"]
+                        return ["Jimmy's West Campus", "The Tower", "Olives and Plates", "Science Stadium", "vida e caffe", "Zesty Lemonz"].includes(item.location);
+                    }
+                });
+                console.log("filtering");
+                console.log(filtered);
+            const sortedFilteredOrders = filtered.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
+            setFilteredOrders(sortedFilteredOrders);
         }
     }, [selectedOption]);
     const handleFilterPress = () => {
@@ -320,13 +331,11 @@ const NotificationsScreen = ({ navigation }) => {
             <View style={styles.contentContainer}>
                 <View style={styles.header}>
                     <Text style={[styles.heading, styles.boldText]}>My Delivery Notifications</Text>
-                </View>
-                <View>
-                    <View style={styles.filter}>
+                    <View style={{paddingLeft:20}}>
                         <TouchableOpacity onPress={() => { handleFilterPress() }} style={styles.filter}>
                             <Image
                                 source={require('../assets/Filter.png')}
-                                style={{ width: 24, height: 24 }}
+                                style={{ width: 40, height: 40 }}
                             />
                         </TouchableOpacity>
 
@@ -354,12 +363,45 @@ const NotificationsScreen = ({ navigation }) => {
                         </Modal>
                     </View>
                 </View>
+                <View>
+                    {/*<View style={styles.filter}>*/}
+                    {/*    <TouchableOpacity onPress={() => { handleFilterPress() }} style={styles.filter}>*/}
+                    {/*        <Image*/}
+                    {/*            source={require('../assets/Filter.png')}*/}
+                    {/*            style={{ width: 24, height: 24 }}*/}
+                    {/*        />*/}
+                    {/*    </TouchableOpacity>*/}
+
+                    {/*    <Modal*/}
+                    {/*        animationType="fade"*/}
+                    {/*        transparent={true}*/}
+                    {/*        visible={isDropdownVisible}*/}
+                    {/*        onRequestClose={toggleDropdown}*/}
+                    {/*    >*/}
+                    {/*        <TouchableWithoutFeedback onPress={toggleDropdown}>*/}
+                    {/*            <View style={styles.modalContainer}>*/}
+                    {/*                <View style={styles.modalContent}>*/}
+                    {/*                    <FlatList*/}
+                    {/*                        data={options}*/}
+                    {/*                        keyExtractor={(item) => item}*/}
+                    {/*                        renderItem={({ item }) => (*/}
+                    {/*                            <TouchableOpacity onPress={() => selectOption(item)}>*/}
+                    {/*                                <Text style={styles.option}>{item}</Text>*/}
+                    {/*                            </TouchableOpacity>*/}
+                    {/*                        )}*/}
+                    {/*                    />*/}
+                    {/*                </View>*/}
+                    {/*            </View>*/}
+                    {/*        </TouchableWithoutFeedback>*/}
+                    {/*    </Modal>*/}
+                    {/*</View>*/}
+                </View>
                 {deliveryStatus ? (
                     <View style={{ marginTop: 90 }}>
                         <FlatList
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={{ paddingBottom: 80 }}
-                            data={orders}
+                            data={filteredOrders}
                             renderItem={({ item }) => <LogCard item={item} />}
                         />
                     </View>
