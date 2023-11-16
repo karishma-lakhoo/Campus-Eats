@@ -98,13 +98,16 @@ const CartScreen = ({ navigation, route }) => {
             const fee = price + deliveryFee;
            // console.log(fee);
             const orderID =  await addNewOrder(cartList,location, fee);
-           await clearCart();
-           setCartList([]);
-           const totalPrice = creditProcessor.calculateTotal([]);
-           setPrice(totalPrice);
-           alert("Order Placed");
+            if(orderID){
+                await clearCart();
+                setCartList([]);
+                const totalPrice = creditProcessor.calculateTotal([]);
+                setPrice(totalPrice);
+                alert("Order Placed");
+                navigation.navigate("Status" , { orderID});   //navigate to a myOrders page
+            }
 
-            navigation.navigate("Status" , { orderID });         //navigate to a myOrders page
+
         }else{
             alert("Select a pick up point");
         }

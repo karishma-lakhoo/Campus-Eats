@@ -36,6 +36,17 @@ const StatusScreen = ({ navigation, route }) => {
     const orderID = route.params.orderID;
     const [currOrder, setOrder] = useState([]);
     const [allOrders, isOrdersLoading ] = getAllOrders();
+    const [locAllOrders, setLocAllorders] = useState([]);
+    const [locLoading, setLocLoading] = useState(true);
+
+    //
+    // useEffect(() => {
+    //     const [allOrders, isOrdersLoading ] = getAllOrders();
+    //     if(!isOrdersLoading){
+    //         setLocAllorders(allOrders);
+    //         setLocLoading(false);
+    //     }
+    // }, [isOrdersLoading]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {

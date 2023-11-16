@@ -190,11 +190,10 @@ export async function addNewOrder(cart, location, tCost){
             const docRef = await addDoc(ordersRef, orderData);
             const orderCollection = doc(userDoc, 'myOrders', docRef.id);
             await setDoc(orderCollection, orderData);
-          //  alert("Order Placed");
             return docRef.id;
         }else{
             // Not enough credits
-            console.log("Not enough credits! Add credits in profile");
+            alert("Not enough credits! Add credits in profile");
             return null;
         }
 
