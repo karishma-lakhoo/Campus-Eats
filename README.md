@@ -23,7 +23,7 @@ CampusEats is a delivery app designed for the [Your University] campus, providin
 
 ## Introduction
 
-CampusEats is a delivery app that streamlines the process of ordering and delivering food within the [Your University] campus. Users can register, log in, and switch between user and delivery person roles. The app utilizes Kudu credits for transactions and offers real-time order tracking. Drivers receive notifications for incoming orders, which they can accept or reject.
+CampusEats is a delivery app that streamlines the process of ordering and delivering food within the Wits University campus. Users can register, log in, and switch between user and delivery person roles. The app utilizes Kudu credits for transactions and offers real-time order tracking. Drivers receive notifications for incoming orders, which they can accept or reject.
 
 ## Features
 
@@ -49,7 +49,7 @@ CampusEats is built with Firebase for backend services and React Native for the 
 
 ### Installation
 
-1. Clone the repository: `git clone `
+1. Clone the repository: `git clone  https://github.com/CODESHEDDING-EATS/Campus-Eats.git`
 2. Navigate to the project directory: `cd CampusEats`
 3. Install dependencies: `npm install --force`
 
@@ -61,31 +61,6 @@ CampusEats is built with Firebase for backend services and React Native for the 
 2. Fill in the required details and click "Register."
 3. If already a user, click on "Log In" and enter your credentials.
 
-...
-
-
-
-
-# CampusEats
-CampusEats is a delivery app designed for the Wits University campus, providing a convenient and efficient way for users to order food and for delivery personnel to fulfill those orders.
-
-# Table of Contents
-1.Introduction
-2.Features
-3.Getting Started
-4.User Registration and Login
-5.Changing User Status
-6.Adding Credits
-7.Placing Orders
-8.Order Tracking
-9.Driver Notifications
-10.Managing Favorites
-
-
-
-# Introduction
-CampusEats is a delivery app that streamlines the process of ordering and delivering food within the  Wits University campus. Users can register, log in, and switch between user and delivery person roles. The app utilizes Kudu credits for transactions and offers real-time order tracking. Drivers receive notifications for incoming orders, which they can accept or reject.
-
 # Features
 User registration and login
 Switching between user and delivery person roles
@@ -94,17 +69,6 @@ Real-time order tracking with three status updates: "Finding Delivery Person," "
 Driver notifications for incoming orders
 Food listing in various categories
 Adding food items to favorites
-
-
-# Built With
-
-# Getting Started
-Installation
-Prerequisites: Expo
-Clone the repository: git clone https://github.com/CODESHEDDING-EATS/Campus-Eats.git
-Navigate to the project directory: cd CampusEats
-Install dependencies: npm install --force/ yarn install
-                      npm start/ expo start
                       
 # User Registration and Login
 Open the app and click on the "Sign Up" button.
