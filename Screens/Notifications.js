@@ -232,7 +232,7 @@ const NotificationsScreen = ({ navigation }) => {
                             <View style={{ marginBottom: 50, paddingLeft: width/2 + 12}}>
                                 <Pressable
                                     style={styles.actionBtn}
-                                    onPress={() => handleAccept()}
+                                    onPress={() => handleAccept(item)}
                                 >
                                     <Text style={styles.actionBtnText}>Accept</Text>
                                 </Pressable>
@@ -254,7 +254,7 @@ const NotificationsScreen = ({ navigation }) => {
                             <View style={{ marginBottom: 10, paddingLeft: 90}}>
                                 <Pressable
                                     style={styles.actionBtnComplete}
-                                    onPress={() => handleComplete()}
+                                    onPress={() => handleComplete(item)}
                                 >
                                     <Text style={styles.actionBtnText}>Complete</Text>
                                     <Text style={styles.actionBtnText}>order</Text>
@@ -267,7 +267,7 @@ const NotificationsScreen = ({ navigation }) => {
                             <View style={{ marginBottom: 10, paddingLeft: 90}}>
                                 <Pressable
                                     style={styles.actionBtnReport}
-                                    onPress={() => handleComplete()}
+                                    onPress={() => handleComplete(item)}
                                 >
                                     <Text style={styles.actionBtnText}>Report</Text>
                                 </Pressable>
