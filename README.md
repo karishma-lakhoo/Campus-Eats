@@ -1,6 +1,6 @@
 # CampusEats
 
-CampusEats is a delivery app designed for the [Your University] campus, providing a convenient and efficient way for users to order food and for delivery personnel to fulfill those orders.
+CampusEats is a delivery app designed for the Wits University campus, providing a convenient and efficient way for users to order food and for delivery personnel to fulfill those orders.
 
 ## Table of Contents
 
@@ -37,7 +37,7 @@ CampusEats is a delivery app that streamlines the process of ordering and delive
 
 ## Built With
 
-![Firebase Logo](firebase-logo.png) ![React Native Logo](react-native-logo.png)
+![Firebase Logo](firebase-logo.png) [![React Native](https://img.shields.io/badge/React_Native-0.64.2-blue.svg)](https://reactnative.dev/)
 
 CampusEats is built with Firebase for backend services and React Native for the cross-platform mobile application.
 
