@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     },
     flatListContainer:{
         marginTop: 40,
-        height: height*0.955,
+        height: height*0.900,
         paddingLeft: 10,
         paddingRight: 10,
 
