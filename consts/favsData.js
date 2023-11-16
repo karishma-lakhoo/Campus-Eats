@@ -17,7 +17,7 @@ export function getFavs() {
     useEffect(() => {
 
         if (!currentUser) {
-            console.log("User not logged in! 2");
+            console.log("User not logged in!");
             return;
         }
 
@@ -101,7 +101,7 @@ export async function removeFromFavs(foodID) {
     const currentUser = auth.currentUser;
 
     if (!currentUser) {
-        console.log("User not logged in! 1");
+        console.log("User not logged in!");
         return;
     }
 

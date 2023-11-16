@@ -23,6 +23,7 @@ import {addNewOrder, getAllOrders, getCurrentUsersOrders} from "../consts/orders
 import LottieView from "lottie-react-native";
 import StarRating from 'react-native-star-rating-widget';
 import {collection, doc, getFirestore, onSnapshot} from "firebase/firestore";
+import md5 from "md5";
 
 const { width, height } = Dimensions.get("window");
 
@@ -143,8 +144,10 @@ const StatusScreen = ({ navigation, route }) => {
                             <View style={styles.card}>
                                 <View style={styles.profileImage}>
                                     <Image
-                                        source={require('../assets/avatar.png')}
+                                        source={{uri: `https://www.gravatar.com/avatar/${md5(item.orderersEmail)}?s=200`}}
                                         style={styles.cardImage}
+                                        resizeMode= "cover"
+
                                     />
                                 </View>
                                 <View>

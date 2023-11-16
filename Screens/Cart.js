@@ -92,6 +92,7 @@ const CartScreen = ({ navigation, route }) => {
         // }else{
         //     alert("You cannot order from stores in different locations");
         // }
+       // CheckCartValidity(cartList);
         if(location !== "not selected"){
 
             cartLoading = true;

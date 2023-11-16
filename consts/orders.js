@@ -32,6 +32,8 @@ export function getAllOrders(){
                     const deliverer = data.deliverer;
                     let delivererName = "";
                     const delivered = data.delivered;
+                    let orderersEmail = "";
+                    let delivererEmail = "";
                     const timePlaced = data.timestamp;
                     const status = data.status;
                     const received = data.received;
@@ -45,6 +47,7 @@ export function getAllOrders(){
                         const userDoc = userSnapshot.docs[0];
                         const userData = userDoc.data();
                         orderersName = userData.username;
+                        orderersEmail = userData.email;
                     }
                     if(deliverer){
                         const userQuery2 = query(usersRef, where('__name__', '==', deliverer));
@@ -52,9 +55,10 @@ export function getAllOrders(){
                         const userDoc2 = userSnapshot2.docs[0];
                         const userData2 = userDoc2.data();
                         delivererName = userData2.username;
+                        delivererEmail = userData2.username;
                     }
           
-                    listOfOrders.push({ id, orderersID, location, cart, orderersName, timePlaced, pin, delivererName, finalCost, status, received, delivered });
+                    listOfOrders.push({ id, orderersID, location, cart, orderersName, timePlaced, pin, delivererName, finalCost, status, received, delivered, orderersEmail, delivererEmail });
                   }
 
 
@@ -128,25 +132,32 @@ function generateRandomPin() {
 }
 
 export function CheckCartValidity(cart) {
-    console.log("Inner");
-    const res = cart[0].restaurantName;
-    const [isLoading, setIsLoading] = useState(true);
-    let isValid = true;
-    const { rests} = useFetchRestaurants(isLoading);
-    console.log("I think its you above");
-        if (!isLoading) {
-            const restaurantWithSameName = rests.find(restaurant => restaurant.name === res);
-            let mainLoc = restaurantWithSameName.Location;
-            for (let i = 1; i < cart.length; i++) {
-                let r = cart[i].restaurantName;
-                let restWSN = rests.find(restaurant => restaurant.name === r);
-                if (restWSN.Location !== mainLoc) {
-                    isValid = false;
-                    break;
-                }
-            }
-        }
-    return isValid;
+  //  console.log(cart);
+    const east = [ "Planet Savvy",  "Starbucks"];
+    const west = ["Jimmy's West Campus", "The Tower", "Olives and Plates", "vida e caffe", "Zesty Lemonz"];
+    const matrix = ["Chinese Lantern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"];
+     const res = cart[0].restaurantName;
+     let loc;
+     if(east.includes(res)){
+         loc = east;
+     } else if (west.includes(res)) {
+         loc = west;
+     } else if (matrix.includes(res)) {
+         loc = matrix;
+     }
+
+     let isValid = true;
+
+             for (let i = 1; i < cart.length; i++) {
+                 let r = cart[i].restaurantName;
+
+                 if (!loc.includes(r)) {
+                     isValid = false;
+                     break;
+                 }
+             }
+
+     return isValid;
 }
 
 export async function addNewOrder(cart, location, tCost){
