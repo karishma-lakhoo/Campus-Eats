@@ -18,6 +18,7 @@ import CreditScreen from './Screens/CreditWallet';
 import UpdateScreen from './Screens/UpdateProfile';
 import ProfileScreen from "./Screens/Profile";
 import StatusScreen from "./Screens/Status";
+import TrackOrdersScreen from "./Screens/TrackOrders";
 
 const Stack = createStackNavigator();
 
@@ -43,6 +44,7 @@ export default function App() {
               <Stack.Screen name="Map" component={MapScreen}/>
               <Stack.Screen name="Profile" component={ProfileScreen}/>
               <Stack.Screen name="Status" component={StatusScreen}/>
+              <Stack.Screen name="TrackOrders" component={TrackOrdersScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </MyContext.Provider>
