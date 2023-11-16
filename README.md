@@ -18,8 +18,6 @@ CampusEats is a delivery app designed for the Wits University campus, providing 
   - [Order Tracking](#order-tracking)
   - [Driver Notifications](#driver-notifications)
   - [Managing Favorites](#managing-favorites)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
 
@@ -60,38 +58,29 @@ CampusEats is built with Firebase for backend services and React Native for the 
 1. Open the app and click on the "Sign Up" button.
 2. Fill in the required details and click "Register."
 3. If already a user, click on "Log In" and enter your credentials.
-
-# Features
-User registration and login
-Switching between user and delivery person roles
-Kudu credit management for placing orders
-Real-time order tracking with three status updates: "Finding Delivery Person," "Order Accepted," and "Order Completed"
-Driver notifications for incoming orders
-Food listing in various categories
-Adding food items to favorites
                       
-# User Registration and Login
+#### User Registration and Login
 Open the app and click on the "Sign Up" button.
 Fill in the required details and click "Register."
 If already a user, click on "Log In" and enter your credentials.
 
-# Changing User Status
+#### Changing User Status
 Navigate to the user profile.
 Select "Change Role" to switch between user and delivery person roles.
 
-# Adding Credits
+#### Adding Credits
 Go to the wallet or credits section.
 Add Kudu credits to your account.
 
-# Placing Orders
+#### Placing Orders
 Browse food categories on the home page.
 Select desired items and click "Order."
 Confirm order details and proceed to checkout.
 
-# Order Tracking
+#### Order Tracking
 View order status updates in real-time.
 Three order statuses: "Finding Delivery Person," "Order Accepted," and "Order Completed."
 
-# Driver Notifications
+#### Driver Notifications
 Drivers receive notifications for new orders.
 Accept or reject orders based on availability.
