@@ -265,6 +265,7 @@ const HomeScreen = ({navigation}) => {
                         </View>
                         <View>
                             <Text style={styles.boldText}>{item.name}</Text>
+                            <Text style={styles.subText}>{item.restaurantName}</Text>
                         </View>
                     </TouchableOpacity>
                 )}
@@ -370,6 +371,12 @@ const styles = StyleSheet.create({
         fontFamily: "Urbanist-Regular",
         color: "black",
         fontWeight: "bold",
+    },
+    subText: {
+        fontFamily: "Urbanist-Regular",
+        color: "black",
+        fontWeight: "bold",
+        fontSize: 12
     },
     flatListContainer:{
         marginTop: 5,
