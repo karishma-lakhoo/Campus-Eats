@@ -49,11 +49,17 @@ const TrackOrdersScreen = ({navigation}) => {
         const [showComplete, setShowComplete] = useState(false);
         const [accepted, setAccepted] = useState(true);
         const [pin, setPin] = useState("")
+        const [complete, setComplete] = useState("false")
         const options = {  hour: 'numeric', minute: 'numeric', year: 'numeric', month: 'numeric', day: 'numeric'};
 
         for(let i = 0; i < item.cart.length; i++){
             let price = item.cart[i].price.trim().replace(/[Rr]/g, '');
             totalPrice += parseFloat(price)
+        }
+
+
+        if(item.received){
+            setComplete("true")
         }
 
 
@@ -127,7 +133,7 @@ const TrackOrdersScreen = ({navigation}) => {
                                         Status: {item.status}
                                     </Text>
                                     <Text style={styles.subText}>
-                                        Recieved: {item.recieved}
+                                        Order Complete: {complete}
                                     </Text>
                                 </View>
                             </View>
