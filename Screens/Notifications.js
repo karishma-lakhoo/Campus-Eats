@@ -29,38 +29,44 @@ const NotificationsScreen = ({ navigation }) => {
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
     const [orders, setOrders] = useState([]);
     const [allOrders, isOrdersLoading] = getAllOrders();
-    const [filteredOrders, setFilteredOrders] = useState([]);
-    console.log(allOrders);
+    const [filteredOrders, setFilteredOrders] = useState(allOrders);
     const [deliveryStatus, setDeliveryStatus] = useState(false);
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
     const options = ["Entire Campus", "East", "West" ];
 
     useEffect(() => {
-        console.log(selectedOption);
+        // console.log("jaos")
+        // console.log(allOrders)
+        setFilteredOrders(allOrders)
+        // console.log(selectedOption);
+        // console.log("asdfsdaffsdafsdafsdarfsdafsdafsdagfsdagdfs")
         // i need to do date ascending here
         if (selectedOption === null || selectedOption === "Entire Campus" ) {
-            console.log('null')
-            const sortedFilteredOrders = orders.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
+            console.log(allOrders)
+            const sortedFilteredOrders = allOrders.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
 
-            setFilteredOrders(sortedFilteredOrders);
+            setFilteredOrders(allOrders);
+            // setFilteredOrders(allOrders);
         }
         else{
-                const filtered = orders.filter(item => {
+            console.log('B')
+
+            const filtered = allOrders.filter(item => {
                     if (selectedOption === "East") {
                         // Assuming "East" locations are ["Library Lawns", "Solomon Mahlangu House"]
-                        return ["Chinese Latern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"  ].includes(item.cart[0].restaurantName);
+                        return ["Chinese Lantern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"  ].includes(item.cart[0].restaurantName);
                     } else if (selectedOption === "West") {
                         // Assuming "West" locations are ["Law Lawns", "The Tower", "Chamber of Mines", "Science Stadium"]
-                        return ["Jimmy's West Campus", "The Tower", "Olives and Plates", "Science Stadium", "vida e caffe", "Zesty Lemonz"].includes(item.location);
+                        return ["Jimmy's West Campus", "The Tower", "Olives and Plates", "vida e caffe", "Zesty Lemonz"].includes(item.location);
                     }
                 });
-                console.log("filtering");
-                console.log(filtered);
+                // console.log("filtering");
+                // console.log(filtered);
             const sortedFilteredOrders = filtered.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
             setFilteredOrders(sortedFilteredOrders);
         }
-    }, [selectedOption]);
+    }, [selectedOption, deliveryStatus,allOrders]);
     const handleFilterPress = () => {
         toggleDropdown()
     };
@@ -114,6 +120,7 @@ const NotificationsScreen = ({ navigation }) => {
     // then the notifications should be the list of all deliveries that they are open to
     useEffect(() => {
         if(!isOrdersLoading){
+            setOrders(allOrders);
             // const currTime = new Date();
             // console.log("currTime");
             // console.log(currTime);
@@ -214,7 +221,7 @@ const NotificationsScreen = ({ navigation }) => {
                         flex: 1,
                     }}
                 >
-                    {orders.length === 0 ? (
+                    {allOrders.length === 0 ? (
                         <View>
                             <Text>No orders</Text>
                         </View>
@@ -398,6 +405,7 @@ const NotificationsScreen = ({ navigation }) => {
                 </View>
                 {deliveryStatus ? (
                     <View style={{ marginTop: 90 }}>
+                        {/*<Text>SUMTING BRIKEN {allOrders.length}</Text>*/}
                         <FlatList
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={{ paddingBottom: 80 }}
