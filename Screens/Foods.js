@@ -129,10 +129,11 @@ const FoodsScreen = ({ navigation }) => {
             </View>
 
 
-            <View style={{marginTop: 50, marginHorizontal: 10, height: "45%" }}>
+            <View style={{marginTop: 75, marginHorizontal: 10, height: "45%", width: "95%" }}>
                 <Image source={{ uri: foodItem.imageURL }} style={styles.foodImage} />
             </View>
-            <View>
+
+            <View style={{marginTop: 75, width: 350, alignSelf: "center"}}>
 
                 <Text style={styles.boldText}>Price: R{foodItem.price}</Text>
                 <Text style={styles.subDescr}>Description: {foodItem.description}</Text>
@@ -150,7 +151,6 @@ const FoodsScreen = ({ navigation }) => {
                             } else if (itemValue === foodItem.price2) {
                                 setSelectedSubtype(foodItem.name2);
                             }
-
                     }}
                     >
                         <Picker.Item label={foodItem.name1 + " - " + foodItem.price1} value={foodItem.price1} />
@@ -166,8 +166,6 @@ const FoodsScreen = ({ navigation }) => {
                     onPress={() => {
                         console.log("Food item : ", foodItem.id);
                         handleAddToCart();
-
-
                     }}
                 >
                     <Text style={styles.boldText}>Add to cart</Text>
@@ -246,7 +244,7 @@ const styles = StyleSheet.create({
     foodImage: {
         position:"relative",
         width: "100%",
-        height: "400%",
+        height: "100%",
         marginBottom: 10,
         borderRadius: 10,
 
