@@ -32,6 +32,8 @@ export function getAllOrders(){
                     const deliverer = data.deliverer;
                     let delivererName = "";
                     const timePlaced = data.timestamp;
+                    const status = data.status;
+                    const received = data.received;
                     const finalCost = data.totalCost;
                     const userQuery = query(usersRef, where('__name__', '==', orderersID));
 
@@ -51,7 +53,7 @@ export function getAllOrders(){
                         delivererName = userData2.username;
                     }
           
-                    listOfOrders.push({ id, orderersID, location, cart, orderersName, timePlaced, pin, delivererName, finalCost });
+                    listOfOrders.push({ id, orderersID, location, cart, orderersName, timePlaced, pin, delivererName, finalCost, status, received });
                   }
 
 

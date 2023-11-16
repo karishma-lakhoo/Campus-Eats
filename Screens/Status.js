@@ -22,6 +22,7 @@ import { CreditProcessor } from "../consts/creditProcessor";
 import {addNewOrder, getAllOrders, getCurrentUsersOrders} from "../consts/orders";
 import LottieView from "lottie-react-native";
 import StarRating from 'react-native-star-rating-widget';
+import {collection, doc, getFirestore, onSnapshot} from "firebase/firestore";
 
 const { width, height } = Dimensions.get("window");
 
@@ -34,41 +35,48 @@ const StatusScreen = ({ navigation, route }) => {
     const [deliveryArrived, setDeliveryArrived] = useState(false);
     const [rating, setRating] = useState(2.5);
     const orderID = route.params.orderID;
+    console.log("asdf")
+    console.log(orderID)
     const [currOrder, setOrder] = useState([]);
     const [allOrders, isOrdersLoading ] = getAllOrders();
-    const [locAllOrders, setLocAllorders] = useState([]);
-    const [locLoading, setLocLoading] = useState(true);
-
-    //
-    // useEffect(() => {
-    //     const [allOrders, isOrdersLoading ] = getAllOrders();
-    //     if(!isOrdersLoading){
-    //         setLocAllorders(allOrders);
-    //         setLocLoading(false);
-    //     }
-    // }, [isOrdersLoading]);
+    const db = getFirestore();
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
+        const unsubscribe = onSnapshot(doc(db, "orders", orderID), (docSnapshot) => {
+            console.log("XXXXXXXX  Received doc snapshot:", docSnapshot.data());
+            setOrder(docSnapshot.data());
+        }, (err) => {
+            console.log("Encountered error:", err);
+        });
 
+        return () => {
+            // Unsubscribe when component unmounts
+            unsubscribe();
+        };
+    }, [orderID, db]);
+
+
+    useEffect(() => {
             if (!isOrdersLoading) {
+                console.log("ALL")
+                console.log(allOrders)
                 const orderWithId = allOrders.find(order => order.id === orderID);
-                setOrder(orderWithId);
-
-                if (currOrder.status === "Accepted") {
-                    setDeliveryAccepted(true);
-                    setFindingDeliveryPerson(false);
-                }
-                if (currOrder.status === "Completed") {
-                    setDeliveryArrived(true);
-                    setDeliveryAccepted(false);
-                }
+                setOrder(orderWithId)
             }
-        }, 5000); // 5 seconds in milliseconds
-
         // Cleanup the interval when the component unmounts or when dependencies change
-        return () => clearInterval(intervalId);
-    }, [isOrdersLoading, allOrders, orderID]);
+    }, [allOrders]);
+
+
+    useEffect(() => {
+            if (currOrder.status === "Accepted") {
+                setDeliveryAccepted(true);
+                setFindingDeliveryPerson(false);
+            }
+            if (currOrder.status === "Completed") {
+                setDeliveryArrived(true);
+                setDeliveryAccepted(false);
+            }
+    }, [currOrder]);
 
     useEffect(() => {
         async function loadFont() {
