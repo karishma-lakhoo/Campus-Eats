@@ -19,6 +19,7 @@ import {serverTimestamp} from "firebase/firestore";
 import  {useCallback } from "react";
 import { useFocusEffect } from '@react-navigation/native';
 import COLORS from "../colors";
+import md5 from "md5";
 
 
 
@@ -28,17 +29,16 @@ const NotificationsScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
     const [orders, setOrders] = useState([]);
-    const [allOrders, isOrdersLoading] = getAllOrders();
+    let [allOrders, isOrdersLoading] = getAllOrders();
     const [filteredOrders, setFilteredOrders] = useState(allOrders);
     const [deliveryStatus, setDeliveryStatus] = useState(false);
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const [selectedOption, setSelectedOption] = useState("Entire Campus");
     const options = ["Entire Campus", "East", "West" ];
     useEffect(() => {
-        // console.log("jaos")
-        // console.log(allOrders)
-        const completeFiltered = allOrders.filter(item => {item.delivered === false})
 
+        const completeFiltered = allOrders.filter(item => item.delivered === false)
+      //  console.log(allOrders);
         // console.log(selectedOption);
         // console.log("asdfsdaffsdafsdafsdarfsdafsdafsdagfsdagdfs")
         // i need to do date ascending here
@@ -46,13 +46,14 @@ const NotificationsScreen = ({ navigation }) => {
             // console.log(allOrders)
             const sortedFilteredOrders = allOrders.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
 
-            setFilteredOrders(allOrders);
+            setFilteredOrders(completeFiltered);
+           // console.log(filteredOrders);
             // setFilteredOrders(allOrders);
         }
         else{
-            console.log('B')
+         //   console.log('B')
 
-            const filtered = allOrders.filter(item => {
+            const filtered = completeFiltered.filter(item => {
                     if (selectedOption === "East") {
                         // Assuming "East" locations are ["Library Lawns", "Solomon Mahlangu House"]
                         return ["Chinese Lantern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"  ].includes(item.cart[0].restaurantName);
@@ -66,7 +67,7 @@ const NotificationsScreen = ({ navigation }) => {
             const sortedFilteredOrders = filtered.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
             setFilteredOrders(sortedFilteredOrders);
         }
-    }, [selectedOption, deliveryStatus,allOrders]);
+    }, [selectedOption, deliveryStatus,allOrders, filteredOrders]);
     const handleFilterPress = () => {
         toggleDropdown()
     };
@@ -121,23 +122,7 @@ const NotificationsScreen = ({ navigation }) => {
     useEffect(() => {
         if(!isOrdersLoading){
             setOrders(allOrders);
-            // const currTime = new Date();
-            // console.log("currTime");
-            // console.log(currTime);
-            // //Instead of deleting from DB, just filter to show orders that are at most 2 hours old
-            // //TODO: also filter to show orders where status != order completed
-            // const filteredOrders = allOrders.filter(order => {
-            //                     const orderTime = order.timePlaced;
-            //     const twoHoursAgo = new Date();
-            //     twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
-            //     console.log("orderTime")
-            //     console.log(order.timePlaced.toDate());
-            //     console.log("twoTime")
-            //     console.log(twoHoursAgo);
-            //     return orderTime >= twoHoursAgo && orderTime <= currTime;
-            // });
-
-            setOrders(allOrders);
+           // setOrders(allOrders);
         }
     }, [isOrdersLoading, allOrders]);
 
@@ -189,23 +174,27 @@ const NotificationsScreen = ({ navigation }) => {
         };
 
         const handleAccept = (item) => {
-            acceptOrder(item);
-            setAccepted(false); //Shouldnt this be set to true?
-            setShowComplete(true);
+            acceptOrder(item, () => {
+                // Callback function to be executed after accepting the order
+                setAccepted(false);
+                setShowComplete(true);
+                [allOrders, isOrdersLoading] = getAllOrders();
+                // Add a callback to fetch updated orders in the statusPage
 
-        }
+            });
+        };
 
         const handleComplete = (item) => {
+            if (pin === item.pin.toString()) {
+                completeOrder(item, () => {
+                    [allOrders, isOrdersLoading] = getAllOrders();
+                    // Callback function to be executed after completing the order
 
-            if(pin === item.pin.toString()){
-                 completeOrder(item);
-                setFilteredOrders(prevOrders => prevOrders.filter(order => order.id !== item.id));
-
-            }else{
+                });
+            } else {
                 alert("Incorrect pin");
             }
-
-        }
+        };
 
 
 
