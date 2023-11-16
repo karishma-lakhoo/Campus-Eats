@@ -158,6 +158,17 @@ const TrackOrdersScreen = ({navigation}) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.contentContainer}>
                 <View style={styles.header}>
+                    <TouchableOpacity
+                        style={styles.backButton}
+                        onPress={() => {
+                            navigation.goBack();
+                        }}
+                    >
+                        <Image
+                            source={require("../assets/back_thick.png")}
+                            style={{width: 24, height: 24}}
+                        />
+                    </TouchableOpacity>
                     <Text style={styles.heading}>Track Orders</Text>
                 </View>
                 <View>
@@ -192,10 +203,13 @@ const styles = StyleSheet.create({
         fontFamily: "Urbanist-Bold",
     },
     header: {
-        flexDirection: "column",
+        flexDirection: "row",
         paddingTop: height * 0.02,
         marginHorizontal: width * 0.05,
         position: "relative",
+    },
+    backButton: {
+        marginRight: 10,
     },
     LogCard: {
         height: 100,
