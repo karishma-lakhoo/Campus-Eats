@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     View,
     Image,
-    TouchableWithoutFeedback, FlatList, Button, ScrollView, Pressable, TextInput
+    TouchableWithoutFeedback, FlatList, Button, ScrollView, Pressable, TextInput, Modal
 } from "react-native";
 import * as Font from "expo-font";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -29,8 +29,38 @@ const NotificationsScreen = ({ navigation }) => {
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
     const [orders, setOrders] = useState([]);
     const [allOrders, isOrdersLoading] = getAllOrders();
+    const [filteredOrders, setFilteredOrders] = useState([]);
+    console.log(allOrders);
     const [deliveryStatus, setDeliveryStatus] = useState(false);
+    const [isDropdownVisible, setDropdownVisible] = useState(false);
+    const [selectedOption, setSelectedOption] = useState(null);
+    const options = ["Entire Campus", "East", "West" ];
 
+    useEffect(() => {
+        console.log(selectedOption);
+        // i need to do date ascending here
+        if (selectedOption === null || selectedOption === "Entire Campus" ) {
+            console.log('null')
+            setFilteredOrders(orders);
+        }
+        else{
+            const filtered = orders.filter(item => item.location === selectedOption)
+            console.log("filtering")
+            console.log(filtered)
+            setFilteredOrders(filtered)
+        }
+    }, [selectedOption]);
+    const handleFilterPress = () => {
+        toggleDropdown()
+    };
+    const toggleDropdown = () => {
+        setDropdownVisible(!isDropdownVisible);
+    };
+
+    const selectOption = (option) => {
+        setSelectedOption(option);
+        toggleDropdown();
+    };
     const auth = getAuth();
     const db = getFirestore();
     const fetchDeliveryStatus = async () => {
@@ -130,6 +160,8 @@ const NotificationsScreen = ({ navigation }) => {
         const [showComplete, setShowComplete] = useState(false);
         const [accepted, setAccepted] = useState(true);
         const [pin, setPin] = useState("")
+        const options = {  hour: 'numeric', minute: 'numeric', year: 'numeric', month: 'numeric', day: 'numeric'};
+
         for(let i = 0; i < item.cart.length; i++){
             let price = item.cart[i].price.trim().replace(/[Rr]/g, '');
             totalPrice += parseFloat(price)
@@ -221,7 +253,7 @@ const NotificationsScreen = ({ navigation }) => {
                                         Meet up point: {item.location}
                                     </Text>
                                     <Text style={styles.subText}>
-                                        Time: TEST
+                                        Time: {item.timePlaced.toDate().toLocaleString('en-US', options )}
                                     </Text>
                                 </View>
                             </View>
@@ -288,6 +320,39 @@ const NotificationsScreen = ({ navigation }) => {
             <View style={styles.contentContainer}>
                 <View style={styles.header}>
                     <Text style={[styles.heading, styles.boldText]}>My Delivery Notifications</Text>
+                </View>
+                <View>
+                    <View style={styles.filter}>
+                        <TouchableOpacity onPress={() => { handleFilterPress() }} style={styles.filter}>
+                            <Image
+                                source={require('../assets/Filter.png')}
+                                style={{ width: 24, height: 24 }}
+                            />
+                        </TouchableOpacity>
+
+                        <Modal
+                            animationType="fade"
+                            transparent={true}
+                            visible={isDropdownVisible}
+                            onRequestClose={toggleDropdown}
+                        >
+                            <TouchableWithoutFeedback onPress={toggleDropdown}>
+                                <View style={styles.modalContainer}>
+                                    <View style={styles.modalContent}>
+                                        <FlatList
+                                            data={options}
+                                            keyExtractor={(item) => item}
+                                            renderItem={({ item }) => (
+                                                <TouchableOpacity onPress={() => selectOption(item)}>
+                                                    <Text style={styles.option}>{item}</Text>
+                                                </TouchableOpacity>
+                                            )}
+                                        />
+                                    </View>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </Modal>
+                    </View>
                 </View>
                 {deliveryStatus ? (
                     <View style={{ marginTop: 90 }}>
@@ -368,6 +433,24 @@ const styles = StyleSheet.create({
     flatContainer:{
         flex: 1,
         marginTop: height * 0.7,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        width: 200,
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        elevation: 5,
+    },
+    option: {
+        fontFamily: "Urbanist-Bold",
+        fontSize: 16,
+        paddingVertical: 10,
     },
     itemImage: {
         position:"relative",

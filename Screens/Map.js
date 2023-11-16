@@ -206,7 +206,7 @@ const MapScreen = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.backButton}
                         onPress={() => {
-                            navigation.navigate("Cart");
+                            navigation.navigate("Home");
 
                         }}
                     >

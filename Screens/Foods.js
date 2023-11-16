@@ -135,7 +135,7 @@ const FoodsScreen = ({ navigation }) => {
 
             <View style={{marginTop: 75, width: 350, alignSelf: "center"}}>
 
-                <Text style={styles.boldText}>Price: R{foodItem.price}</Text>
+                <Text style={styles.boldText}>Price: R{foodItem.price.trim().replace(/[Rr]/g, '')}</Text>
                 <Text style={styles.subDescr}>Description: {foodItem.description}</Text>
 
 
