@@ -216,8 +216,9 @@ const NotificationsScreen = ({ navigation }) => {
                         <>
                             <View style={{backgroundColor: 'rgba(255, 167, 38, 0.8)', alignItems: "center", height: 100, borderRadius: 10, marginTop: 5}}>
                                 <Image
-                                    source={require("../assets/profile.jpg")}
+                                    source={{uri: `https://www.gravatar.com/avatar/${md5(item.orderersEmail)}?s=200`}}
                                     style={{ height: 80, width: 80, borderRadius: 50, marginTop: 10}}
+                                    resizeMode= "cover"
                                 />
                             </View>
                             <View
