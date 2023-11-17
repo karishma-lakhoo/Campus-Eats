@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Button,
     Pressable,
-    TouchableOpacity, TouchableWithoutFeedback, Image
+    TouchableOpacity, TouchableWithoutFeedback, Image, Platform, KeyboardAvoidingView
 } from "react-native";
 
 const { width, height } = Dimensions.get('window');
@@ -24,6 +24,7 @@ import {FontAwesome5} from "@expo/vector-icons";
 
 
 import {widthHeight} from "twrnc/dist/esm/resolve/width-height";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 
 const SignUpScreen = ({navigation}) =>{
@@ -140,25 +141,12 @@ const SignUpScreen = ({navigation}) =>{
 
     return(
         <SafeAreaView style={styles.container}>
-            <View style={styles.container2}>
-                <View style={{marginLeft: width*0.4, marginTop: height*0.1}}>
-                    <View style={styles.addpfp}>
-                        <TouchableWithoutFeedback onPress={handleAdd}>
-                            <FontAwesome5 name="plus" size={24} color="white" />
-                        </TouchableWithoutFeedback>
-                        <PFPpopup
-                            title="Profile Picture"
-                            ref={(target) => popupRef = target}
-                            onTouchOutside={onClosePopup}
-                        />
-                    </View>
+            <KeyboardAwareScrollView
+                contentContainerStyle={styles.scrollViewContainer}
+                resetScrollToCoords={{ x: 0, y: 0 }}
+                scrollEnabled={false}
+            >
 
-                    <View style={styles.profileImage}>
-                        <Image source={require("../assets/avatar.png")} style={styles.image} resizeMode="center"></Image>
-                    </View>
-
-                </View>
-            </View>
             <View style={styles.header}>
                 <Text style={[styles.heading, styles.boldText]}>Sign Up</Text>
                 <Text style={[styles.boldText, styles.subHeadings]}>Username</Text>
@@ -214,6 +202,7 @@ const SignUpScreen = ({navigation}) =>{
                     </TouchableOpacity>
                 </View>
             </View>
+            </KeyboardAwareScrollView>
         </SafeAreaView>)
 }
 
@@ -246,6 +235,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         zIndex: 1, // Ensure the button appears on top of the image
+    },
+    scrollViewContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
     },
 
 

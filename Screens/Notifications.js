@@ -228,11 +228,12 @@ const NotificationsScreen = ({ navigation }) => {
         const cartItems = item.cart;
         const restaurantName = item.cart[0].restaurantName;
         let totalPrice = 0;
-        const cardHeight = 290 + cartItems.length*15;
+        const cardHeight = 320 + cartItems.length*15;
         const [showComplete, setShowComplete] = useState(false);
         const [accepted, setAccepted] = useState(true);
         const [pin, setPin] = useState("")
         const options = {  hour: 'numeric', minute: 'numeric', year: 'numeric', month: 'numeric', day: 'numeric'};
+        const [backgroundColor, setBackgroundColor] = useState("#FFA726");
 
         for(let i = 0; i < item.cart.length; i++){
             let price = item.cart[i].price.trim().replace(/[Rr]/g, '');
@@ -247,6 +248,7 @@ const NotificationsScreen = ({ navigation }) => {
                 // This block will be executed after the acceptOrder promise is resolved
                 setAccepted(false);
                 setShowComplete(true);
+                setBackgroundColor("#4CAF50");
                // setFilteredOrders(prevOrders => prevOrders.filter(order => order.accepted !== item.accepted));
 
                 // Update the 'filtered' list
@@ -296,7 +298,7 @@ const NotificationsScreen = ({ navigation }) => {
                         </View>
                     ) : (
                         <>
-                            <View style={{backgroundColor: 'rgba(255, 167, 38, 0.8)', alignItems: "center", height: 100, borderRadius: 10, marginTop: 5}}>
+                            <View style={{backgroundColor: backgroundColor, alignItems: "center", height: 100, borderRadius: 10, marginTop: 5}}>
                                 <Image
                                     source={{uri: `https://www.gravatar.com/avatar/${md5(item.orderersEmail)}?s=200`}}
                                     style={{ height: 80, width: 80, borderRadius: 50, marginTop: 10}}
@@ -352,7 +354,7 @@ const NotificationsScreen = ({ navigation }) => {
                     )}
                     <View style={{flexDirection:"row"}}>
                         {accepted && (
-                            <View style={{ marginBottom: 50, paddingLeft: width/2 + 12}}>
+                            <View style={{ marginTop: 17, paddingLeft: width/2 + 12}}>
                                 <Pressable
                                     style={styles.actionBtn}
                                     onPress={() => handleAccept(item)}
@@ -363,7 +365,7 @@ const NotificationsScreen = ({ navigation }) => {
                         )
                         }
                         { showComplete && (
-                            <View style={{ marginBottom: 10, paddingLeft: 30}}>
+                            <View style={{ marginTop: 13, paddingLeft: 30}}>
                                 <TextInput
                                     onChangeText={handlePinChange}
                                     value={pin}
@@ -374,7 +376,7 @@ const NotificationsScreen = ({ navigation }) => {
                         )
                         }
                         { showComplete && (
-                            <View style={{ marginBottom: 10, paddingLeft: 90}}>
+                            <View style={{ marginTop: 17, paddingLeft: 90}}>
                                 <Pressable
                                     style={styles.actionBtnComplete}
                                     onPress={() => handleComplete(item)}
@@ -387,7 +389,7 @@ const NotificationsScreen = ({ navigation }) => {
                         )
                         }
                         { showComplete && (
-                            <View style={{ marginBottom: 10, paddingLeft: 90}}>
+                            <View style={{ marginTop: 17, paddingLeft: 90}}>
                                 <Pressable
                                     style={styles.actionBtnReport}
                                     onPress={() => handleComplete(item)}
