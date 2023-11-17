@@ -18,6 +18,7 @@ export async function rateDeliverer(delivererUID, rating) {
             const docData = doc.data();
             const currentRating = docData.rating;
             numOfRatings = docData.numOfRatings;
+            if(!numOfRatings) numOfRatings = 0;
             numOfRatings++;
             newRating = currentRating +(rating - currentRating)/numOfRatings;
         })
@@ -27,6 +28,25 @@ export async function rateDeliverer(delivererUID, rating) {
         });
     } catch (error) {
         console.log('Error getting documents', error);
-        setLoading(false);
     }
+}
+
+export async function getRating(delivererUID){
+    try {
+        const usersCollection = collection(db, 'users');
+        const userDoc = doc(usersCollection,delivererUID);
+        const ratingsCollection = collection(userDoc,'Ratings');
+        const querySnapshot = await getDocs(ratingsCollection);
+
+        querySnapshot.forEach((doc) =>{
+            const docData = doc.data();
+            const currentRating = docData.rating;
+            return currentRating;
+        })
+
+
+    } catch (error) {
+        console.log("Error getting documents",error);
+    }
+    return 2;
 }

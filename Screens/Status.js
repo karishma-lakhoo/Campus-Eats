@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
+import colors from "../colors";
 
 import {
     Dimensions,
@@ -24,6 +25,7 @@ import LottieView from "lottie-react-native";
 import StarRating from 'react-native-star-rating-widget';
 import {collection, doc, getFirestore, onSnapshot} from "firebase/firestore";
 import md5 from "md5";
+import { rateDeliverer } from "../consts/ratings";
 
 const { width, height } = Dimensions.get("window");
 
@@ -41,6 +43,10 @@ const StatusScreen = ({ navigation, route }) => {
     const [currOrder, setOrder] = useState([]);
     const [allOrders, isOrdersLoading ] = getAllOrders();
     const db = getFirestore();
+
+    const handleRatingChange = () =>{
+        rateDeliverer(currOrder.deliverer, rating);
+    }
 
     useEffect(() => {
         const unsubscribe = onSnapshot(doc(db, "orders", orderID), (docSnapshot) => {
@@ -149,7 +155,6 @@ const StatusScreen = ({ navigation, route }) => {
                                     {/*    style={styles.cardImage}*/}
                                     {/*    resizeMode= "cover"*/}
 
-                                    />
                                 </View>
                                 <View>
                                     <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.delivererName}</Text>
@@ -163,6 +168,7 @@ const StatusScreen = ({ navigation, route }) => {
                                 <View style={{paddingTop: 20}}>
                                     <Text style={[styles.boldText17, { fontSize: 20 }]}>Confirmation Code: {currOrder.pin}</Text>
                                     {/*add randomised code*/}
+                                    
                                 </View>
                             </View>
 
@@ -186,6 +192,11 @@ const StatusScreen = ({ navigation, route }) => {
                                     onChange={setRating}
                                 />
                             </View>
+                            <View style={styles.btncontainer}>
+                                <TouchableOpacity activeOpacity={0.7} onPress={handleRatingChange}>
+                                        <Text style={[styles.boldText, styles.pressableText]}>Rate</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     )}
 
@@ -196,6 +207,7 @@ const StatusScreen = ({ navigation, route }) => {
     );
 };
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -204,6 +216,21 @@ const styles = StyleSheet.create({
     heading: {
         fontFamily: "Urbanist-Bold",
         fontSize: 26,
+    },
+    btncontainer : {
+        backgroundColor: colors.primary,
+        width: '50%',
+        height: '10%',
+        padding: 5,
+        marginVertical: 20,
+        alignItems:'center',
+        borderRadius: 12
+    },
+        text:{
+        justifyContent: "center",
+        fontFamily: 'Urbanist-Bold',
+        alignContent: "center",
+        fontSize: 20,
     },
     card: {
         height: 370,
@@ -214,7 +241,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: "#FFF",
         alignItems: 'center',
-        flexDirection: "column"
+        flexDirection: "column",
+
     },
     cardImage: {
         flex: 1,
@@ -338,6 +366,13 @@ const styles = StyleSheet.create({
     rightButton: {
         marginLeft: "auto",
         marginRight: 10
+    },
+    boldText: {
+        fontFamily: 'Urbanist-Bold',
+    },
+    pressableText:{
+        color: "#FFF",
+        fontSize:16
     },
     bottomButton: {
         backgroundColor: "orange",
