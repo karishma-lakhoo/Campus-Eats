@@ -75,7 +75,7 @@ Select "Change Role" to switch between user and delivery person roles.
 Go to the wallet or credits section.
 Add Kudu credits to your account.
 
-<img src="screenshots/credits.jpg" width="300" />
+<img src="screenshots/credits.jpg" width="500" />
 
 
 ### Placing Orders
@@ -100,4 +100,4 @@ Three order statuses: "Finding Delivery Person," "Order Accepted," and "Order Co
 ### Driver Notifications
 Drivers receive notifications for new orders.
 Accept or reject orders.
-<img src="screenshots/order_notifications.jpg" width="500" />
+<img src="screenshots/orders_notifications.jpg" width="500" />
