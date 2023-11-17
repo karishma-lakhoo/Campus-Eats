@@ -64,7 +64,7 @@ If already a user, click on "Log In" and enter your credentials.
 Navigate to the user profile.
 Select "Change Role" to switch between user and delivery person roles.
 
-<p float="right">
+<p float="left">
   <img src="screenshots/delivery_status.jpg" width="500" /> 
   <img src="screenshots/delivery_status_off.jpg" width="500" />
 </p>
@@ -74,7 +74,8 @@ Select "Change Role" to switch between user and delivery person roles.
 
 Go to the wallet or credits section.
 Add Kudu credits to your account.
-<img src="screenshots/credits.jpg" width="500" />
+
+<img src="screenshots/credits.jpg" width="300" />
 
 
 ### Placing Orders
@@ -95,9 +96,9 @@ Three order statuses: "Finding Delivery Person," "Order Accepted," and "Order Co
 ![Alt order tracking](screenshots/status_complete.jpg)
 
 <p float="left">
-  <img src="screenshots/status_search.jpgg" width="500" /> 
-  <img src="screenshots/status_inprogress.jpg" width="500" />
-  <img src="screenshots/status_complete.jpg" width="500" />
+  <img src="screenshots/status_search.jpgg" width="100" /> 
+  <img src="screenshots/status_inprogress.jpg" width="100" />
+  <img src="screenshots/status_complete.jpg" width="100" />
 </p>
 
 
