@@ -48,6 +48,7 @@ const StatusScreen = ({ navigation, route }) => {
 
     const handleRatingChange = () =>{
         rateDeliverer(currOrder.deliverer, rating);
+        navigation.navigate('Home');
     }
 
     useEffect(() => {
