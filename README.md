@@ -91,9 +91,9 @@ Confirm order details and proceed to checkout.
 View order status updates in real-time.
 Three order statuses: "Finding Delivery Person," "Order Accepted," and "Order Completed."
 <p float="left">
-  <img src="screenshots/status_search.jpgg" width="100" /> 
-  <img src="screenshots/status_inprogress.jpg" width="100" />
-  <img src="screenshots/status_complete.jpg" width="100" />
+  <img src="screenshots/status_search.jpg" width="200" /> 
+  <img src="screenshots/status_inprogress.jpg" width="200" />
+  <img src="screenshots/status_complete.jpg" width="200" />
 </p>
 
 
