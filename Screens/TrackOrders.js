@@ -53,7 +53,7 @@ const TrackOrdersScreen = ({navigation}) => {
         console.log(orderID)
         const restaurantName = item.cart[0].restaurantName;
         let totalPrice = 0;
-        const cardHeight = 290 + cartItems.length*15;
+        const cardHeight = 300 + cartItems.length*15;
         const [showComplete, setShowComplete] = useState(false);
         const [accepted, setAccepted] = useState(true);
         const [pin, setPin] = useState("")
