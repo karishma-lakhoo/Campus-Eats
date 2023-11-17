@@ -407,9 +407,7 @@ const styles = StyleSheet.create({
         marginLeft: "auto",
         marginRight: 10
     },
-    boldText: {
-        fontFamily: 'Urbanist-Bold',
-    },
+
     pressableText:{
         color: "#FFF",
         fontSize:16

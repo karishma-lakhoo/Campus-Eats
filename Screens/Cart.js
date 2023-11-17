@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import { ActivityIndicator } from "react-native";
 
 import {
@@ -20,9 +20,10 @@ import { foodList } from "../consts/foodData";
 import {clearCart, getCart, removeFromCart} from "../consts/cartData";
 import { CreditProcessor } from "../consts/creditProcessor";
 import {addNewOrder, CheckCartValidity} from "../consts/orders";
-import {getFirestore} from "firebase/firestore";
+import {collection, doc, getDocs, getFirestore} from "firebase/firestore";
 import {getAuth} from "firebase/auth";
 import colors from "../colors";
+import {useFocusEffect} from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,7 +31,9 @@ const CartScreen = ({ navigation, route }) => {
     let popupRef = React.createRef();
     const [cartList, setCartList] = useState([]);
     const [fontLoaded, setFontLoaded] = useState(false);
-    let [cartFoods, cartLoading] = getCart();
+    //let [cartFoods, cartLoading] = getCart();
+    const [cartFoods, setFoodIDs] = useState([]);
+    const [cartLoading, setLoading] = useState(true)
     const [allFoods, foodLoading] = foodList();
     const creditProcessor = new CreditProcessor();
   
@@ -41,6 +44,43 @@ const CartScreen = ({ navigation, route }) => {
 
     const db = getFirestore();
     const auth = getAuth();
+    const currentUser = auth.currentUser;
+    let userUID;
+
+    if(currentUser){
+        userUID = currentUser.uid;
+    }
+    else{
+        console.log("User not logged in!");
+    }
+
+    const fetchCart = async () => {
+        try {
+            const usersCollection = collection(db, 'users');
+            const userDoc = doc(usersCollection,userUID);
+            const cartCollection = collection(userDoc,'Cart');
+            const querySnapshot = await getDocs(cartCollection);
+
+            querySnapshot.forEach((doc) =>{
+                const docData = doc.data();
+                setFoodIDs(docData.foodIDs);
+                setLoading(false);
+            })
+        } catch (error) {
+            console.log('Error getting documents', error);
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchCart();
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchCart();
+        }, [])
+    );
 
     useEffect(() =>{
         if(!foodLoading && !cartLoading ){
@@ -91,7 +131,6 @@ const CartScreen = ({ navigation, route }) => {
            //  console.log("it works");
               if(location !== "not selected"){
 
-                  cartLoading = true;
                   const fee = price + deliveryFee;
                  // console.log(fee);
                   const orderID =  await addNewOrder(cartList,location, fee);
@@ -174,8 +213,8 @@ const CartScreen = ({ navigation, route }) => {
                                         style={styles.rightButton}
                                         onPress={() => {
                                             removeFromCart(item.id);
-                                            setCartList(cartList.filter(food => food.id != item.id));
-                                            const totalPrice = creditProcessor.calculateTotal(cartList.filter(food => food.id != item.id));
+                                            setCartList(cartList.filter(food => food.id !== item.id));
+                                            const totalPrice = creditProcessor.calculateTotal(cartList.filter(food => food.id !== item.id));
                                             setPrice(totalPrice);
                                         }}
                                     >
