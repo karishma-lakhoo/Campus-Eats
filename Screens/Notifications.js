@@ -38,6 +38,17 @@ const NotificationsScreen = ({ navigation }) => {
     const auth = getAuth();
     const db = getFirestore();
 
+    const currentUser = auth.currentUser;
+    let userUID;
+
+    if(currentUser){
+        userUID = currentUser.uid;
+    }
+    else{
+        console.log("User not logged in!");
+    }
+
+
     const ordersRef = collection(db, 'orders');
     const usersRef = collection(db, 'users');
     const fetchOrders = async () => {
@@ -112,7 +123,7 @@ const NotificationsScreen = ({ navigation }) => {
         // Filter orders based on delivery status and selected option
         if(!loading){
         const filtered = allOrders.filter(item => {
-            if (!item.delivered) { // Only include orders where delivered is false
+            if (!item.delivered && item.orderersID !== userUID) { // Only include orders where delivered is false
                 if (selectedOption === null || selectedOption === "Entire Campus") {
                     return true; // Include all orders when selectedOption is null or "Entire Campus"
                 } else if (selectedOption === "East") {
