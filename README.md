@@ -62,6 +62,7 @@ If already a user, click on "Log In" and enter your credentials.
 Navigate to the user profile.
 Select "Change Role" to switch between user and delivery person roles.
 
+
 ### Adding Credits
 Go to the wallet or credits section.
 Add Kudu credits to your account.
