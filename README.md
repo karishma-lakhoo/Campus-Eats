@@ -65,22 +65,16 @@ Navigate to the user profile.
 Select "Change Role" to switch between user and delivery person roles.
 
 <p float="left">
-  <img src="screenshots/delivery_status.jpg" width="100" /> 
-  <img src="screenshots/delivery_status_off.jpg" width="100" />
+  <img src="screenshots/delivery_status.jpg" width="500" /> 
+  <img src="screenshots/delivery_status_off.jpg" width="500" />
 </p>
-
-
 
 
 ### Adding Credits
 
 Go to the wallet or credits section.
 Add Kudu credits to your account.
-![Alt Adding credits](screenshots/credits.jpg)
-
-
-
-
+<img src="screenshots/credits.jpg" width="500" />
 
 
 ### Placing Orders
@@ -88,15 +82,7 @@ Add Kudu credits to your account.
 Browse food categories on the home page.
 Select desired items and click "Order."
 Confirm order details and proceed to checkout.
-![Alt Placing the order ](screenshots/placing_order.jpg)
-
-
-
-
-
-
-
-
+<img src="screenshots/placing_order.jpg" width="500" />
 
 
 
@@ -108,14 +94,14 @@ Three order statuses: "Finding Delivery Person," "Order Accepted," and "Order Co
 ![Alt order tracking](screenshots/status_inprogress.jpg)
 ![Alt order tracking](screenshots/status_complete.jpg)
 
-
-
-
-
+<p float="left">
+  <img src="screenshots/status_search.jpgg" width="500" /> 
+  <img src="screenshots/status_inprogress.jpg" width="500" />
+  <img src="screenshots/status_complete.jpg" width="500" />
+</p>
 
 
 ### Driver Notifications
-
 Drivers receive notifications for new orders.
 Accept or reject orders.
-![Alt notifications](screenshots/order_notifications.jpg)
+<img src="screenshots/order_notifications.jpg" width="500" />
