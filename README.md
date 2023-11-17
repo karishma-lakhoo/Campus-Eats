@@ -81,20 +81,15 @@ Add Kudu credits to your account.
 ### Placing Orders
 
 Browse food categories on the home page.
-Select desired items and click "Order."
+Select desired items and click "Place Order."
 Confirm order details and proceed to checkout.
 <img src="screenshots/placing_order.jpg" width="500" />
-
 
 
 ### Order Tracking
 
 View order status updates in real-time.
 Three order statuses: "Finding Delivery Person," "Order Accepted," and "Order Completed."
-![Alt order tracking](screenshots/status_search.jpg)
-![Alt order tracking](screenshots/status_inprogress.jpg)
-![Alt order tracking](screenshots/status_complete.jpg)
-
 <p float="left">
   <img src="screenshots/status_search.jpgg" width="100" /> 
   <img src="screenshots/status_inprogress.jpg" width="100" />
