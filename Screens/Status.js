@@ -22,7 +22,7 @@ import { CreditProcessor } from "../consts/creditProcessor";
 import {addNewOrder, getAllOrders, getCurrentUsersOrders} from "../consts/orders";
 import LottieView from "lottie-react-native";
 import StarRating from 'react-native-star-rating-widget';
-import {collection, doc, getFirestore, onSnapshot} from "firebase/firestore";
+import {collection, doc, getDocs, getFirestore, onSnapshot, query, where} from "firebase/firestore";
 import md5 from "md5";
 
 const { width, height } = Dimensions.get("window");
@@ -36,11 +36,13 @@ const StatusScreen = ({ navigation, route }) => {
     const [deliveryArrived, setDeliveryArrived] = useState(false);
     const [rating, setRating] = useState(2.5);
     const orderID = route.params.orderID;
-    console.log("asdf")
-    console.log(orderID)
+    const [delivererDetails, setDelivererDetails] = useState("");
+    // console.log("asdf")
+    // console.log(orderID)
     const [currOrder, setOrder] = useState([]);
     const [allOrders, isOrdersLoading ] = getAllOrders();
     const db = getFirestore();
+    const [deliveryEmail, setDeliveryEmail] = useState('');
 
     useEffect(() => {
         const unsubscribe = onSnapshot(doc(db, "orders", orderID), (docSnapshot) => {
@@ -59,8 +61,8 @@ const StatusScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         if (!isOrdersLoading) {
-            console.log("ALL")
-            console.log(allOrders)
+            // console.log("ALL")
+            // console.log(allOrders)
             const orderWithId = allOrders.find(order => order.id === orderID);
             setOrder(orderWithId)
         }
@@ -69,14 +71,50 @@ const StatusScreen = ({ navigation, route }) => {
 
 
     useEffect(() => {
-        if (currOrder.status === "Accepted") {
+        // Fetch deliverer details
+        // Fetch deliverer details
+        async function fetchDelivererDetails() {
+            try {
+                const delivererID = currOrder.deliverer;
+                const usersRef = collection(db, 'users');
+                const userQuery = query(usersRef, where('__name__', '==', delivererID));
+                const userSnapshot = await getDocs(userQuery);
 
+                if (!userSnapshot.empty) {
+                    const userDoc = userSnapshot.docs[0];
+                    const userData = userDoc.data();
+                    setDelivererDetails({
+                        delivererName: userData.username,
+                        delivererEmail: userData.email,
+                    });
+                    console.log("HELP ME")
+                    console.log(delivererDetails.delivererEmail)
+                }
+            } catch (error) {
+                console.log('Error fetching deliverer details', error);
+            }
+        }
+
+        fetchDelivererDetails();
+
+
+        if (currOrder.status === "Accepted") {
+            console.log("currMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+            console.log(currOrder)
+            setDeliveryEmail(delivererDetails?.delivererEmail || '');            // setDeliveryEmail(currOrder.orderersEmail)
             setDeliveryAccepted(true);
             setFindingDeliveryPerson(false);
         }
         if (currOrder.status === "Completed") {
-            setDeliveryArrived(true);
-            setDeliveryAccepted(false);
+            console.log("sasdfafsdasfadfsad")
+            console.log("currMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+            console.log(currOrder)
+            console.log(currOrder.delivererName)
+            setTimeout(() => {
+                setDeliveryArrived(true);
+                setDeliveryAccepted(false);
+                setFindingDeliveryPerson(false);
+            }, 2000); // Adjust the delay time as needed
         }
     }, [currOrder]);
 
@@ -132,7 +170,7 @@ const StatusScreen = ({ navigation, route }) => {
                     {deliveryAccepted && (
                         <View>
                             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.delivererName} is on the way</Text>
+                                <Text style={[styles.boldText17, { fontSize: 20 }]}>{delivererDetails.delivererName} is on the way</Text>
                                 <View style={styles.animationContainer}>
                                     <LottieView
                                         source={require('../animations/dots.json')}
@@ -144,15 +182,15 @@ const StatusScreen = ({ navigation, route }) => {
                             </View>
                             <View style={styles.card}>
                                 <View style={styles.profileImage}>
-                                    {/*<Image*/}
-                                    {/*    source={{uri: `https://www.gravatar.com/avatar/${md5(currOrder.orderersEmail)}?s=200`}}*/}
-                                    {/*    style={styles.cardImage}*/}
-                                    {/*    resizeMode= "cover"*/}
-
+                                    <Image
+                                        source={{ uri: delivererDetails ? `https://www.gravatar.com/avatar/${md5(delivererDetails.delivererEmail)}?s=200` : 'https://example.com/placeholder-image.jpg' }}
+                                        style={styles.cardImage}
+                                        resizeMode="cover"
                                     />
+
                                 </View>
                                 <View>
-                                    <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.delivererName}</Text>
+                                    <Text style={[styles.boldText17, { fontSize: 20 }]}>{delivererDetails.delivererName}</Text>
                                 </View>
                                 <View style={{ pointerEvents: 'none', marginTop: 30}}>
                                     <StarRating
@@ -179,7 +217,7 @@ const StatusScreen = ({ navigation, route }) => {
                                 />
                             </View>
                             <Text style={[styles.boldText17, { fontSize: 20 , padding: 10 }]}>Order Complete!</Text>
-                            <Text style={styles.boldText17}>Please rate {currOrder.delivererName}</Text>
+                            <Text style={styles.boldText17}>Please rate {delivererDetails.delivererName}</Text>
                             <View style={{ marginTop: 10}}>
                                 <StarRating
                                     rating={rating}
