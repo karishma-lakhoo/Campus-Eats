@@ -212,15 +212,6 @@ const updateDeliveryStatus = async (newState) => {
                     </Text>
                 </TouchableOpacity>
 
-                {/*removed this because we shouldnt be able to edit our student number or email*/}
-                {/*<TouchableOpacity style={styles.smallContainer}  >*/}
-                {/*    */}
-                {/*    <FontAwesomeIcon icon={faUserEdit} style={styles.icon} />*/}
-                {/*    <Text style={styles.textInfo}>*/}
-                {/*        Edit profile*/}
-                {/*    </Text>*/}
-                {/*</TouchableOpacity>*/}
-
                 {toggleValue && (
                     <View style={styles.smallContainer}>
                         <FontAwesomeIcon icon={faStar} style={styles.icon} />

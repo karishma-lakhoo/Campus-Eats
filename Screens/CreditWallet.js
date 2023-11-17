@@ -17,9 +17,11 @@ import {
 } from "react-native";
 import * as Font from "expo-font";
 import { FontAwesome5 } from '@expo/vector-icons';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getDoc,doc, getFirestore, updateDoc } from 'firebase/firestore';
 import Colors from "../colors";
+import { useFocusEffect } from '@react-navigation/native';
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,6 +31,9 @@ const CreditScreen = ({ navigation }) => {
     const [cash_in_amount, setAmount] = useState("");
     const [credits, setCredits] = useState(0);
     const [balance, setBalance] = useState(0);
+    const auth = getAuth();
+    const db = getFirestore();
+    
 
     useEffect(() => {
         async function loadFont() {
@@ -38,6 +43,25 @@ const CreditScreen = ({ navigation }) => {
             });
             setFontLoaded(true);
         }
+        const fetchCredits = async () => {
+            try {
+              // Get the current user's UID
+              const uid = auth.currentUser.uid;
+      
+              // Reference to the user's document in the database
+              const userDocRef = doc(db, 'users', uid);
+      
+              // Get the current credits from the database
+              const userDoc = await getDoc(userDocRef);
+              const currentCredits = userDoc.data().credits || 0;
+      
+              // Update the local state with the fetched credits
+              setCredits(currentCredits);
+            } catch (error) {
+              console.error('Error fetching credits:', error);
+            }
+        }
+        fetchCredits();
         loadFont();
     }, []);
 
@@ -45,11 +69,14 @@ const CreditScreen = ({ navigation }) => {
         return null;
     }
 
-    const auth = getAuth();
-    const db = getFirestore();
 
+    
     const handleAddToWallet = async () => {
         try {
+            if (!validateForm()) {
+                alert("Please enter the valid amount of credits.");
+                return;
+            }
             // Get the current user's UID
             const uid = auth.currentUser.uid;
 
@@ -77,6 +104,15 @@ const CreditScreen = ({ navigation }) => {
         } catch (error) {
             console.error('Error updating credits:', error);
         }
+    };
+    const validateForm = () => {
+        if (cash_in_amount.trim()=="") {
+            return false; // At least one field is empty
+        }
+        if(parseFloat(cash_in_amount.trim()) < 0){
+            return false;
+        }
+        return true; // All fields are filled
     };
 
     const handleWithdraw = async () => {
@@ -153,19 +189,18 @@ const CreditScreen = ({ navigation }) => {
                     />
                 </View>
 
-                {!credits && (
+                {credits > 0 && (
+                    <View style={styles.noCredit}>
+                        <Text style={styles.textInfo}> Credits: {credits} </Text>
+                    </View>
+                )}
+
+                {credits===0 && (
                     <View style={styles.noCredit}>
                         <Text style={styles.textInfo}> You have no credits</Text>
                         <Text style={{ alignItems: "center", justifyContent: "center", fontSize: 11 }}>
                             Add credits to order food
                         </Text>
-                    </View>
-                )}
-
-                {credits > 0 && (
-                    <View style={styles.noCredit}>
-                        <Text style={styles.textInfo}> Credits: {credits} </Text>
-                        <Text style={styles.textInfo}>Balance: {balance}</Text>
                     </View>
                 )}
 
@@ -191,11 +226,11 @@ const CreditScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.btncontainer}>
+                {/* <View style={styles.btncontainer}>
                     <TouchableOpacity activeOpacity={0.7} onPress={handleWithdraw}>
                         <Text style={[styles.boldText, styles.pressableText]}>Withdraw</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
             </View>
         </SafeAreaView>
     );
