@@ -43,6 +43,9 @@ const CreditScreen = ({ navigation }) => {
             });
             setFontLoaded(true);
         }
+
+
+        // Fetching credits from the DB
         const fetchCredits = async () => {
             try {
               // Get the current user's UID
@@ -50,8 +53,6 @@ const CreditScreen = ({ navigation }) => {
       
               // Reference to the user's document in the database
               const userDocRef = doc(db, 'users', uid);
-      
-              // Get the current credits from the database
               const userDoc = await getDoc(userDocRef);
               const currentCredits = userDoc.data().credits || 0;
       
@@ -70,7 +71,7 @@ const CreditScreen = ({ navigation }) => {
     }
 
 
-    
+    // for Depositing of Credits
     const handleAddToWallet = async () => {
         try {
             if (!validateForm()) {
@@ -86,16 +87,12 @@ const CreditScreen = ({ navigation }) => {
             // Get the current credits from the database
             const userDoc = await getDoc(userDocRef);
             const currentCredits = userDoc.data().credits || 0;
-
-            // Calculate the new credits by adding the entered amount
             const newCredits = currentCredits + parseFloat(cash_in_amount);
 
             // Update the credits field in the user's document
             await updateDoc(userDocRef, {
                 credits: newCredits,
             });
-
-            // Update the local state
             setCredits(newCredits);
 
             // Show an alert or navigate to another screen after a successful update
@@ -115,21 +112,19 @@ const CreditScreen = ({ navigation }) => {
         return true; // All fields are filled
     };
 
+
+    //For Handling withdrawals
     const handleWithdraw = async () => {
         try {
             // Get the current user's UID
             const uid = auth.currentUser.uid;
-
-            // Reference to the user's document in the database
             const userDocRef = doc(db, 'users', uid);
-
-            // Get the current credits from the database
             const userDoc = await getDoc(userDocRef);
             const currentCredits = userDoc.data().credits || 0;
 
             // Ensure that the user has sufficient credits for the withdrawal
             if (currentCredits < parseFloat(cash_in_amount)) {
-                alert('Insufficient credits for withdrawal');
+                alert('Insufficient credits');
                 return;
             }
 
@@ -162,6 +157,10 @@ const CreditScreen = ({ navigation }) => {
         popupRef.close()
     }
 
+
+
+    
+// Everything rendered
     return (
         <SafeAreaView style={styles.safecontainer}>
             <View style={styles.header}>
@@ -236,6 +235,8 @@ const CreditScreen = ({ navigation }) => {
     );
 };
 
+
+// CSS styles
 const styles = StyleSheet.create({
     container: {
         flex: 1,
