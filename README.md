@@ -78,7 +78,7 @@ Add Kudu credits to your account.
 <img src="screenshots/credits.jpg" width="500" />
 
 
-### Placing Orders
+###** Placing Orders**
 
 Browse food categories on the home page.
 Select desired items and click "Place Order."
