@@ -64,7 +64,7 @@ If already a user, click on "Log In" and enter your credentials.
 Navigate to the user profile.
 Select "Change Role" to switch between user and delivery person roles.
 
-<p float="left">
+<p float="right">
   <img src="screenshots/delivery_status.jpg" width="500" /> 
   <img src="screenshots/delivery_status_off.jpg" width="500" />
 </p>
