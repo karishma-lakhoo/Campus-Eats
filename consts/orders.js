@@ -132,10 +132,10 @@ function generateRandomPin() {
 }
 
 export function CheckCartValidity(cart) {
-  //  console.log(cart);
+   // console.log(cart);
     const east = [ "Planet Savvy",  "Starbucks"];
     const west = ["Jimmy's West Campus", "The Tower", "Olives and Plates", "vida e caffe", "Zesty Lemonz"];
-    const matrix = ["Chinese Lantern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"];
+    const matrix = ["Chinese Latern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"];
      const res = cart[0].restaurantName;
      let loc;
      if(east.includes(res)){

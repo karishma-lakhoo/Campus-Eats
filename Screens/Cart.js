@@ -87,31 +87,31 @@ const CartScreen = ({ navigation, route }) => {
 
     const handleCheckout = async () => {
         // console.log("WIthin");
-        // if(CheckCartValidity(cartList)){
-        //     console.log("it works");
-        // }else{
-        //     alert("You cannot order from stores in different locations");
-        // }
-       // CheckCartValidity(cartList);
-        if(location !== "not selected"){
+         if(CheckCartValidity(cartList)){
+             console.log("it works");
+         }else{
+             alert("You cannot order from stores in different locations");
+         }
 
-            cartLoading = true;
-            const fee = price + deliveryFee;
-           // console.log(fee);
-            const orderID =  await addNewOrder(cartList,location, fee);
-            if(orderID){
-                await clearCart();
-                setCartList([]);
-                const totalPrice = creditProcessor.calculateTotal([]);
-                setPrice(totalPrice);
-                alert("Order Placed");
-                navigation.navigate("Status" , { orderID});   //navigate to a myOrders page
-            }
-
-
-        }else{
-            alert("Select a pick up point");
-        }
+       //  if(location !== "not selected"){
+       //
+       //      cartLoading = true;
+       //      const fee = price + deliveryFee;
+       //     // console.log(fee);
+       //      const orderID =  await addNewOrder(cartList,location, fee);
+       //      if(orderID){
+       //          await clearCart();
+       //          setCartList([]);
+       //          const totalPrice = creditProcessor.calculateTotal([]);
+       //          setPrice(totalPrice);
+       //          alert("Order Placed");
+       //          navigation.navigate("Status" , { orderID});   //navigate to a myOrders page
+       //      }
+       //
+       //
+       //  }else{
+       //      alert("Select a pick up point");
+       //  }
 
     };
 
