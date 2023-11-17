@@ -7,12 +7,13 @@ import {
     Dimensions,
     TouchableOpacity,
     FlatList,
-    Image, Pressable
+    Image, Pressable, ActivityIndicator
 } from "react-native";
 import React, {useEffect, useState} from "react";
 import {acceptOrder, completeOrder, getAllOrders, getCurrentUsersOrders} from "../consts/orders";
 import {getAuth} from "firebase/auth";
 import {getFirestore} from "firebase/firestore";
+import md5 from "md5";
 
 const { width, height } = Dimensions.get("window");
 
@@ -46,6 +47,7 @@ const TrackOrdersScreen = ({navigation}) => {
     const LogCard = ({ item }) => {
         const cartItems = item.cart;
         const orderID = item.id;
+
         const options = {  hour: 'numeric', minute: 'numeric', year: 'numeric', month: 'numeric', day: 'numeric'};
         console.log(item.timePlaced.toDate().toLocaleString('en-US', options ))
         console.log(orderID)
@@ -89,8 +91,9 @@ const TrackOrdersScreen = ({navigation}) => {
                             }>
                                 <View style={{backgroundColor: 'rgba(255, 167, 38, 0.8)', alignItems: "center", height: 100, borderRadius: 10, marginTop: 5}}>
                                     <Image
-                                        source={require("../assets/profile.jpg")}
+                                        source={{uri: `https://www.gravatar.com/avatar/${md5(item.orderersEmail)}?s=200`}}
                                         style={{ height: 80, width: 80, borderRadius: 50, marginTop: 10}}
+                                        resizeMode= "cover"
                                     />
                                 </View>
                                 <View
@@ -154,7 +157,7 @@ const TrackOrdersScreen = ({navigation}) => {
         )
     }
 
-    return(
+    return (
         <SafeAreaView style={styles.container}>
             <View style={styles.contentContainer}>
                 <View style={styles.header}>
@@ -166,22 +169,33 @@ const TrackOrdersScreen = ({navigation}) => {
                     >
                         <Image
                             source={require("../assets/back_thick.png")}
-                            style={{width: 24, height: 24}}
+                            style={{ width: 24, height: 24 }}
                         />
                     </TouchableOpacity>
                     <Text style={styles.heading}>Track Orders</Text>
                 </View>
                 <View>
-                    <FlatList
-                        data={sortedFilteredOrders}
-                        keyExtractor={(item) => item}
-                        renderItem={({ item }) => <LogCard item={item} />}
-                    />
+                    {isOrdersLoading ? (
+                        <ActivityIndicator
+                            size="large"
+                            color="orange"
+                            style={{
+                                marginTop: height * 0.2,
+                                marginBottom: height * 0.2,
+                            }}
+                        />
+                    ) : (
+                        <FlatList
+                            data={sortedFilteredOrders}
+                            keyExtractor={(item) => item}
+                            renderItem={({ item }) => <LogCard item={item} />}
+                        />
+                    )}
                 </View>
             </View>
         </SafeAreaView>
-    )
-}
+    );
+};
 
 
 

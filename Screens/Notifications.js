@@ -28,54 +28,106 @@ const { width, height } = Dimensions.get("window");
 const NotificationsScreen = ({ navigation }) => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const [isAtEndOfList, setIsAtEndOfList] = useState(false);
-    const [orders, setOrders] = useState([]);
-    const [allOrders, isOrdersLoading] = getAllOrders();
-    const [filteredOrders, setFilteredOrders] = useState(allOrders);
+    const [loading, setLoading] = useState(true);
+    const [allOrders, setOrders] = useState([]);
+    const [filteredOrders, setFilteredOrders] = useState([]);
     const [deliveryStatus, setDeliveryStatus] = useState(false);
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const [selectedOption, setSelectedOption] = useState("Entire Campus");
     const options = ["Entire Campus", "East", "West" ];
+    const auth = getAuth();
+    const db = getFirestore();
+
+    const currentUser = auth.currentUser;
+    let userUID;
+
+    if(currentUser){
+        userUID = currentUser.uid;
+    }
+    else{
+        console.log("User not logged in!");
+    }
+
+
+    const ordersRef = collection(db, 'orders');
+    const usersRef = collection(db, 'users');
+    const fetchOrders = async () => {
+        try{
+            const q = query(ordersRef);
+            const querySnapshot = await getDocs(q);
+
+            const listOfOrders = [];
+
+            for (const myDoc of querySnapshot.docs) {
+                const id = myDoc.id; // Firestore document ID
+                const data = myDoc.data();
+                const orderersID = data.orderersID;
+                const location = data.location;
+                const cart = data.cart;
+                let orderersName = "";
+                const deliverer = data.deliverer;
+                let delivererName = "";
+                const delivered = data.delivered;
+                let orderersEmail = "";
+                let delivererEmail = "";
+                const timePlaced = data.timestamp;
+                const status = data.status;
+                const received = data.received;
+                const finalCost = data.totalCost;
+                const userQuery = query(usersRef, where('__name__', '==', orderersID));
+
+                const userSnapshot = await getDocs(userQuery);
+
+                const pin = data.pin;
+                if (!userSnapshot.empty) {
+                    const userDoc = userSnapshot.docs[0];
+                    const userData = userDoc.data();
+                    orderersName = userData.username;
+                    orderersEmail = userData.email;
+                }
+                if(deliverer){
+                    const userQuery2 = query(usersRef, where('__name__', '==', deliverer));
+                    const userSnapshot2 = await getDocs(userQuery2);
+                    const userDoc2 = userSnapshot2.docs[0];
+                    const userData2 = userDoc2.data();
+                    delivererName = userData2.username;
+                    delivererEmail = userData2.username;
+                }
+
+                listOfOrders.push({ id, orderersID, location, cart, orderersName, timePlaced, pin, delivererName, finalCost, status, received, delivered, orderersEmail, delivererEmail });
+            }
+
+
+
+            setOrders(listOfOrders);
+            setLoading(false);
+        } catch (error) {
+            console.log('Error getting documents', error);
+            setLoading(false);
+
+        }
+    }
+
+
+
     // useEffect(() => {
-    //     // console.log("jaos")
-    //     // console.log(allOrders)
-    //     const completeFiltered = allOrders.filter(item => {item.delivered === false})
-    //
-    //     // console.log(selectedOption);
-    //     // console.log("asdfsdaffsdafsdafsdarfsdafsdafsdagfsdagdfs")
-    //     // i need to do date ascending here
-    //     if (selectedOption === null || selectedOption === "Entire Campus" ) {
-    //         // console.log(allOrders)
-    //         const sortedFilteredOrders = allOrders.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
-    //
-    //         setFilteredOrders(allOrders);
-    //         // setFilteredOrders(allOrders);
+    //     if(!isOrdersLoading){
+    //         setOrders(allOrders);
+    //        // setOrders(allOrders);
     //     }
-    //     else{
-    //         console.log('B')
-    //
-    //         const filtered = allOrders.filter(item => {
-    //             if (selectedOption === "East") {
-    //                 // Assuming "East" locations are ["Library Lawns", "Solomon Mahlangu House"]
-    //                 return ["Chinese Lantern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"  ].includes(item.cart[0].restaurantName);
-    //             } else if (selectedOption === "West") {
-    //                 // Assuming "West" locations are ["Law Lawns", "The Tower", "Chamber of Mines", "Science Stadium"]
-    //                 return ["Jimmy's West Campus", "The Tower", "Olives and Plates", "vida e caffe", "Zesty Lemonz"].includes(item.location);
-    //             }
-    //         });
-    //         // console.log("filtering");
-    //         // console.log(filtered);
-    //         const sortedFilteredOrders = filtered.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
-    //         setFilteredOrders(sortedFilteredOrders);
-    //     }
-    // }, [selectedOption, deliveryStatus,allOrders]);
+    // }, [isOrdersLoading, allOrders]);
+
+
+
     useEffect(() => {
         // Filter orders based on delivery status and selected option
+        if(!loading){
         const filtered = allOrders.filter(item => {
-            if (!item.delivered) { // Only include orders where delivered is false
+            if (!item.delivered && item.orderersID !== userUID) { // Only include orders where delivered is false
                 if (selectedOption === null || selectedOption === "Entire Campus") {
                     return true; // Include all orders when selectedOption is null or "Entire Campus"
                 } else if (selectedOption === "East") {
-                    return ["Chinese Lantern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"].includes(item.cart[0].restaurantName);
+                    return ["Chinese Latern", "Deli Delicious", "Jimmy's East Campus", "Love & Light", "Planet Savvy", "Sausage saloon", "Starbucks", "Xpresso"].includes(item.cart[0].restaurantName);
                 } else if (selectedOption === "West") {
                     return ["Jimmy's West Campus", "The Tower", "Olives and Plates", "vida e caffe", "Zesty Lemonz"].includes(item.location);
                 }
@@ -87,7 +139,8 @@ const NotificationsScreen = ({ navigation }) => {
         const sortedFilteredOrders = filtered.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
 
         setFilteredOrders(sortedFilteredOrders);
-    }, [selectedOption, deliveryStatus, allOrders]);
+    }
+    }, [selectedOption, deliveryStatus, allOrders, loading]);
     const handleFilterPress = () => {
         toggleDropdown()
     };
@@ -99,8 +152,7 @@ const NotificationsScreen = ({ navigation }) => {
         setSelectedOption(option);
         toggleDropdown();
     };
-    const auth = getAuth();
-    const db = getFirestore();
+
     const fetchDeliveryStatus = async () => {
         try {
             // Get the user's email
@@ -127,11 +179,13 @@ const NotificationsScreen = ({ navigation }) => {
     useEffect(() => {
         // Fetch the delivery status when the component mounts
         fetchDeliveryStatus();
+        fetchOrders();
     }, []);
 
     useFocusEffect(
         useCallback(() => {
             fetchDeliveryStatus();
+            fetchOrders();
         }, [])
     );
 
@@ -139,28 +193,7 @@ const NotificationsScreen = ({ navigation }) => {
     // ike your driver is nearby or come and pick up your food
     // if the user is a driver
     // then the notifications should be the list of all deliveries that they are open to
-    useEffect(() => {
-        if(!isOrdersLoading){
-            setOrders(allOrders);
-            // const currTime = new Date();
-            // console.log("currTime");
-            // console.log(currTime);
-            // //Instead of deleting from DB, just filter to show orders that are at most 2 hours old
-            // //TODO: also filter to show orders where status != order completed
-            // const filteredOrders = allOrders.filter(order => {
-            //                     const orderTime = order.timePlaced;
-            //     const twoHoursAgo = new Date();
-            //     twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
-            //     console.log("orderTime")
-            //     console.log(order.timePlaced.toDate());
-            //     console.log("twoTime")
-            //     console.log(twoHoursAgo);
-            //     return orderTime >= twoHoursAgo && orderTime <= currTime;
-            // });
 
-            setOrders(allOrders);
-        }
-    }, [isOrdersLoading, allOrders]);
 
     useEffect(() => {
         async function loadFont() {
@@ -210,17 +243,34 @@ const NotificationsScreen = ({ navigation }) => {
         };
 
         const handleAccept = (item) => {
-            acceptOrder(item);
-            setAccepted(false); //Shouldnt this be set to true?
-            setShowComplete(true);
+            acceptOrder(item).then(() => {
+                // This block will be executed after the acceptOrder promise is resolved
+                setAccepted(false);
+                setShowComplete(true);
+               // setFilteredOrders(prevOrders => prevOrders.filter(order => order.accepted !== item.accepted));
 
-        }
+                // Update the 'filtered' list
+                // setFiltered((prevFiltered) => {
+                //     return prevFiltered.map((filteredItem) => {
+                //         // Assuming 'id' is a unique identifier for each item
+                //         if (filteredItem.id === item.id) {
+                //             // Update the specific item
+                //             return { ...filteredItem, accepted: true };
+                //         }
+                //         return filteredItem; // Return unchanged items
+                //     });
+                // });
+            });
+        };
+
 
         const handleComplete = (item) => {
 
             if(pin === item.pin.toString()){
-                completeOrder(item);
-                setFilteredOrders(prevOrders => prevOrders.filter(order => order.id !== item.id));
+                completeOrder(item).then(() => {
+                    setFilteredOrders(filteredOrders.filter(order => order.id !== item.id));
+                });
+
 
             }else{
                 alert("Incorrect pin");
