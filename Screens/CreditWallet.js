@@ -309,8 +309,9 @@ const styles = StyleSheet.create({
     btncontainer : {
         backgroundColor: colors.primary,
         width: '50%',
-        padding: 10,
-        marginVertical: 40,
+        height: '8%',
+        padding: 22,
+        marginVertical: 20,
         alignItems:'center',
         borderRadius: 12,
     },

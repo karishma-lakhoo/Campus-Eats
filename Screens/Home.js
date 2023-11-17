@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {
     ActivityIndicator,
     Dimensions,
@@ -17,7 +17,8 @@ import categories from "../consts/foodCategories";
 import {getFavs} from "../consts/favsData";
 import md5 from "md5";
 import {getAuth, onAuthStateChanged} from "firebase/auth";
-import {collection, getDocs, getFirestore, query, where} from "firebase/firestore";
+import {collection, doc, getDocs, getFirestore, query, where} from "firebase/firestore";
+import {useFocusEffect} from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -26,10 +27,59 @@ const HomeScreen = ({navigation}) => {
     const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
     const [selectedItems, setSelectedItems] = useState([]);
     const [allFoods, isFoodLoading ] = foodList();
-  //  console.log("favFoods runs");
-    const [favFoods, favsLoading] = getFavs();
-    const [lfavFoods, setFavs] = useState([]);
- //   console.log("favFoods:", favFoods);
+   // let [favFoods, favsLoading] = getFavs();
+    const [favFoodIDs, setFoodIDs] = useState([]);
+    const [favsLoading, setLoading] = useState(true);
+
+
+    // useEffect(() => {
+    //     // Fetch the delivery status when the component mounts
+    //     const [favFoods, favsLoading] = getFavs();
+    // }, []);
+    //
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         const [favFoods, favsLoading] = getFavs();
+    //     }, [])
+    // );
+
+    const updateFavs = async() => {
+        const db = getFirestore();
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            console.log("User not logged in!");
+            return;
+        }
+
+        try {
+            const userUID = currentUser.uid;
+            const usersCollection = collection(db, 'users');
+            const userDoc = doc(usersCollection, userUID);
+            const favsCollection = collection(userDoc, 'Favourites');
+            const querySnapshot = await getDocs(favsCollection);
+
+            const foodIDList = [];
+            querySnapshot.forEach((doc) => {
+                const docData = doc.data();
+                foodIDList.push(...docData.foodIDs);
+            });
+
+            setFoodIDs(foodIDList);
+            //   console.log('foodIDs:', foodIDList); // Log the foodIDs when set
+            //  console.log(foodIDs);
+            setLoading(false);
+        } catch (error) {
+            console.log('Error getting documents', error);
+            setLoading(false);
+        }
+
+    }
+
+    // useEffect(() => {
+    //     updateFavs();
+    // }, [favsLoading]);
+
 
     useEffect(() => {
         async function loadFont() {
@@ -96,9 +146,10 @@ const HomeScreen = ({navigation}) => {
                 const randomFoods = getRandomFoods(allFoods, 10);
                 setSelectedItems(randomFoods);
             } else if (selectedCategory.category.toLowerCase() === "your favourites") {
-
+                //    setLoading(true);
+                updateFavs();
                 if ( !favsLoading) {
-                    const filteredFoods = allFoods.filter((food) => favFoods.includes(food?.id));
+                    const filteredFoods = allFoods.filter((food) => favFoodIDs.includes(food?.id));
                     setSelectedItems(filteredFoods);
             //        console.log("favFoods:", favFoods);
              //       console.log("selectedItems:", selectedItems);
@@ -113,7 +164,7 @@ const HomeScreen = ({navigation}) => {
                 setSelectedItems(filteredItems);
             }
         }
-    }, [isFoodLoading, favsLoading, selectedCategoryIndex, allFoods, favFoods]);
+    }, [isFoodLoading, favsLoading, selectedCategoryIndex, allFoods, favFoodIDs]);
 
 
 
@@ -214,6 +265,7 @@ const HomeScreen = ({navigation}) => {
                         </View>
                         <View>
                             <Text style={styles.boldText}>{item.name}</Text>
+                            <Text style={styles.subText}>{item.restaurantName}</Text>
                         </View>
                     </TouchableOpacity>
                 )}
@@ -319,6 +371,12 @@ const styles = StyleSheet.create({
         fontFamily: "Urbanist-Regular",
         color: "black",
         fontWeight: "bold",
+    },
+    subText: {
+        fontFamily: "Urbanist-Regular",
+        color: "black",
+        fontWeight: "bold",
+        fontSize: 12
     },
     flatListContainer:{
         marginTop: 5,

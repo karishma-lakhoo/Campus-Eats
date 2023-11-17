@@ -208,7 +208,7 @@ const updateDeliveryStatus = async (newState) => {
                     }}>
                     <FontAwesomeIcon icon={faWallet} style={styles.icon} />
                     <Text style={styles.textInfo}>
-                        Credit Wallet: {user.credits} Kudu
+                        Credit Wallet: {user.credits} Credits
                     </Text>
                 </TouchableOpacity>
 

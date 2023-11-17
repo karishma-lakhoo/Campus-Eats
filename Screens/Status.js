@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
+import colors from "../colors";
 
 import {
     Dimensions,
@@ -22,6 +23,9 @@ import { CreditProcessor } from "../consts/creditProcessor";
 import {addNewOrder, getAllOrders, getCurrentUsersOrders} from "../consts/orders";
 import LottieView from "lottie-react-native";
 import StarRating from 'react-native-star-rating-widget';
+import {collection, doc, getDocs, getFirestore, onSnapshot, query, where} from "firebase/firestore";
+import md5 from "md5";
+import { rateDeliverer } from "../consts/ratings";
 
 const { width, height } = Dimensions.get("window");
 
@@ -34,41 +38,91 @@ const StatusScreen = ({ navigation, route }) => {
     const [deliveryArrived, setDeliveryArrived] = useState(false);
     const [rating, setRating] = useState(2.5);
     const orderID = route.params.orderID;
+    const [delivererDetails, setDelivererDetails] = useState("");
+    // console.log("asdf")
+    // console.log(orderID)
     const [currOrder, setOrder] = useState([]);
     const [allOrders, isOrdersLoading ] = getAllOrders();
-    const [locAllOrders, setLocAllorders] = useState([]);
-    const [locLoading, setLocLoading] = useState(true);
+    const db = getFirestore();
+    const [deliveryEmail, setDeliveryEmail] = useState('');
 
-    //
-    // useEffect(() => {
-    //     const [allOrders, isOrdersLoading ] = getAllOrders();
-    //     if(!isOrdersLoading){
-    //         setLocAllorders(allOrders);
-    //         setLocLoading(false);
-    //     }
-    // }, [isOrdersLoading]);
+    const handleRatingChange = () =>{
+        rateDeliverer(currOrder.deliverer, rating);
+    }
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
+        const unsubscribe = onSnapshot(doc(db, "orders", orderID), (docSnapshot) => {
+            console.log("XXXXXXXX  Received doc snapshot:", docSnapshot.data());
+            setOrder(docSnapshot.data());
+        }, (err) => {
+            console.log("Encountered error:", err);
+        });
 
-            if (!isOrdersLoading) {
-                const orderWithId = allOrders.find(order => order.id === orderID);
-                setOrder(orderWithId);
+        return () => {
+            // Unsubscribe when component unmounts
+            unsubscribe();
+        };
+    }, [orderID, db]);
 
-                if (currOrder.status === "Accepted") {
-                    setDeliveryAccepted(true);
-                    setFindingDeliveryPerson(false);
-                }
-                if (currOrder.status === "Completed") {
-                    setDeliveryArrived(true);
-                    setDeliveryAccepted(false);
-                }
-            }
-        }, 5000); // 5 seconds in milliseconds
 
+    useEffect(() => {
+        if (!isOrdersLoading) {
+            // console.log("ALL")
+            // console.log(allOrders)
+            const orderWithId = allOrders.find(order => order.id === orderID);
+            setOrder(orderWithId)
+        }
         // Cleanup the interval when the component unmounts or when dependencies change
-        return () => clearInterval(intervalId);
-    }, [isOrdersLoading, allOrders, orderID]);
+    }, [allOrders]);
+
+
+    useEffect(() => {
+        // Fetch deliverer details
+        // Fetch deliverer details
+        async function fetchDelivererDetails() {
+            try {
+                const delivererID = currOrder.deliverer;
+                const usersRef = collection(db, 'users');
+                const userQuery = query(usersRef, where('__name__', '==', delivererID));
+                const userSnapshot = await getDocs(userQuery);
+
+                if (!userSnapshot.empty) {
+                    const userDoc = userSnapshot.docs[0];
+                    const userData = userDoc.data();
+                    setDelivererDetails({
+                        delivererName: userData.username,
+                        delivererEmail: userData.email,
+                    });
+                    console.log("HELP ME")
+                    console.log(delivererDetails.delivererEmail)
+                }
+            } catch (error) {
+                console.log('Error fetching deliverer details', error);
+            }
+        }
+
+        fetchDelivererDetails();
+
+
+        if (currOrder.status === "Accepted") {
+            console.log("currMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+            console.log(currOrder)
+            setDeliveryEmail(delivererDetails?.delivererEmail || '');            // setDeliveryEmail(currOrder.orderersEmail)
+            setDeliveryAccepted(true);
+            setFindingDeliveryPerson(false);
+        }
+        if (currOrder.status === "Completed") {
+            console.log("sasdfafsdasfadfsad")
+            console.log("currMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+            console.log(currOrder)
+            console.log(currOrder.delivererName)
+            setTimeout(() => {
+                setDeliveryArrived(true);
+                setDeliveryAccepted(false);
+                setFindingDeliveryPerson(false);
+            }, 2000); // Adjust the delay time as needed
+        }
+    }, [currOrder]);
 
     useEffect(() => {
         async function loadFont() {
@@ -122,7 +176,7 @@ const StatusScreen = ({ navigation, route }) => {
                     {deliveryAccepted && (
                         <View>
                             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.delivererName} is on the way</Text>
+                                <Text style={[styles.boldText17, { fontSize: 20 }]}>{delivererDetails.delivererName} is on the way</Text>
                                 <View style={styles.animationContainer}>
                                     <LottieView
                                         source={require('../animations/dots.json')}
@@ -135,12 +189,14 @@ const StatusScreen = ({ navigation, route }) => {
                             <View style={styles.card}>
                                 <View style={styles.profileImage}>
                                     <Image
-                                        source={require('../assets/avatar.png')}
+                                        source={{ uri: delivererDetails ? `https://www.gravatar.com/avatar/${md5(delivererDetails.delivererEmail)}?s=200` : 'https://example.com/placeholder-image.jpg' }}
                                         style={styles.cardImage}
+                                        resizeMode="cover"
                                     />
+
                                 </View>
                                 <View>
-                                    <Text style={[styles.boldText17, { fontSize: 20 }]}>{currOrder.delivererName}</Text>
+                                    <Text style={[styles.boldText17, { fontSize: 20 }]}>{delivererDetails.delivererName}</Text>
                                 </View>
                                 <View style={{ pointerEvents: 'none', marginTop: 30}}>
                                     <StarRating
@@ -151,13 +207,36 @@ const StatusScreen = ({ navigation, route }) => {
                                 <View style={{paddingTop: 20}}>
                                     <Text style={[styles.boldText17, { fontSize: 20 }]}>Confirmation Code: {currOrder.pin}</Text>
                                     {/*add randomised code*/}
+                                    
                                 </View>
                             </View>
 
                         </View>
                     )}
                     {deliveryArrived && (
-                        <Text style={styles.boldText17}>Delivery Arrived!</Text>
+                        <View style={styles.card}>
+                            <View>
+                                <LottieView
+                                    source={require('../animations/tick.json')}
+                                    autoPlay
+                                    loop={false}
+                                    style={styles.animation}
+                                />
+                            </View>
+                            <Text style={[styles.boldText17, { fontSize: 20 , padding: 10 }]}>Order Complete!</Text>
+                            <Text style={styles.boldText17}>Please rate {delivererDetails.delivererName}</Text>
+                            <View style={{ marginTop: 10}}>
+                                <StarRating
+                                    rating={rating}
+                                    onChange={setRating}
+                                />
+                            </View>
+                            <View style={styles.btncontainer}>
+                                <TouchableOpacity activeOpacity={0.7} onPress={handleRatingChange}>
+                                        <Text style={[styles.boldText, styles.pressableText]}>Rate</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     )}
 
                 </View>
@@ -166,6 +245,7 @@ const StatusScreen = ({ navigation, route }) => {
         </SafeAreaView>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -176,6 +256,21 @@ const styles = StyleSheet.create({
         fontFamily: "Urbanist-Bold",
         fontSize: 26,
     },
+    btncontainer : {
+        backgroundColor: colors.primary,
+        width: '50%',
+        height: '10%',
+        padding: 5,
+        marginVertical: 20,
+        alignItems:'center',
+        borderRadius: 12
+    },
+        text:{
+        justifyContent: "center",
+        fontFamily: 'Urbanist-Bold',
+        alignContent: "center",
+        fontSize: 20,
+    },
     card: {
         height: 370,
         marginTop: 5,
@@ -185,7 +280,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: "#FFF",
         alignItems: 'center',
-        flexDirection: "column"
+        flexDirection: "column",
+
     },
     cardImage: {
         flex: 1,
@@ -309,6 +405,13 @@ const styles = StyleSheet.create({
     rightButton: {
         marginLeft: "auto",
         marginRight: 10
+    },
+    boldText: {
+        fontFamily: 'Urbanist-Bold',
+    },
+    pressableText:{
+        color: "#FFF",
+        fontSize:16
     },
     bottomButton: {
         backgroundColor: "orange",

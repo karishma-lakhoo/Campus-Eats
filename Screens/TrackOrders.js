@@ -7,12 +7,13 @@ import {
     Dimensions,
     TouchableOpacity,
     FlatList,
-    Image, Pressable
+    Image, Pressable, ActivityIndicator
 } from "react-native";
 import React, {useEffect, useState} from "react";
 import {acceptOrder, completeOrder, getAllOrders, getCurrentUsersOrders} from "../consts/orders";
 import {getAuth} from "firebase/auth";
 import {getFirestore} from "firebase/firestore";
+import md5 from "md5";
 
 const { width, height } = Dimensions.get("window");
 
@@ -33,6 +34,8 @@ const TrackOrdersScreen = ({navigation}) => {
     }
 
     const filtered = allOrders.filter(item => item.orderersID === userUID)
+    const sortedFilteredOrders = filtered.sort((a, b) => b.timePlaced.toMillis() - a.timePlaced.toMillis());
+
     // useEffect(() => {
     //     const filtered = allOrders.filter(item => item.orderersID === "3P6lxfR5LtX7tj6vsesSXH8cLT22");
     //     setFilteredOrders(filtered)
@@ -43,6 +46,11 @@ const TrackOrdersScreen = ({navigation}) => {
 
     const LogCard = ({ item }) => {
         const cartItems = item.cart;
+        const orderID = item.id;
+
+        const options = {  hour: 'numeric', minute: 'numeric', year: 'numeric', month: 'numeric', day: 'numeric'};
+        console.log(item.timePlaced.toDate().toLocaleString('en-US', options ))
+        console.log(orderID)
         const restaurantName = item.cart[0].restaurantName;
         let totalPrice = 0;
         const cardHeight = 290 + cartItems.length*15;
@@ -50,7 +58,6 @@ const TrackOrdersScreen = ({navigation}) => {
         const [accepted, setAccepted] = useState(true);
         const [pin, setPin] = useState("")
         const [complete, setComplete] = useState("false")
-        const options = {  hour: 'numeric', minute: 'numeric', year: 'numeric', month: 'numeric', day: 'numeric'};
 
         for(let i = 0; i < item.cart.length; i++){
             let price = item.cart[i].price.trim().replace(/[Rr]/g, '');
@@ -80,63 +87,67 @@ const TrackOrdersScreen = ({navigation}) => {
                         </View>
                     ) : (
                         <>
-                            <View style={{backgroundColor: 'rgba(255, 167, 38, 0.8)', alignItems: "center", height: 100, borderRadius: 10, marginTop: 5}}>
-                                <Image
-                                    source={require("../assets/profile.jpg")}
-                                    style={{ height: 80, width: 80, borderRadius: 50, marginTop: 10}}
-                                />
-                            </View>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    marginTop: 0,
-                                    right: 15,
-                                }}
-                            >
-                                <View style={{ marginLeft: 30 }}>
-                                    <Text style={styles.boldSubtext}>
-                                        Order
-                                    </Text>
-                                    <Text style={styles.subText}>
-                                        Delivery person: {item.delivererName}
-                                    </Text>
-
-                                    <Text style={styles.subText}>
-                                        Restaurant: {restaurantName}
-                                    </Text>
-
-                                    {/* Render all the names of the items in the cart */}
-                                    <View>
-                                        <Text style={[styles.subText, styles.boldText]}>
-                                            Items:
-                                        </Text>
-                                        {cartItems.map((cartItem, index) => (
-                                            <Text style={{...styles.subText}} key={index}>
-                                                {cartItem.name}
-                                            </Text>
-                                        ))}
-                                    </View>
-                                    <Text style={styles.subText}>
-                                        Price: R{totalPrice}
-                                    </Text>
-                                    <Text style={styles.subText}>
-                                        Meet up point: {item.location}
-                                    </Text>
-                                    <Text style={styles.subText}>
-                                        Order Placed: {item.timePlaced.toDate().toLocaleString('en-US', options )}
-                                    </Text>
-                                    <Text style={styles.subText}>
-                                        Pin: {item.pin}
-                                    </Text>
-                                    <Text style={styles.subText}>
-                                        Status: {item.status}
-                                    </Text>
-                                    <Text style={styles.subText}>
-                                        Order Complete: {complete}
-                                    </Text>
+                            <TouchableOpacity onPress={() => navigation.navigate("Status", { orderID }) //navigate to a myOrders page
+                            }>
+                                <View style={{backgroundColor: 'rgba(255, 167, 38, 0.8)', alignItems: "center", height: 100, borderRadius: 10, marginTop: 5}}>
+                                    <Image
+                                        source={{uri: `https://www.gravatar.com/avatar/${md5(item.orderersEmail)}?s=200`}}
+                                        style={{ height: 80, width: 80, borderRadius: 50, marginTop: 10}}
+                                        resizeMode= "cover"
+                                    />
                                 </View>
-                            </View>
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginTop: 0,
+                                        right: 15,
+                                    }}
+                                >
+                                    <View style={{ marginLeft: 30 }}>
+                                        <Text style={styles.boldSubtext}>
+                                            Order
+                                        </Text>
+                                        <Text style={styles.subText}>
+                                            Delivery person: {item.delivererName}
+                                        </Text>
+
+                                        <Text style={styles.subText}>
+                                            Restaurant: {restaurantName}
+                                        </Text>
+
+                                        {/* Render all the names of the items in the cart */}
+                                        <View>
+                                            <Text style={[styles.subText, styles.boldText]}>
+                                                Items:
+                                            </Text>
+                                            {cartItems.map((cartItem, index) => (
+                                                <Text style={{...styles.subText}} key={index}>
+                                                    {cartItem.name}
+                                                </Text>
+                                            ))}
+                                        </View>
+                                        <Text style={styles.subText}>
+                                            Price: R{totalPrice}
+                                        </Text>
+                                        <Text style={styles.subText}>
+                                            Meet up point: {item.location}
+                                        </Text>
+                                        <Text style={styles.subText}>
+                                            Order Placed: {item.timePlaced.toDate().toLocaleString('en-US', options )}
+                                        </Text>
+                                        <Text style={styles.subText}>
+                                            Pin: {item.pin}
+                                        </Text>
+                                        <Text style={styles.subText}>
+                                            Status: {item.status}
+                                        </Text>
+                                        <Text style={styles.subText}>
+                                            Order Complete: {item.delivered.toString()}
+                                        </Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
                         </>
                     )}
                 </View>
@@ -146,23 +157,45 @@ const TrackOrdersScreen = ({navigation}) => {
         )
     }
 
-    return(
+    return (
         <SafeAreaView style={styles.container}>
             <View style={styles.contentContainer}>
                 <View style={styles.header}>
+                    <TouchableOpacity
+                        style={styles.backButton}
+                        onPress={() => {
+                            navigation.goBack();
+                        }}
+                    >
+                        <Image
+                            source={require("../assets/back_thick.png")}
+                            style={{ width: 24, height: 24 }}
+                        />
+                    </TouchableOpacity>
                     <Text style={styles.heading}>Track Orders</Text>
                 </View>
                 <View>
-                    <FlatList
-                        data={filtered}
-                        keyExtractor={(item) => item}
-                        renderItem={({ item }) => <LogCard item={item} />}
-                    />
+                    {isOrdersLoading ? (
+                        <ActivityIndicator
+                            size="large"
+                            color="orange"
+                            style={{
+                                marginTop: height * 0.2,
+                                marginBottom: height * 0.2,
+                            }}
+                        />
+                    ) : (
+                        <FlatList
+                            data={sortedFilteredOrders}
+                            keyExtractor={(item) => item}
+                            renderItem={({ item }) => <LogCard item={item} />}
+                        />
+                    )}
                 </View>
             </View>
         </SafeAreaView>
-    )
-}
+    );
+};
 
 
 
@@ -184,10 +217,13 @@ const styles = StyleSheet.create({
         fontFamily: "Urbanist-Bold",
     },
     header: {
-        flexDirection: "column",
+        flexDirection: "row",
         paddingTop: height * 0.02,
         marginHorizontal: width * 0.05,
         position: "relative",
+    },
+    backButton: {
+        marginRight: 10,
     },
     LogCard: {
         height: 100,

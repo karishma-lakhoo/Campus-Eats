@@ -33,11 +33,11 @@ const BottomNavigator = () => {
                 <Icon name="store" color={color} size={28}/>
             ),
         }}/>
-        <Tab.Screen name="FoodDB" component={FormPage} options={{
-            tabBarIcon: ({color}) => (
-                <Icon name="home-filled" color={color} size={28}/>
-            ),
-        }}/>
+        {/*<Tab.Screen name="FoodDB" component={FormPage} options={{*/}
+        {/*    tabBarIcon: ({color}) => (*/}
+        {/*        <Icon name="home-filled" color={color} size={28}/>*/}
+        {/*    ),*/}
+        {/*}}/>*/}
         <Tab.Screen name="Cart" component={CartScreen} options={{
             tabBarIcon: ({color}) => (
                 <Icon name="shopping-cart" color={color} size={28}/>

@@ -79,6 +79,7 @@ const SignUpScreen = ({navigation}) =>{
             await addDoc(ratingsCollectionRef, {
                 rating: 0, // Sample rating value
                 comment: 'Great user!', // Sample comment
+                numOfRatings: 0,
                 //Any other category required in the ratings can be added here with a sample
             });
 
@@ -126,8 +127,6 @@ const SignUpScreen = ({navigation}) =>{
 
 
     let popupRef = React.createRef()
-
-    let student_name = "Panda";
 
     const handleAdd = () => {
         // Implement your logic here, e.g., navigate to a new screen
