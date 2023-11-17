@@ -63,14 +63,22 @@ If already a user, click on "Log In" and enter your credentials.
 
 Navigate to the user profile.
 Select "Change Role" to switch between user and delivery person roles.
-![Alt delivery_status](screenshots/delivery_status.jpg)
+![Alt delivery_status](screenshots/delivery _status.jpg)
 ![Alt delivery_status](screenshots/delivery_status_off.jpg)
+
+
+
 
 ### Adding Credits
 
 Go to the wallet or credits section.
 Add Kudu credits to your account.
 ![Alt Adding credits](screenshots/credits.jpg)
+
+
+
+
+
 
 ### Placing Orders
 
@@ -79,13 +87,29 @@ Select desired items and click "Order."
 Confirm order details and proceed to checkout.
 ![Alt Placing the order ](screenshots/placing_order.jpg)
 
+
+
+
+
+
+
+
+
+
+
 ### Order Tracking
 
 View order status updates in real-time.
 Three order statuses: "Finding Delivery Person," "Order Accepted," and "Order Completed."
 ![Alt order tracking](screenshots/status_search.jpg)
 ![Alt order tracking](screenshots/status_inprogress.jpg)
-![Alt order tracking](screenshots/complete.jpg)
+![Alt order tracking](screenshots/status_complete.jpg)
+
+
+
+
+
+
 
 ### Driver Notifications
 
