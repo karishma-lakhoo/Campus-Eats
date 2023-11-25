@@ -115,4 +115,5 @@ Three order statuses: "Finding Delivery Person," "Order Accepted," and "Order Co
 ### Driver Notifications
 Drivers receive notifications for new orders.
 Accept or reject orders.
+
 <img src="screenshots/orders_notifications.jpg" width="500" />
