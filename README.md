@@ -97,6 +97,7 @@ Add Kudu credits to your account.
 Browse food categories on the home page.
 Select desired items and click "Place Order."
 Confirm order details and proceed to checkout.
+
 <img src="screenshots/placing_order.jpg" width="500" />
 
 
