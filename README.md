@@ -10,6 +10,7 @@ CampusEats is a delivery app designed for the Wits University campus, providing 
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+- [Quick Start Video](#Quick-Start-Video)
 - [Usage](#usage)
   - [User Registration and Login](#user-registration-and-login)
   - [Changing User Status](#changing-user-status)
