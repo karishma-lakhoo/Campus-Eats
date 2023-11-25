@@ -51,6 +51,20 @@ CampusEats is built with Firebase for backend services and React Native for the 
 2. Navigate to the project directory: `cd CampusEats`
 3. Install dependencies: `npm install --force`
 
+## Quick Start Video
+
+### Customers Perspective
+
+
+https://github.com/CODESHEDDING-EATS/Campus-Eats/assets/65980113/af99be7c-3cfe-4ca0-8347-43dba5c043b9
+
+
+### Derivery Person's Perspective
+
+
+https://github.com/CODESHEDDING-EATS/Campus-Eats/assets/65980113/795905f4-6f0a-4e2c-9507-1c38b0a8d7ee
+
+
 ## Usage
 
 ### User Registration and Login
